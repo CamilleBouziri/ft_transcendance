@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block stylesheets %}<link rel="stylesheet" href="{% static './css/accueil.css' %}">{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Bienvenue {{ user.nom }}!</h1>
+    {% if user.photo_url %}
+        <img src="{{ user.photo_url }}" alt="Profile Picture">
+    {% endif %}
+    <p>Your email is: {{ user.email }}</p>
+    <p>Your nom is: {{ user.nom }}</p>
+    <p>Your id is: {{ user.id }}</p>
+    <a href="{% url 'logout' %}" class="logout-button">Logout</a>
+</div>
+{% endblock %}

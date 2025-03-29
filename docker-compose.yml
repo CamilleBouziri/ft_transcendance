@@ -1,0 +1,83 @@
+# version: '3.8'
+
+services:
+  ###################################################
+  # Service Redis pour Django Channels
+  ###################################################
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6380:6379"
+
+  ###################################################
+  # Service PostgreSQL (Database)
+  ###################################################
+  database:
+    build:
+      context: .
+      dockerfile: database/Dockerfile
+    container_name: database
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+
+  ###################################################
+  # Service Django (Backend)
+  ###################################################
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+      - "8443:8443"  # Port HTTPS
+    depends_on:
+      - database
+      - redis
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=project.settings
+      - POSTGRES_HOST
+      - POSTGRES_PORT
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - DJANGO_SECRET_KEY
+      - DJANGO_DEBUG
+      - DJANGO_ALLOWED_HOSTS
+      - CORS_ORIGIN_WHITELIST
+
+  ###################################################
+  # Service Nginx (Frontend)
+  ###################################################
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    env_file:
+      - .env
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+
+###################################################
+# Définition des volumes persistants
+###################################################
+volumes:
+  pgdata:

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/amis.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container-amis">
+    <h3>Rechercher un ami</h3>
+
+    <form method="GET" action="{% url 'amis' %}">
+        <input type="text" name="q" placeholder="Rechercher un utilisateur..." value="{{ query }}">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    {% if utilisateurs %}
+        <ul>
+            {% for user in utilisateurs %}
+                <li>
+                    <div class="container-nom">
+                        {{ user.nom }}
+                    </div>
+                    <div class="container-bouton">
+                        <a href="{% url 'envoyer_demande_ami' utilisateur_id=user.id %}" class="btn btn-success">Ajouter</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun utilisateur trouvé.</p>
+    {% endif %}
+</div>
+
+<div class="invitations-container">
+    <div class="container-amis">
+        <h3>En attente</h3>
+        {% if demandes_envoyees %}
+            <ul>
+                {% for demande in demandes_envoyees %}
+                    <li>
+                        <div class="container-nom">
+                            {{ demande.ami.nom }}
+                        </div>
+                        <div class="container-bouton">
+                            <span class="statut-attente">{{ demande.get_statut_display }}</span>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Aucune invitation en attente.</p>
+        {% endif %}
+    </div>
+
+    <div class="container-amis">
+        <h3>Reçues</h3>
+        {% if demandes_recues %}
+            <ul>
+                {% for demande in demandes_recues %}
+                    <li>
+                        <div class="container-nom">
+                            {{ demande.utilisateur.nom }}
+                        </div>
+                        <div class="container-bouton">
+                            <a href="{% url 'accepter_demande_ami' demande_id=demande.id %}" class="btn btn-success">Accepter</a>
+                            <a href="{% url 'refuser_demande_ami' demande_id=demande.id %}" class="btn btn-danger">Refuser</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Aucune invitation en attente.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container-amis">
+    <h3>Amis</h3>
+    {% if amis_acceptes.envoyes or amis_acceptes.recus %}
+        <ul>
+            {% for ami in amis_acceptes.envoyes %}
+                <li>
+                    <div class="container-nom">
+                        {{ ami.ami.nom }}
+                    </div>
+                    <div class="container-bouton">
+                        <a href="{% url 'chat:room' room_name=ami.ami.nom %}" class="btn btn-primary">Chatter</a>
+                        <a href="{% url 'supprimer_ami' ami_id=ami.ami.id %}" class="btn btn-danger" 
+                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet ami ?')">Supprimer</a>
+                    </div>
+                </li>
+            {% endfor %}
+            {% for ami in amis_acceptes.recus %}
+                <li>
+                    <div class="container-nom">
+                        {{ ami.utilisateur.nom }}
+                    </div>
+                    <div class="container-bouton">
+                        <a href="{% url 'chat:room' room_name=ami.utilisateur.nom %}" class="btn btn-primary">Chatter</a>
+                        <a href="{% url 'supprimer_ami' ami_id=ami.utilisateur.id %}" class="btn btn-danger"
+                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet ami ?')">Supprimer</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun ami accepté.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

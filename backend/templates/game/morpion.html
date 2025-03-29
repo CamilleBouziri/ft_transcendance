@@ -1,0 +1,282 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>{% trans "Morpion" %}</title>
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: black;
+      color: white;
+      font-family: 'Press Start 2P', sans-serif;
+    }
+    
+    h1 {
+      color: yellow;
+      margin-bottom: 20px;
+      text-align: center;
+      animation: glow 1.5s infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 5px yellow; }
+      to { text-shadow: 0 0 15px yellow, 0 0 30px rgb(255, 187, 0); }
+    }
+
+    .game-container {
+      display: flex;
+      align-items: center;
+      gap: 50px;
+      margin-top: 2%;
+    }
+    
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 5px;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      background-color: #222;
+      border: 2px solid white;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+ 
+    .player-info p {
+    margin: 0;
+    color: #ffffff;
+}
+    .cell.x { color: cyan; }
+    .cell.o { color: red; }
+
+    .player-info {
+      border: 3px solid yellow;
+      padding: 15px;
+      border-radius: 10px;
+      background: #000000;
+      animation: pulse 1.5s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { box-shadow: 0 0 5px yellow; }
+      to { box-shadow: 0 0 15px yellow; }
+    }
+
+    .turn-indicator {
+      font-size: 1.2rem;
+      margin-top: 10px;
+      color: yellow;
+      text-align: center;
+      animation: blink 1s infinite alternate;
+    }
+
+    @keyframes blink {
+      from { opacity: 1; }
+      to { opacity: 0.5; }
+    }
+
+    .winner-message {
+      margin-top: 20px;
+      font-size: 1.5rem;
+      color: rgb(255, 23, 23);
+      text-align: center;
+    }
+
+    .button-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .reset-btn, .dashboard-btn {
+      padding: 10px 20px;
+      background-color: rgb(241, 237, 0);
+      color: black;
+      font-family: 'Press Start 2P', sans-serif;
+      border-radius : 5px;
+      font-size: 1.2rem;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .reset-btn:hover, .dashboard-btn:hover {
+      background-color: rgb(10, 205, 231);
+      color: white;
+    }
+    
+    .dashboard-btn {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<h1>{% trans "Morpion" %}</h1>
+
+<div class="turn-indicator" id="turnIndicator"> Turn: {{ user.nom }}</div>
+<div class="game-container">
+  <div class="player-info">
+    <p><span style="color: cyan;">X</span> - {{ user.nom }}</p>
+    <p><span style="color: red;">O</span> - Joueur 2</p>
+  </div>
+
+  <div class="board" id="board">
+    <div class="cell" data-index="0"></div>
+    <div class="cell" data-index="1"></div>
+    <div class="cell" data-index="2"></div>
+    <div class="cell" data-index="3"></div>
+    <div class="cell" data-index="4"></div>
+    <div class="cell" data-index="5"></div>
+    <div class="cell" data-index="6"></div>
+    <div class="cell" data-index="7"></div>
+    <div class="cell" data-index="8"></div>
+  </div>
+</div>
+
+<p class="winner-message" id="winnerMessage"></p>
+
+<div class="button-container">
+  <button class="reset-btn" onclick="resetGame()">{% trans "Restart" %}</button>
+  <a href="{% url 'dashboard' %}"><button class="dashboard-btn" id="dashboardBtn">{% trans "Dashboard" %}</button></a>
+</div>
+<script>
+  let currentPlayer = "X";
+  let board = ["", "", "", "", "", "", "", "", ""];
+  let gameOver = false;
+  let playerX = "{{ user.nom }}";
+  let playerO = "Joueur 2";
+
+  function checkWinner() {
+  const winPatterns = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6]
+  ];
+
+  for (let pattern of winPatterns) {
+    let [a, b, c] = pattern;
+    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+      gameOver = true;
+      let winnerName = board[a] === "X" ? playerX : playerO;
+
+      document.getElementById("winnerMessage").textContent = " {% trans 'Winner :' %}" + winnerName + " 🏆";
+
+      const gameData = {
+        player1: playerX,
+        player2: playerO,
+        winner: winnerName,
+        player1_score: winnerName === playerX ? 1 : 0,
+        player2_score: winnerName === playerO ? 1 : 0
+      };
+
+      console.log("Sending game data:", gameData);
+
+      fetch("{% url 'save_morpion_result' %}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify(gameData)
+      })
+      .then(response => response.json())
+      .then(data => console.log("Game Saved Response:", data))
+      .catch(error => console.error("Error saving game:", error));
+
+      document.getElementById("dashboardBtn").style.display = "inline-block";
+      return;
+    }
+  }
+
+  if (!board.includes("") && !gameOver) {
+    document.getElementById("winnerMessage").textContent = "{% trans 'Draw!' %}";
+
+    fetch("{% url 'save_morpion_result' %}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+      body: JSON.stringify({
+        player1: playerX,
+        player2: playerO,
+        winner: "Draw",
+        player1_score: 0,
+        player2_score: 0
+      })
+    })
+    .then(response => response.json())
+    .then(data => console.log("Draw Game Saved Response:", data))
+    .catch(error => console.error("Error saving draw game:", error));
+
+    gameOver = true;
+  }
+}
+
+
+  document.querySelectorAll(".cell").forEach(cell => {
+    cell.addEventListener("mouseover", () => {
+      if (!cell.textContent && !gameOver) {
+        cell.style.backgroundColor = currentPlayer === "X" ? "cyan" : "red";
+      }
+    });
+
+    cell.addEventListener("mouseleave", () => {
+      if (!cell.textContent && !gameOver) {
+        cell.style.backgroundColor = "#222";
+      }
+    });
+
+    cell.addEventListener("click", () => {
+      let index = cell.getAttribute("data-index");
+
+      if (!board[index] && !gameOver) {
+        board[index] = currentPlayer;
+        cell.textContent = currentPlayer;
+        cell.classList.add(currentPlayer.toLowerCase());
+        cell.style.backgroundColor = "#222"; // Reset background after click
+        checkWinner();
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        document.getElementById("turnIndicator").textContent = 
+          "{% trans 'Turn: ' %}" + (currentPlayer === "X" ? playerX : playerO);
+      }
+    });
+  });
+
+  function resetGame() {
+    board = ["", "", "", "", "", "", "", "", ""];
+    gameOver = false;
+    document.getElementById("winnerMessage").textContent = "";
+    document.querySelectorAll(".cell").forEach(cell => {
+      cell.textContent = "";
+      cell.classList.remove("x", "o");
+      cell.style.backgroundColor = "#222";
+    });
+    currentPlayer = "X";
+    document.getElementById("turnIndicator").textContent = "{% trans 'Turn: ' %}" + playerX;
+  }
+
+</script>
+
+</body>
+</html>

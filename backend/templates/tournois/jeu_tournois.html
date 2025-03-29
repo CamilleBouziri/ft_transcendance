@@ -1,0 +1,930 @@
+{% load i18n %}
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pong Game</title>
+    <!-- Police Press Start 2P -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+        /* Mise en page générale */
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Press Start 2P', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        /* Conteneur principal de la fenêtre "Settings" encadré en blanc */
+        .settings-container {
+            border: 3px solid white;
+            width: 500px;
+            padding: 1rem;
+            box-sizing: border-box;
+            text-align: center;
+            margin-bottom: 1rem;
+            position: relative; /* Important pour la position absolue de la croix */
+        }
+
+        /* Bouton de fermeture (petite croix rouge en haut à droite) */
+        .close-button {
+            position: absolute;
+            top: 8px;  /* Ajustez si besoin */
+            right: 10px;
+            color: red;
+            border-radius: 50%;
+            border: 5px solid white; 
+            width: 30px;
+            height: 30px;
+            font-size: 1.3rem;
+            cursor: pointer;
+        }
+        
+        .close-button:hover {
+            filter: brightness(1.2);
+        }
+
+        /* Titre "Play Game" en jaune */
+        .settings-title {
+            color: yellow;
+            font-size: 1.8rem;
+            margin: 0.7em 0 1rem 0;
+        }
+
+        /* Chaque section (Colors, Paddle1, Paddle2, Terrain, Points) */
+        .option-group {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+        }
+        .option-group-title {
+            margin: 0.3rem 0.2em 1rem 0;
+            font-size: 1rem;
+            display: inline-block;
+            border: 1px solid white;
+            padding: 0.2rem 0.5rem;
+        }
+
+        /* Conteneur pour les bulles de couleur */
+        .bubbles-container {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .color-bubble {
+            width: 25px;
+            height: 25px;
+            border: 2px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .color-bubble:hover {
+            transform: scale(1.2);
+        }
+        /* Bulle sélectionnée (on la met en surbrillance) */
+        .color-bubble.selected {
+            box-shadow: 0 0 5px 3px white;
+        }
+
+        /* Conteneur pour les choix de points */
+        .points-container {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .point-box {
+            border: 2px solid white;
+            padding: 0.3rem 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.9rem;
+        }
+        .point-box:hover {
+            background-color: #444;
+        }
+        .point-box.selected {
+            background-color: white;
+            color: black;
+        }
+
+        /* Bouton "Play" encadré en blanc, texte en jaune */
+        .play-button {
+            border: 2px solid white;
+            background-color: black;
+            color: yellow;
+            font-family: 'Press Start 2P';
+            font-size: 1.2rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .play-button:hover {
+            background-color: yellow;
+            color: black;
+        }
+
+        /* ------------------------------------------------------------------------------------
+           Styles du container de jeu, scoreboard, overlays, etc.
+        ------------------------------------------------------------------------------------ */
+        #gameContainer {
+            display: none;
+            align-items: center;
+            width: 100%;
+            position: relative;
+            flex-direction: column;
+        }
+        #title {
+            background-color: rgb(0, 0, 0);
+            color: rgb(229, 241, 0);
+            font-size: 2em;
+        }
+        #players-container {
+            display: flex;
+            justify-content: space-between;
+            width: 40%;
+            margin-bottom: 20px;
+        }
+        .player {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 10px;
+        }
+        .scoreBubble {
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            border-radius: 50%;
+            padding: 10px;
+            font-size: 20px;
+            margin-top: 5px;
+            width: 30px;
+            -webkit-text-stroke: 1.5px black;
+            text-align: center;
+        }
+        #gameCanvas {
+            background-color: black;
+            width: 640px;
+            height: 360px;
+        }
+        #winnerBoard {
+            font-size: 1.5em;
+            color: white;
+            margin-top: 20px;
+        }
+        #pauseButton {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 1rem;
+            font-size: 2.5rem;
+            color: black;
+            background-color: black;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .pause-container {
+            background-color: #222;
+            padding: 1.5rem;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+        }
+        #pauseOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .pause-row {
+            display: flex;
+            justify-content: space-around;
+            width: 50%;
+            margin-bottom: 1.5rem;
+        }
+        .pause-column {
+            text-align: center;
+        }
+        #gameResultOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .result-container {
+            background-color: #222;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            min-width: 300px;
+        }
+        .result-container h2 {
+            color: yellow;
+            margin-top: 0;
+        }
+        .result-content {
+            margin: 1.5rem 0;
+        }
+        .winner-text, .score-text {
+            font-size: 1.2em;
+            margin: 0.5rem 0;
+        }
+        .result-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+        .result-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fenêtre de configuration -->
+    <div class="settings-container" id="settingsContainer">
+        <!-- Petite croix rouge (fermante) en haut à droite -->
+        <div class="close-button" onclick="closeSettings()">&#10006;</div>
+
+        <!-- Titre en jaune (on peut le traduire) -->
+        <h1 class="settings-title">{% trans "Play Game" %}</h1>
+
+        <!-- Choix de la couleur de la balle (4 couleurs primaires) -->
+        <div class="option-group">
+            <h2 class="option-group-title">{% trans "Color" %}</h2>
+            <div class="bubbles-container" id="ballColorBubbles">
+                <div class="color-bubble" data-color="#FF0000" style="background-color:#FF0000"></div>
+                <div class="color-bubble" data-color="#00FF00" style="background-color:#00FF00"></div>
+                <div class="color-bubble" data-color="#0000FF" style="background-color:#0000FF"></div>
+                <div class="color-bubble" data-color="#FFFF00" style="background-color:#FFFF00"></div>
+            </div>
+        </div>
+
+        <!-- Couleur Paddle 1 (5 couleurs) -->
+        <div class="option-group">
+            <h2 class="option-group-title">{% trans "Paddle 1" %}</h2>
+            <div class="bubbles-container" id="paddle1Bubbles">
+                <div class="color-bubble" data-color="#FF0000" style="background-color:#FF0000"></div>
+                <div class="color-bubble" data-color="#00FF00" style="background-color:#00FF00"></div>
+                <div class="color-bubble" data-color="#0000FF" style="background-color:#0000FF"></div>
+                <div class="color-bubble" data-color="#000000" style="background-color:#000000"></div>
+                <div class="color-bubble" data-color="#FFFFFF" style="background-color:#FFFFFF"></div>
+            </div>
+        </div>
+
+        <!-- Couleur Paddle 2 (5 couleurs) -->
+        <div class="option-group">
+            <h2 class="option-group-title">{% trans "Paddle 2" %}</h2>
+            <div class="bubbles-container" id="paddle2Bubbles">
+                <div class="color-bubble" data-color="#FF0000" style="background-color:#FF0000"></div>
+                <div class="color-bubble" data-color="#00FF00" style="background-color:#00FF00"></div>
+                <div class="color-bubble" data-color="#0000FF" style="background-color:#0000FF"></div>
+                <div class="color-bubble" data-color="#000000" style="background-color:#000000"></div>
+                <div class="color-bubble" data-color="#FFFFFF" style="background-color:#FFFFFF"></div>
+            </div>
+        </div>
+
+        <!-- Couleur du Terrain (5 couleurs) -->
+        <div class="option-group">
+            <h2 class="option-group-title">{% trans "Terrain" %}</h2>
+            <div class="bubbles-container" id="terrainBubbles">
+                <div class="color-bubble" data-color="#FF0000" style="background-color:#FF0000"></div>
+                <div class="color-bubble" data-color="#00FF00" style="background-color:#00FF00"></div>
+                <div class="color-bubble" data-color="#0000FF" style="background-color:#0000FF"></div>
+                <div class="color-bubble" data-color="#000000" style="background-color:#000000"></div>
+                <div class="color-bubble" data-color="#FFFFFF" style="background-color:#FFFFFF"></div>
+            </div>
+        </div>
+
+        <!-- Choix des points -->
+        <div class="option-group">
+            <h2 class="option-group-title">{% trans "Points" %}</h2>
+            <div class="points-container" id="pointsGroup">
+                <div class="point-box" data-points="1">{% trans "1 Point" %}</div>
+                <div class="point-box" data-points="3">{% trans "3 Point" %}</div>
+                <div class="point-box" data-points="5">{% trans "5 Point" %}</div>
+                <div class="point-box" data-points="11">{% trans "11 Point" %}</div>
+            </div>
+        </div>
+
+        <!-- Bouton Play -->
+        <button class="play-button" onclick="applySettings()">{% trans "Play" %}</button>
+    </div>
+
+    <!-- Jeu -->
+    <div class="game-container" id="gameContainer">
+        <h1 id="title">{% trans "PLAY GAME" %}</h1>
+
+        <div id="players-container">
+            <div id="player1" class="player">
+                <img id="iconPlayer1" class="icon" src="{% static 'images/joueurs.png' %}" alt="Player 1 Icon">
+                <h2 id="player1-name">{{ joueur1_nom }}</h2>
+                <div class="scoreBubble" id="scorePlayer1">0</div>
+            </div>
+            <div id="player2" class="player">
+                <div class="scoreBubble" id="scorePlayer2">0</div>
+                <h2 id="player2-name">{{ joueur2_nom }}</h2>
+                <img id="iconPlayer2" class="icon" src="{% static 'images/joueurs.png' %}" alt="Player 2 Icon">
+            </div>
+        </div>
+
+        <!-- Canvas du jeu -->
+        <div id="gameCanvasContainer">
+            <div id="gameCanvas"></div>
+            <!-- Message de victoire -->
+            <h2 id="winnerBoard"></h2>
+        </div>
+
+        <!-- Bouton pause -->
+        <button onclick="togglePause()" id="pauseButton">⏸️</button>
+    </div>
+
+    <!-- Pause Overlay -->
+    <div id="pauseOverlay" class="pause-container">
+        <h1>{% trans "Pause" %}</h1>
+        <div class="pause-row">
+            <div class="pause-column">
+                <h2>{% trans "Player 1" %}</h2>
+                <p>{% trans "Left: A" %}</p>
+                <p>{% trans "Right: D" %}</p>
+            </div>
+            <div class="pause-column">
+                <h2>{% trans "Player 2" %}</h2>
+                <p>{% trans "Left: ⮜" %}</p>
+                <p>{% trans "Right: ⮞" %}</p>
+            </div>
+        </div>
+        <button onclick="togglePause()">{% trans "Resume" %}</button>
+    </div>
+
+    <!-- Scripts du jeu -->
+    <!-- <script src="../../static/Scripts/game2.js"></script> -->
+    <script src="../../static/Scripts/keyboard.js"></script>
+    <script src="../../static/Scripts/three.min.js"></script>
+
+    <!-- Pour personnaliser le nom du player1 -->
+
+
+    <!-- Script pour gérer les bulles de couleur, la sélection des points et le lancement du jeu -->
+    <script>
+        // Variables pour stocker la sélection
+        let selectedBallColor = null;
+        let selectedPaddle1 = null;
+        let selectedPaddle2 = null;
+        let selectedTerrain = null;
+        let selectedPoints = null;
+
+        // Ajout d'écouteurs de clic sur les bulles "ballColorBubbles"
+        const ballBubbles = document.getElementById('ballColorBubbles').getElementsByClassName('color-bubble');
+        for (let bubble of ballBubbles) {
+            bubble.addEventListener('click', () => {
+                for (let b of ballBubbles) b.classList.remove('selected');
+                bubble.classList.add('selected');
+                selectedBallColor = bubble.getAttribute('data-color');
+            });
+        }
+
+        // Paddle 1
+        const paddle1Bubbles = document.getElementById('paddle1Bubbles').getElementsByClassName('color-bubble');
+        for (let bubble of paddle1Bubbles) {
+            bubble.addEventListener('click', () => {
+                for (let b of paddle1Bubbles) b.classList.remove('selected');
+                bubble.classList.add('selected');
+                selectedPaddle1 = bubble.getAttribute('data-color');
+            });
+        }
+
+        // Paddle 2
+        const paddle2Bubbles = document.getElementById('paddle2Bubbles').getElementsByClassName('color-bubble');
+        for (let bubble of paddle2Bubbles) {
+            bubble.addEventListener('click', () => {
+                for (let b of paddle2Bubbles) b.classList.remove('selected');
+                bubble.classList.add('selected');
+                selectedPaddle2 = bubble.getAttribute('data-color');
+            });
+        }
+
+        // Terrain
+        const terrainBubbles = document.getElementById('terrainBubbles').getElementsByClassName('color-bubble');
+        for (let bubble of terrainBubbles) {
+            bubble.addEventListener('click', () => {
+                for (let b of terrainBubbles) b.classList.remove('selected');
+                bubble.classList.add('selected');
+                selectedTerrain = bubble.getAttribute('data-color');
+            });
+        }
+
+        // Points
+        const pointsContainer = document.getElementById('pointsGroup').getElementsByClassName('point-box');
+        for (let box of pointsContainer) {
+            box.addEventListener('click', () => {
+                for (let b of pointsContainer) b.classList.remove('selected');
+                box.classList.add('selected');
+                selectedPoints = box.getAttribute('data-points');
+            });
+        }
+
+        // Appliquer les réglages et démarrer
+        function applySettings() {
+            // Par sécurité, si jamais l'utilisateur n'a rien sélectionné, on met quelques valeurs par défaut
+            if (!selectedBallColor) selectedBallColor = '#FF0000';
+            if (!selectedPaddle1)  selectedPaddle1  = '#FFFFFF';
+            if (!selectedPaddle2)  selectedPaddle2  = '#00FF00';
+            if (!selectedTerrain)  selectedTerrain  = '#00FF00';
+            if (!selectedPoints)   selectedPoints   = '5';
+
+            const settings = {
+                ballColor:     selectedBallColor,
+                paddleColor1:  selectedPaddle1,
+                paddleColor2:  selectedPaddle2,
+                terrainColor:  selectedTerrain,
+                maxScore:      parseInt(selectedPoints),
+            };
+
+            localStorage.setItem('pongSettings', JSON.stringify(settings));
+            startGame();
+        }
+
+        // Démarrer le jeu
+        function startGame() {
+            document.getElementById('settingsContainer').style.display = 'none';
+            document.getElementById('gameContainer').style.display = 'flex';
+            setup(); // Appel à votre fonction d'initialisation du jeu (dans game2.js)
+        }
+
+        // Gestion de la pause
+        function togglePause() {
+            const overlay = document.getElementById('pauseOverlay');
+            const gameContainer = document.getElementById('gameContainer');
+
+            paused = !paused;
+            if (paused) {
+                overlay.style.display = 'flex';
+                gameContainer.style.pointerEvents = 'none';
+            } else {
+                overlay.style.display = 'none';
+                gameContainer.style.pointerEvents = 'auto';
+            }
+        }
+
+        // Quand on clique sur la croix rouge
+        function closeSettings() {
+            window.location.href = '/details_tournois/{{ tournoi_id }}/';
+        }
+
+        // Charger d'anciens réglages éventuels
+        window.onload = function () {
+            const settings = JSON.parse(localStorage.getItem('pongSettings'));
+            if (settings) {
+                // On pourrait pré-sélectionner les bulles si on voulait
+                selectedBallColor   = settings.ballColor;
+                selectedPaddle1    = settings.paddleColor1;
+                selectedPaddle2    = settings.paddleColor2;
+                selectedTerrain    = settings.terrainColor;
+                selectedPoints     = settings.maxScore;
+            }
+        };
+    </script>
+
+    <script>
+        // --------------------------------------------- //
+// ------- 3D PONG built with Three.JS --------- //
+// --------------------------------------------- //
+
+var renderer, scene, camera, pointLight, spotLight;
+var fieldWidth = 400, fieldHeight = 200;
+
+// Paddles
+var paddleWidth, paddleHeight, paddleDepth, paddleQuality;
+var paddleSpeed = 5;
+
+// Ball
+var ball, paddle1, paddle2;
+var ballSpeed = 1.3;
+var ballDirX = 1, ballDirY = 1;
+
+// Scores
+var score1 = 0, score2 = 0;
+var maxScore = 7;
+
+// Camera
+var cameraSide = 0;
+
+// Game mode
+var mode = "ia";
+
+// For pause
+var paused = false;
+
+// ------------------- FUNCTION TO GET SETTINGS -------------------
+function getSettings() {
+    const savedSettings = localStorage.getItem('pongSettings');
+    return savedSettings ? JSON.parse(savedSettings) : null;
+}
+
+// ------------------- FUNCTION TO TOGGLE PAUSE -------------------
+function togglePause() {
+    paused = !paused;
+    console.log(paused ? "Game paused" : "Game resumed");
+}
+
+// ------------------- CAMERA PHYSICS -------------------
+function cameraPhysics() {
+    spotLight.position.copy(camera.position);
+    spotLight.position.z += 20;
+
+    if (cameraSide === 0) {
+        camera.position.x = paddle1.position.x - 100;
+        camera.position.z = paddle1.position.z + 100 + 0.04 * (-ball.position.x + paddle1.position.x);
+
+        camera.rotation.x = -0.01 * (ball.position.y) * Math.PI / 180;
+        camera.rotation.y = -60 * Math.PI / 180;
+        camera.rotation.z = -90 * Math.PI / 180;
+    } else {
+        camera.position.x = paddle2.position.x + 100;
+        camera.position.z = paddle2.position.z + 100 + 0.04 * (ball.position.x - paddle2.position.x);
+
+        camera.rotation.x = -0.01 * (ball.position.y) * Math.PI / 180;
+        camera.rotation.y = +60 * Math.PI / 180;
+        camera.rotation.z = +90 * Math.PI / 180;
+    }
+}
+
+// ------------------- SETUP -------------------
+function setup() {
+    const settings = getSettings(); // Get saved settings
+    if (settings) {
+        maxScore = settings.maxScore;
+        mode = settings.mode; // Set game mode
+    }
+
+    document.getElementById("winnerBoard").innerHTML = "First to " + maxScore + " wins!";
+    score1 = 0;
+    score2 = 0;
+    createScene(settings);
+    draw();
+}
+
+// ------------------- CREATE SCENE -------------------
+function createScene(settings) {
+    var WIDTH = 640, HEIGHT = 360;
+    var VIEW_ANGLE = 50,
+        ASPECT = WIDTH / HEIGHT,
+        NEAR = 0.1,
+        FAR = 10000;
+
+    var c = document.getElementById("gameCanvas");
+    renderer = new THREE.WebGLRenderer();
+    camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+    scene = new THREE.Scene();
+
+    scene.add(camera);
+    camera.position.z = 320;
+    renderer.setSize(WIDTH, HEIGHT);
+    c.appendChild(renderer.domElement);
+
+    // Terrain
+    var terrainColor = settings ? settings.terrainColor : 0x0e18a9;
+    var planeMaterial = new THREE.MeshLambertMaterial({ color: terrainColor });
+    var plane = new THREE.Mesh(
+        new THREE.PlaneGeometry(fieldWidth * 0.95, fieldHeight, 10, 10),
+        planeMaterial
+    );
+    plane.name = 'terrain';
+    scene.add(plane);
+    plane.receiveShadow = true;
+
+    // Line
+    var lineMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+    var centerLine = new THREE.Mesh(
+        new THREE.PlaneGeometry(fieldWidth * 0.95, 2),
+        lineMaterial
+    );
+    centerLine.position.set(0, 0, 1);
+    scene.add(centerLine);
+
+    // Table
+    var tableMaterial = new THREE.MeshLambertMaterial({ color: 0x111111 });
+    var table = new THREE.Mesh(
+        new THREE.CubeGeometry(
+            fieldWidth * 1.05,
+            fieldHeight * 1.03,
+            100
+        ),
+        tableMaterial
+    );
+    table.position.z = -51;
+    table.receiveShadow = true;
+    scene.add(table);
+
+    // Background below the table
+    var backgroundMaterial = new THREE.MeshLambertMaterial({ color: 0x555555 });
+    var background = new THREE.Mesh(
+        new THREE.CubeGeometry(1000, 1000, 10),
+        backgroundMaterial
+    );
+    background.position.z = -150;
+    scene.add(background);
+
+    // Ball
+    var ballColor = settings ? settings.ballColor : 0xffffff;
+    var sphereMaterial = new THREE.MeshLambertMaterial({ color: ballColor });
+    ball = new THREE.Mesh(new THREE.SphereGeometry(5, 6, 6), sphereMaterial);
+    ball.position.set(0, 0, 5);
+    ball.receiveShadow = true;
+    ball.castShadow = true;
+    scene.add(ball);
+
+    // Paddles
+    paddleWidth = 10;
+    paddleHeight = 30;
+    paddleDepth = 10;
+
+    var paddleColor1 = settings ? settings.paddleColor1 : 0xffffff;
+    var paddleColor2 = settings ? settings.paddleColor2 : 0xffffff;
+
+    var paddle1Material = new THREE.MeshLambertMaterial({ color: paddleColor1 });
+    paddle1 = new THREE.Mesh(
+        new THREE.CubeGeometry(paddleWidth, paddleHeight, paddleDepth),
+        paddle1Material
+    );
+    paddle1.receiveShadow = false;
+    paddle1.castShadow = false;
+    scene.add(paddle1);
+
+    var paddle2Material = new THREE.MeshLambertMaterial({ color: paddleColor2 });
+    paddle2 = new THREE.Mesh(
+        new THREE.CubeGeometry(paddleWidth, paddleHeight, paddleDepth),
+        paddle2Material
+    );
+    paddle2.receiveShadow = false;
+    paddle2.castShadow = false;
+    scene.add(paddle2);
+
+    paddle1.position.x = -fieldWidth / 2 + paddleWidth;
+    paddle2.position.x = fieldWidth / 2 - paddleWidth;
+    paddle1.position.z = paddleDepth;
+    paddle2.position.z = paddleDepth;
+
+    // Lights
+    pointLight = new THREE.PointLight(0xF8D898);
+    pointLight.position.set(-1000, 0, 1000);
+    pointLight.intensity = 3;
+    pointLight.distance = 10000;
+    scene.add(pointLight);
+
+    spotLight = new THREE.SpotLight(0xF8D898);
+    spotLight.position.set(0, 0, 460);
+    spotLight.target = new THREE.Object3D();
+    spotLight.target.position.set(0, 0, 0);
+    scene.add(spotLight.target);
+
+    spotLight.intensity = 3;
+    spotLight.castShadow = true;
+    scene.add(spotLight);
+
+    renderer.shadowMapEnabled = true;
+}
+
+// ------------------- DRAW -------------------
+function draw() {
+    renderer.render(scene, camera);
+    requestAnimationFrame(draw);
+
+    if (!paused) {
+        ballPhysics();
+        paddlePhysics();
+        cameraPhysics();
+        playerPaddleMovement();
+        if (mode === "ia") {
+            opponentPaddleMovement();
+        } else {
+            player2PaddleMovement();
+        }
+    }
+}
+
+// ------------------- BALL PHYSICS -------------------
+function ballPhysics() {
+    if (ball.position.x <= -fieldWidth / 2) {
+        score2++;
+        document.getElementById("scorePlayer2").innerHTML = score2;
+        resetBall(2);
+        matchScoreCheck();
+        cameraSide = 1 - cameraSide;
+    }
+    if (ball.position.x >= fieldWidth / 2) {
+        score1++;
+        document.getElementById("scorePlayer1").innerHTML = score1;
+        resetBall(1);
+        matchScoreCheck();
+        cameraSide = 1 - cameraSide;
+    }
+    if (ball.position.y <= -fieldHeight / 2 || ball.position.y >= fieldHeight / 2) {
+        ballDirY = -ballDirY;
+    }
+    ball.position.x += ballDirX * ballSpeed;
+    ball.position.y += ballDirY * ballSpeed;
+
+    if (ballDirY > ballSpeed * 2) {
+        ballDirY = ballSpeed * 2;
+    } else if (ballDirY < -ballSpeed * 2) {
+        ballDirY = -ballSpeed * 2;
+    }
+}
+
+// ------------------- PLAYER PADDLE MOVEMENT -------------------
+function playerPaddleMovement() {
+    paddle1DirY = 0;
+    if (Key.isDown(Key.A)) {
+        paddle1DirY = paddleSpeed * 0.5;
+    } else if (Key.isDown(Key.D)) {
+        paddle1DirY = -paddleSpeed * 0.5;
+    }
+    paddle1.position.y += paddle1DirY;
+    paddle1.position.y = Math.max(Math.min(paddle1.position.y, fieldHeight * 0.45), -fieldHeight * 0.45);
+}
+
+// ------------------- PLAYER 2 PADDLE MOVEMENT -------------------
+function player2PaddleMovement() {
+    paddle2DirY = 0;
+    if (Key.isDown(Key.LEFT)) {
+        paddle2DirY = paddleSpeed * 0.5;
+    } else if (Key.isDown(Key.RIGHT)) {
+        paddle2DirY = -paddleSpeed * 0.5;
+    }
+    paddle2.position.y += paddle2DirY;
+    paddle2.position.y = Math.max(Math.min(paddle2.position.y, fieldHeight * 0.45), -fieldHeight * 0.45);
+}
+
+// ------------------- OPPONENT PADDLE MOVEMENT -------------------
+function opponentPaddleMovement() {
+    paddle2DirY = (ball.position.y - paddle2.position.y) * 0.2;
+    paddle2.position.y += Math.sign(paddle2DirY) * Math.min(Math.abs(paddle2DirY), paddleSpeed);
+    paddle2.position.y = Math.max(Math.min(paddle2.position.y, fieldHeight * 0.45), -fieldHeight * 0.45);
+}
+
+// ------------------- PADDLE PHYSICS -------------------
+function paddlePhysics() {
+    if (
+        ball.position.x <= paddle1.position.x + paddleWidth &&
+        ball.position.x >= paddle1.position.x &&
+        ball.position.y <= paddle1.position.y + paddleHeight / 2 &&
+        ball.position.y >= paddle1.position.y - paddleHeight / 2 &&
+        ballDirX < 0
+    ) {
+        ballDirX = -ballDirX;
+        ballDirY -= paddle1DirY * 0.3;
+    }
+
+    if (
+        ball.position.x <= paddle2.position.x + paddleWidth &&
+        ball.position.x >= paddle2.position.x &&
+        ball.position.y <= paddle2.position.y + paddleHeight / 2 &&
+        ball.position.y >= paddle2.position.y - paddleHeight / 2 &&
+        ballDirX > 0
+    ) {
+        ballDirX = -ballDirX;
+        ballDirY -= paddle2DirY * 0.3;
+    }
+}
+
+// ------------------- RESET BALL -------------------
+function resetBall(loser) {
+    ball.position.set(0, 0, 5);
+    ballDirX = loser === 1 ? 1 : -1;
+    ballDirY = 1;
+}
+
+
+
+// ------------------- MATCH SCORE CHECK -------------------
+
+
+// Mise à jour de la fonction matchScoreCheck
+// ... (rest of the code remains the same until matchScoreCheck function)
+
+function matchScoreCheck() {
+    if (score1 >= maxScore) {
+        ballSpeed = 0;
+        const player1Name = document.querySelector('#player1 h2').textContent || 'Player 1';
+        // Envoyer directement les scores au backend
+        sendGameResult(player1Name, "Player 2", score1, score2);
+        displayWinner(player1Name, "Player 2", score1, score2);
+    } else if (score2 >= maxScore) {
+        ballSpeed = 0;
+        const player1Name = document.querySelector('#player1 h2').textContent || 'Player 1';
+        // Envoyer directement les scores au backend
+        sendGameResult(player1Name, "Player 2", score1, score2);
+        displayWinner("Player 2", player1Name, score2, score1);
+    }
+}
+
+function displayWinner(winner, loser, winnerScore, loserScore) {
+    const overlay = document.createElement('div');
+    overlay.id = 'gameResultOverlay';
+    overlay.innerHTML = `
+    <div class="result-container">
+    <h2>Partie Terminée !</h2>
+    <div class="result-content">
+    <p class="winner-text"><strong>Vainqueur :</strong> ${winner}</p>
+    <p class="score-text"><strong>Score Final :</strong> ${winnerScore} - ${loserScore}</p>
+    </div>
+    <button class="result-button" onclick="closeResultAndRedirect()">Fermer</button>
+    </div>
+    `;
+    
+    document.body.appendChild(overlay);
+}
+
+// Garder une seule version de sendGameResult
+// Envoie automatiquement les résultats à la fin du match
+function sendGameResult(winner, loser, winnerScore, loserScore) {
+    const winnerId = winner === document.getElementById("player1-name").textContent 
+        ? "{{ match.joueur1.id }}" 
+        : "{{ match.joueur2.id }}";
+
+    fetch("/enregistrer_resultat_match/{{ match.id }}/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            player1_score: winner === document.getElementById("player1-name").textContent ? winnerScore : loserScore,
+            player2_score: winner === document.getElementById("player1-name").textContent ? loserScore : winnerScore,
+            winner: winnerId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            window.location.href = "/details_tournois/{{ tournoi_id }}/";
+        }
+    })
+    .catch(error => console.error("Error:", error));
+}
+
+// Mise à jour de matchScoreCheck pour appeler sendGameResult automatiquement
+function matchScoreCheck() {
+    if (score1 >= maxScore) {
+        ballSpeed = 0;
+        const player1Name = document.getElementById("player1-name").textContent;
+        const player2Name = document.getElementById("player2-name").textContent;
+        sendGameResult(player1Name, player2Name, score1, score2);
+        displayWinner(player1Name, player2Name, score1, score2);
+    } else if (score2 >= maxScore) {
+        ballSpeed = 0;
+        const player1Name = document.getElementById("player1-name").textContent;
+        const player2Name = document.getElementById("player2-name").textContent;
+        sendGameResult(player2Name, player1Name, score2, score1);
+        displayWinner(player2Name, player1Name, score2, score1);
+    }
+}
+
+
+
+function closeResultAndRedirect() {
+            window.location.href = '/details_tournois/{{ tournoi_id }}/';
+        }
+
+// Fonction utilitaire pour obtenir le token CSRF
+function getCSRFToken() {
+    return document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1] || '';
+}
+
+        </script>
+</body>
+</html>

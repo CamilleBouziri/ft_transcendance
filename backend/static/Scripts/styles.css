@@ -1,0 +1,16 @@
+        
+        
+        #title{
+            overflow: hidden;
+            background: none;
+            margin-top: 20px;
+            text-align: center;
+            display: none; 
+            font-size: 1.5em;
+            background-color: none;
+            animation: bordure 2s cubic-bezier(0.08,0.3,0.41,1.05) 1s forwards;
+            border: 5px solid black;
+            opacity: 0;
+            box-shadow: 0px 0px 50px 33px rgba(0,255,255,0.2);
+            color: yellow
+        }

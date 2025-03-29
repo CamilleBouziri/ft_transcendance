@@ -1,0 +1,200 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQNGGVAS8kaPYMCMZj4m2jxkH4QsE1RV9Jl3K5tPY0Fd6IT6H9TPHjXm" crossorigin="anonymous">   
+</head>
+<body>
+
+  <!-- ------------------------------------------------------------------------------- -->
+  <!-- ----------------------------- SELECTEUR DE LANGUE ----------------------------- -->
+  <!-- ------------------------------------------------------------------------------- -->
+
+  <div class="language-switcher">
+    <form action="{% url 'set_language' %}" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.path }}">
+      <select name="language">
+          <option value="fr" {% if LANGUAGE_CODE == 'fr' %}selected{% endif %}>Français</option>
+          <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
+          <option value="es" {% if LANGUAGE_CODE == 'es' %}selected{% endif %}>Español</option>
+      </select>
+      <button type="submit">{% trans "OK" %}</button>
+    </form>
+  </div>
+
+  <!-- ------------------------------------------------------------------------------- -->
+  <!-- -------------------------------- PROFIL JOUEUR -------------------------------- -->
+  <!-- ------------------------------------------------------------------------------- -->
+
+  <section id="profile" class="header-section container">
+      <div class="avatar">
+        {% if user.photo_url %}
+          <img src="{{ user.photo_url }}" alt="Profile Picture">
+        {% else %}
+          <img src="{% static 'img/joueurs.png' %}" style="width: 100px; height: 100px;">
+        {% endif %}
+      </div>
+      <div class="player-info">
+        <h2>{{ user.nom }}</h2>
+      <div class="progress-container">
+          <div class="progress-bar" style="width: {{ level_progress }}%;"></div>
+          <div class="progress-text"> Level {{ level }} - {{ level_progress }}%</div>
+      </div>
+      <a href="{% url 'logout' %}" class="logout-btn">{% trans "Logout" %} <span></span></a>
+  </section>
+    
+
+  <!-- ------------------------------------------------------------------------------- -->
+  <!-- -------------------------------- BLOC PRINCIPAL ------------------------------- -->
+  <!-- ------------------------------------------------------------------------------- -->
+  
+  <div class="main-content">
+    
+  <!-- ------------------------------------------------------------------------------- -->
+  <!-- -------------------------------- COLONNE DROITE (à gauche maintenant) ------------------------------- -->
+  <!-- ------------------------------------------------------------------------------- -->
+
+    <div class="right-column">
+      <div class="buttons-container container">
+        <a href="/amis/amis/" class="button-link" id="friend-btn">{% trans "Friend" %} <span>📲</span></a>
+        <a href="{% url 'chat:conversations_list' %}" class="button-link" id="friend-btn">{% trans "Chat" %} <span>💬</span></a>
+        <button id="game-btn" class="button-link">{% trans "Game" %} <span>🎲</span></button>
+      </div>
+        
+  <!-- ------------------------------------------------------------------------------- -->
+  <!-- -------------------------------- FENETRE POPUP -------------------------------- -->
+  <!-- ------------------------------------------------------------------------------- -->
+
+      <div id="game-popup" class="game-popup">
+        <div class="popup-content">
+          <h3>{% trans "Choose a Game" %}</h3>
+          <a href="{% url 'start_game' %}">
+            <button>{% trans "Pong" %}</button>
+          </a>
+          <a href="{% url 'morpion' %}">
+            <button>{% trans "Morpion" %}</button>
+          </a>
+          <button id="close-popup" class="close-btn">✖</button>
+        </div>
+      </div>
+      
+      
+      <script src="{% static 'Scripts/dashboard.js' %}"></script>
+
+  <!-- ------------------------------------------------------------------------------- -->
+  <!-- ------------------------------ TOURNOIS JOUEURS ------------------------------- -->
+  <!-- ------------------------------------------------------------------------------- -->
+
+      <div class="ten-cases container">
+        <div class="achievement-title">
+          <h2>{% trans "Tournaments" %}</h2>
+          <div class="create-tournament-btn">
+            <a href="{% url 'creer_tournois' %}" class="btn">
+                {% trans "Create Tournament" %}
+            </a>
+          </div>
+          <div class="highlight-bar"></div>
+        </div>
+        <div class="achievement-content">
+          <table class="tournaments-table">
+            <thead>
+              <tr>
+                <th>{% trans "Creator" %}</th>
+                <th>{% trans "Status" %}</th>
+                <th>{% trans "Players" %}</th>
+                <th>{% trans "Actions" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for tournoi in tournois %}
+                <tr class="tournament-row" data-url="{% url 'details_tournois' tournoi.id %}">
+                  <td>{{ tournoi.createur.nom }}</td>
+                  <td>{{ tournoi.get_statut_display }}</td>
+                  <td>{{ tournoi.joueurs.count }}/4</td>
+                  <td class="actions-cell">
+                    {% if tournoi.est_complet %}
+                      <p class="text-danger">{% trans "Tournament is full" %}</p>
+                    {% elif user in tournoi.joueurs.all %}
+                      <p class="text-success">{% trans "You have joined this tournament" %}</p>
+                    {% else %}
+                      <a href="{% url 'rejoindre_tournoi' tournoi.id %}" class="btn btn-primary" onclick="event.stopPropagation();">
+                        {% trans "Join Tournament" %}
+                      </a>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="4" class="empty-message">{% trans "No tournaments available at the moment." %}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  
+  <!-- ------------------------------------------------------------------------------- -->
+  <!-- -------------------------------- COLONNE GAUCHE (à droite maintenant) ------------------------------- -->
+  <!-- ------------------------------------------------------------------------------- -->
+
+    <div class="left-column">
+
+      <div class="win-loss container">
+        <div class="wins">
+          {% trans "Wins" %}<br>
+          <span class="number">{{ games_won }}</span>
+        </div>
+        <div class="losses">
+          {% trans "Losses" %}<br>
+          <span class="number">{{ games_lost }}</span>
+        </div>
+      </div>
+
+
+      <section id="history" class="history-section container">
+        <h2 style="font-size: 2em;">{% trans "History" %}</h2>
+        <div class="highlight-bar"></div>
+        <div class="history-list">
+          {% for game in games %}
+            <div class="history-item">
+              <div class="player-name {% if game.winner == user.nom and game.player1 == user.nom %}winner{% elif game.player1 == user.nom %}loser{% endif %}">
+                {{ game.player1 }}
+              </div>
+              <div class="score-display">
+                <span class="{% if game.winner == game.player1 %}winner{% else %}loser{% endif %}">{{ game.player1_score }}</span>
+                <span class="score-separator">-</span>
+                <span class="{% if game.winner == game.player2 %}winner{% else %}loser{% endif %}">{{ game.player2_score }}</span>
+              </div>
+              <div class="player-name {% if game.winner == user.nom and game.player2 == user.nom %}winner{% elif game.player2 == user.nom %}loser{% endif %}">
+                {{ game.player2 }}
+              </div>
+            </div>
+          {% empty %}
+            <p>{% trans "No games played yet." %}</p>
+          {% endfor %}
+        </div>
+      </section>
+    </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tournamentRows = document.querySelectorAll('.tournament-row');
+    tournamentRows.forEach(row => {
+      row.addEventListener('click', function() {
+        window.location.href = this.dataset.url;
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

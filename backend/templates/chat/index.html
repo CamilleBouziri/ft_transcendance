@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Salles de Chat</title>
+    <link rel="stylesheet" href="/static/chat.css">
+</head>
+<body>
+    <div class="chat-index">
+        <h1>Salles de Chat</h1>
+        
+        <div class="room-list">
+            {% for room in rooms %}
+            <div class="room-item">
+                <a href="{% url 'chat:room' room.name %}">
+                    {{ room.name }}
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <a href="{% url 'chat:create_room' %}" class="create-room-btn">
+            Créer une nouvelle salle
+        </a>
+    </div>
+</body>
+</html>

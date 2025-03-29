@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/room.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ room.name }} - Chat</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+</head>
+<body>
+    <div class="chat-room">
+        <h1>{{ room_name }}</h1>
+        <div id="connection-status" style="color: red;"></div>
+        
+        <div class="messages-container" id="messages">
+            {% for message in messages %}
+                <div class="message {% if message.user.nom == request.user.nom %}sent{% else %}received{% endif %}">
+                    <strong>{{ message.user.nom }}</strong>{{ message.content }}
+                    <span class="timestamp">{{ message.timestamp|date:'H:i' }}</span>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="message-input">
+            <input type="text" id="chat-message-input" placeholder="Votre message...">
+            <button id="chat-message-submit">Envoyer</button>
+        </div>
+    </div>
+
+    <script src="{% static 'Scripts/room.js' %}" 
+            data-room-name="{{ room_name }}" 
+            data-user-name="{{ request.user.nom }}">
+    </script>
+</body>
+</html>
+
+{% endblock %}

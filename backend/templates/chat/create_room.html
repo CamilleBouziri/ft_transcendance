@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Créer une nouvelle salle</title>
+    <link rel="stylesheet" href="/static/chat.css">
+</head>
+<body>
+    <div class="create-room">
+        <h1>Créer une nouvelle salle</h1>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="room_name">Nom de la salle:</label>
+                <input type="text" name="room_name" id="room_name" required>
+            </div>
+            <button type="submit">Créer</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,512 @@
+{% load i18n %}
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pong Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Press Start 2P', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        .settings-container {
+            border: 3px solid white;
+            width: 500px;
+            padding: 1rem;
+            box-sizing: border-box;
+            text-align: center;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            color: red;
+            border-radius: 50%;
+            border: 5px solid white; 
+            width: 30px;
+            height: 30px;
+            font-size: 1.3rem;
+            cursor: pointer;
+        }
+        
+        .close-button:hover {
+            filter: brightness(1.2);
+        }
+
+        .settings-title {
+            color: yellow;
+            font-size: 1.8rem;
+            margin: 0.7em 0 1rem 0;
+        }
+
+        .option-group {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+        }
+        .option-group-title {
+            margin: 0.3rem 0.2em 1rem 0;
+            font-size: 1rem;
+            display: inline-block;
+            border: 1px solid white;
+            padding: 0.2rem 0.5rem;
+        }
+
+        .bubbles-container {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .color-bubble {
+            width: 25px;
+            height: 25px;
+            border: 2px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .color-bubble:hover {
+            transform: scale(1.2);
+        }
+        .color-bubble.selected {
+            box-shadow: 0 0 5px 3px white;
+        }
+
+        .points-container {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .point-box {
+            border: 2px solid white;
+            padding: 0.3rem 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.9rem;
+        }
+        .point-box:hover {
+            background-color: #444;
+        }
+        .point-box.selected {
+            background-color: white;
+            color: black;
+        }
+
+        .play-button {
+            border: 2px solid white;
+            background-color: black;
+            color: yellow;
+            font-family: 'Press Start 2P';
+            font-size: 1.2rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .play-button:hover {
+            background-color: yellow;
+            color: black;
+        }
+
+        #gameContainer {
+            display: none;
+            align-items: center;
+            width: 100%;
+            position: relative;
+            flex-direction: column;
+        }
+        #title {
+            background-color: rgb(0, 0, 0);
+            color: rgb(229, 241, 0);
+            font-size: 2em;
+        }
+        #players-container {
+            display: flex;
+            justify-content: space-between;
+            width: 40%;
+            margin-bottom: 20px;
+        }
+        .player {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 10px;
+        }
+        .scoreBubble {
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            border-radius: 50%;
+            padding: 10px;
+            font-size: 20px;
+            margin-top: 5px;
+            width: 30px;
+            -webkit-text-stroke: 1.5px black;
+            text-align: center;
+        }
+        #gameCanvas {
+            background-color: black;
+            width: 640px;
+            height: 360px;
+        }
+        #winnerBoard {
+            font-size: 1.5em;
+            color: white;
+            margin-top: 20px;
+        }
+        #pauseButton {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 1rem;
+            font-size: 2.5rem;
+            color: black;
+            background-color: black;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .pause-container {
+            background-color: #222;
+            padding: 1.5rem;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+        }
+        #pauseOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .pause-row {
+            display: flex;
+            justify-content: space-around;
+            width: 50%;
+            margin-bottom: 1.5rem;
+        }
+        .pause-column {
+            text-align: center;
+        }
+        #gameResultOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .result-container {
+            background-color: #222;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            min-width: 300px;
+        }
+        .result-container h2 {
+            color: yellow;
+            margin-top: 0;
+        }
+        .result-content {
+            margin: 1.5rem 0;
+        }
+        .winner-text, .score-text {
+            font-size: 1.2em;
+            margin: 0.5rem 0;
+        }
+        .result-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+        .result-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fenêtre de configuration -->
+    <div class="settings-container" id="settingsContainer">
+        <!-- Petite croix rouge (fermante) en haut à droite -->
+        <div class="close-button" onclick="closeSettings()">&#10006;</div>
+
+        <!-- Titre en jaune (on peut le traduire) -->
+        <h1 class="settings-title">{% trans "Play Game" %}</h1>
+
+        <!-- Choix de la couleur de la balle (4 couleurs primaires) -->
+        <div class="option-group">
+            <h2 class="option-group-title">{% trans "Color" %}</h2>
+            <div class="bubbles-container" id="ballColorBubbles">
+                <div class="color-bubble" data-color="#FF0000" style="background-color:#FF0000"></div>
+                <div class="color-bubble" data-color="#00FF00" style="background-color:#00FF00"></div>
+                <div class="color-bubble" data-color="#0000FF" style="background-color:#0000FF"></div>
+                <div class="color-bubble" data-color="#FFFF00" style="background-color:#FFFF00"></div>
+            </div>
+        </div>
+
+        <!-- Couleur Paddle 1 (5 couleurs) -->
+        <div class="option-group">
+            <h2 class="option-group-title">{% trans "Paddle 1" %}</h2>
+            <div class="bubbles-container" id="paddle1Bubbles">
+                <div class="color-bubble" data-color="#FF0000" style="background-color:#FF0000"></div>
+                <div class="color-bubble" data-color="#00FF00" style="background-color:#00FF00"></div>
+                <div class="color-bubble" data-color="#0000FF" style="background-color:#0000FF"></div>
+                <div class="color-bubble" data-color="#000000" style="background-color:#000000"></div>
+                <div class="color-bubble" data-color="#FFFFFF" style="background-color:#FFFFFF"></div>
+            </div>
+        </div>
+
+        <!-- Couleur Paddle 2 (5 couleurs) -->
+        <div class="option-group">
+            <h2 class="option-group-title">{% trans "Paddle 2" %}</h2>
+            <div class="bubbles-container" id="paddle2Bubbles">
+                <div class="color-bubble" data-color="#FF0000" style="background-color:#FF0000"></div>
+                <div class="color-bubble" data-color="#00FF00" style="background-color:#00FF00"></div>
+                <div class="color-bubble" data-color="#0000FF" style="background-color:#0000FF"></div>
+                <div class="color-bubble" data-color="#000000" style="background-color:#000000"></div>
+                <div class="color-bubble" data-color="#FFFFFF" style="background-color:#FFFFFF"></div>
+            </div>
+        </div>
+
+        <!-- Couleur du Terrain (5 couleurs) -->
+        <div class="option-group">
+            <h2 class="option-group-title">{% trans "Terrain" %}</h2>
+            <div class="bubbles-container" id="terrainBubbles">
+                <div class="color-bubble" data-color="#FF0000" style="background-color:#FF0000"></div>
+                <div class="color-bubble" data-color="#00FF00" style="background-color:#00FF00"></div>
+                <div class="color-bubble" data-color="#0000FF" style="background-color:#0000FF"></div>
+                <div class="color-bubble" data-color="#000000" style="background-color:#000000"></div>
+                <div class="color-bubble" data-color="#FFFFFF" style="background-color:#FFFFFF"></div>
+            </div>
+        </div>
+
+        <!-- Choix des points -->
+        <div class="option-group">
+            <h2 class="option-group-title">{% trans "Points" %}</h2>
+            <div class="points-container" id="pointsGroup">
+                <div class="point-box" data-points="1">{% trans "1 Point" %}</div>
+                <div class="point-box" data-points="3">{% trans "3 Point" %}</div>
+                <div class="point-box" data-points="5">{% trans "5 Point" %}</div>
+                <div class="point-box" data-points="11">{% trans "11 Point" %}</div>
+            </div>
+        </div>
+
+        <!-- Bouton Play -->
+        <button class="play-button" onclick="applySettings()">{% trans "Play" %}</button>
+    </div>
+
+    <!-- Jeu -->
+    <div class="game-container" id="gameContainer">
+        <h1 id="title">{% trans "PLAY GAME" %}</h1>
+
+        <!-- Container pour les joueurs -->
+        <div id="players-container">
+            <div id="player1" class="player">
+                <img id="iconPlayer1" class="icon" src="./joueurs.png" alt="Player 1 Icon">
+                <h2>{% trans "Player 1" %}</h2>
+                <div class="scoreBubble" id="scorePlayer1">0</div>
+            </div>
+            <div id="player2" class="player">
+                <div class="scoreBubble" id="scorePlayer2">0</div>
+                <h2>{% trans "Player 2" %}</h2>
+                <img id="iconPlayer2" class="icon" src="./joueurs.png" alt="Player 2 Icon">
+            </div>
+        </div>
+
+        <!-- Canvas du jeu -->
+        <div id="gameCanvasContainer">
+            <div id="gameCanvas"></div>
+            <!-- Message de victoire -->
+            <h2 id="winnerBoard"></h2>
+        </div>
+
+        <!-- Bouton pause -->
+        <button onclick="togglePause()" id="pauseButton">⏸️</button>
+    </div>
+
+    <!-- Pause Overlay -->
+    <div id="pauseOverlay" class="pause-container">
+        <h1>{% trans "Pause" %}</h1>
+        <div class="pause-row">
+            <div class="pause-column">
+                <h2>{% trans "Player 1" %}</h2>
+                <p>{% trans "Left: A" %}</p>
+                <p>{% trans "Right: D" %}</p>
+            </div>
+            <div class="pause-column">
+                <h2>{% trans "Player 2" %}</h2>
+                <p>{% trans "Left: ⮜" %}</p>
+                <p>{% trans "Right: ⮞" %}</p>
+            </div>
+        </div>
+        <button onclick="togglePause()">{% trans "Resume" %}</button>
+    </div>
+
+    <!-- Scripts du jeu -->
+    <script src="../../static/Scripts/three.min.js"></script>
+    <script src="../../static/Scripts/keyboard.js"></script>
+    <script src="../../static/Scripts/game2.js"></script>
+
+    <!-- Pour personnaliser le nom du player1 -->
+    <script>
+        const loggedInUser = "{{ user.nom }}";
+        document.getElementById("player1").querySelector("h2").textContent = loggedInUser;
+    </script>
+
+    <!-- Script pour gérer les bulles de couleur, la sélection des points et le lancement du jeu -->
+    <script>
+        // Variables pour stocker la sélection
+        let selectedBallColor = null;
+        let selectedPaddle1 = null;
+        let selectedPaddle2 = null;
+        let selectedTerrain = null;
+        let selectedPoints = null;
+
+        // Ajout d'écouteurs de clic sur les bulles "ballColorBubbles"
+        const ballBubbles = document.getElementById('ballColorBubbles').getElementsByClassName('color-bubble');
+        for (let bubble of ballBubbles) {
+            bubble.addEventListener('click', () => {
+                for (let b of ballBubbles) b.classList.remove('selected');
+                bubble.classList.add('selected');
+                selectedBallColor = bubble.getAttribute('data-color');
+            });
+        }
+
+        // Paddle 1
+        const paddle1Bubbles = document.getElementById('paddle1Bubbles').getElementsByClassName('color-bubble');
+        for (let bubble of paddle1Bubbles) {
+            bubble.addEventListener('click', () => {
+                for (let b of paddle1Bubbles) b.classList.remove('selected');
+                bubble.classList.add('selected');
+                selectedPaddle1 = bubble.getAttribute('data-color');
+            });
+        }
+
+        // Paddle 2
+        const paddle2Bubbles = document.getElementById('paddle2Bubbles').getElementsByClassName('color-bubble');
+        for (let bubble of paddle2Bubbles) {
+            bubble.addEventListener('click', () => {
+                for (let b of paddle2Bubbles) b.classList.remove('selected');
+                bubble.classList.add('selected');
+                selectedPaddle2 = bubble.getAttribute('data-color');
+            });
+        }
+
+        // Terrain
+        const terrainBubbles = document.getElementById('terrainBubbles').getElementsByClassName('color-bubble');
+        for (let bubble of terrainBubbles) {
+            bubble.addEventListener('click', () => {
+                for (let b of terrainBubbles) b.classList.remove('selected');
+                bubble.classList.add('selected');
+                selectedTerrain = bubble.getAttribute('data-color');
+            });
+        }
+
+        // Points
+        const pointsContainer = document.getElementById('pointsGroup').getElementsByClassName('point-box');
+        for (let box of pointsContainer) {
+            box.addEventListener('click', () => {
+                for (let b of pointsContainer) b.classList.remove('selected');
+                box.classList.add('selected');
+                selectedPoints = box.getAttribute('data-points');
+            });
+        }
+
+        // Appliquer les réglages et démarrer
+        function applySettings() {
+            // Par sécurité, si jamais l'utilisateur n'a rien sélectionné, on met quelques valeurs par défaut
+            if (!selectedBallColor) selectedBallColor = '#FF0000';
+            if (!selectedPaddle1)  selectedPaddle1  = '#FFFFFF';
+            if (!selectedPaddle2)  selectedPaddle2  = '#00FF00';
+            if (!selectedTerrain)  selectedTerrain  = '#00FF00';
+            if (!selectedPoints)   selectedPoints   = '5';
+
+            const settings = {
+                ballColor:     selectedBallColor,
+                paddleColor1:  selectedPaddle1,
+                paddleColor2:  selectedPaddle2,
+                terrainColor:  selectedTerrain,
+                maxScore:      parseInt(selectedPoints),
+            };
+
+            localStorage.setItem('pongSettings', JSON.stringify(settings));
+            startGame();
+        }
+
+        // Démarrer le jeu
+        function startGame() {
+            document.getElementById('settingsContainer').style.display = 'none';
+            document.getElementById('gameContainer').style.display = 'flex';
+            setup(); // Appel à votre fonction d'initialisation du jeu (dans game2.js)
+        }
+
+        // Gestion de la pause
+        function togglePause() {
+            const overlay = document.getElementById('pauseOverlay');
+            const gameContainer = document.getElementById('gameContainer');
+
+            paused = !paused;
+            if (paused) {
+                overlay.style.display = 'flex';
+                gameContainer.style.pointerEvents = 'none';
+            } else {
+                overlay.style.display = 'none';
+                gameContainer.style.pointerEvents = 'auto';
+            }
+        }
+
+        // Quand on clique sur la croix rouge
+        function closeSettings() {
+            // Redirigez vers votre dashboard ou un autre lien de votre choix
+            window.location.href = '/dashboard';
+            // Pour la démo, on se contente de masquer la div:
+            document.getElementById('settingsContainer').style.display = 'none';
+        }
+
+        // Charger d'anciens réglages éventuels
+        window.onload = function () {
+            const settings = JSON.parse(localStorage.getItem('pongSettings'));
+            if (settings) {
+                // On pourrait pré-sélectionner les bulles si on voulait
+                selectedBallColor   = settings.ballColor;
+                selectedPaddle1    = settings.paddleColor1;
+                selectedPaddle2    = settings.paddleColor2;
+                selectedTerrain    = settings.terrainColor;
+                selectedPoints     = settings.maxScore;
+            }
+        };
+    </script>
+</body>
+</html>

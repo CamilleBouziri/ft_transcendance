@@ -1,0 +1,1008 @@
+/* ====================================================================================================== */
+/* ================================================ GENERAL ============================================= */
+/* ====================================================================================================== */
+
+body 
+{
+  margin: 0;
+  font-family: "Press Start 2P", Arial, sans-serif;
+  background-color: #000;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ====================================================================================================== */
+/* ================================================  TITRE  ============================================= */
+/* ====================================================================================================== */
+
+h2 
+{
+  color: yellow;
+  margin-bottom: 10px;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.highlight-bar 
+{
+  width: 50%; 
+  height: 0px; 
+  background-color: white;
+  margin: 10px auto;
+}
+
+/* ====================================================================================================== */
+/* ==========================================  ANIMATION CHARGEMENT  ==================================== */
+/* ====================================================================================================== */
+
+.container, .header-section, .history-section, .buttons-container, .win-loss, .ten-cases
+{
+  /* overflow: hidden; */
+  /* background: none; */
+  animation: bordure 0.5s cubic-bezier(0.08, 0.3, 0.41, 1.05) 0.2s forwards;
+  border: 5px solid white;
+  border-radius: 10px;
+  opacity: 0;
+  box-shadow: 0px 0px 50px 33px rgba(0, 255, 255, 0.168);
+}
+
+@keyframes bordure 
+{
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ====================================================================================================== */
+/* ================================================ NAVBAR  ============================================= */
+/* ====================================================================================================== */
+
+.navbar 
+{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #222;
+  border-bottom: 3px solid yellow;
+}
+
+.navbar .logo 
+{
+  font-size: 1.2rem;
+  color: yellow;
+}
+
+.navbar .nav-links 
+{
+  display: flex;
+  list-style: none;
+  gap: 15px;
+}
+
+.navbar .nav-links li a 
+{
+  text-decoration: none;
+  color: white;
+  font-size: 0.8rem;
+}
+
+/* ====================================================================================================== */
+/* ================================================ LANGAGE ============================================= */
+/* ====================================================================================================== */
+
+.language-switcher 
+{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 9999;
+  background-color: #222;
+  border: 2px solid yellow;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.language-switcher select 
+{
+  background-color: #000;
+  color: #fff;
+  border: 1px solid yellow;
+  font-family: "Press Start 2P", Arial, sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.language-switcher button 
+{
+  background-color: yellow;
+  color: #000;
+  border: none;
+  font-family: "Press Start 2P", Arial, sans-serif;
+  font-size: 0.8rem;
+  margin-left: 5px;
+  cursor: pointer;
+  padding: 5px 8px;
+}
+
+.language-switcher button:hover 
+{
+  opacity: 0.8;
+}
+
+/* ====================================================================================================== */
+/* =============================================  PLAYER INFO  ========================================== */
+/* ====================================================================================================== */
+
+.header-section 
+{
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 20px;
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 200px;
+  padding: 10px;
+}
+
+.avatar img 
+{
+  width: 100px; 
+  height: 100px; 
+  border-radius: 50%;
+  border: 2px solid white;
+  margin-left: 60px;
+}
+
+.player-info 
+{
+  flex: 1;
+  margin-left: 10px;
+  color: white;
+  text-align: center;
+}
+
+.player-info p 
+{
+  margin: 5px 0 0 0;
+  font-size: 0.8rem;
+}
+
+/* ====================================================================================================== */
+/* =======================================  BARRE DE PROGRESSION  ======================================= */
+/* ====================================================================================================== */
+
+.progress-container 
+{
+  width: 80%;
+  height: 20px;
+  background-color: #666666;
+  border-radius: 10px;
+  position: relative;
+  margin: 10px auto;
+}
+
+.progress-bar
+{
+  height: 100%;
+  background-color: #00ff00;
+  border-radius: 10px;
+}
+
+.progress-text
+{
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* ====================================================================================================== */
+/* =============================================  CONTENU PRINCIPAL  ==================================== */
+/* ====================================================================================================== */
+
+.main-content 
+{
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.left-column, .right-column 
+{
+  flex: 1;
+  /* display: flex; */
+  flex-direction: column;
+  height: 800px;
+  width: 48%;
+  border-radius: 10px;
+  box-shadow: 0px 0px 50px 33px rgba(0, 255, 255, 0.168);
+  /* padding: 5px; */
+  margin-top: 10px;
+}
+
+.right-column
+{
+  margin-right: 1%;
+  height: fit-content;
+}
+
+.left-column
+{
+  margin-left: 1%;
+  height: fit-content;
+  /* background-color: #00ff00; */
+} 
+
+/* ====================================================================================================== */
+/* ==========================================  HISTORIQUE PARTIE  ======================================= */
+/* ====================================================================================================== */
+
+.history-section 
+{
+  flex: 1;
+  padding: 10px;
+  /* overflow: hidden; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 500px;
+  /* margin-bottom: 50px; */
+}
+
+.history-list 
+{
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  max-height: calc(100% - 60px); /* Tenir compte du titre et de la barre */
+  width: 100%;
+}
+
+.history-item 
+{
+  background: #000;
+  padding: 10px;
+  border: 4px solid white;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.2rem;
+}
+
+.history-item .player-name {
+  flex: 1;
+  text-align: center;
+  font-size: 1rem;
+  padding: 0 5px;
+}
+
+.history-item .score-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  min-width: 80px;
+}
+
+.history-item .score-separator {
+  margin: 0 5px;
+  color: white;
+}
+
+.history-item .winner {
+  color: #00ff00;
+}
+
+.history-item .loser {
+  color: red;
+}
+
+/* ====================================================================================================== */
+/* ==========================================   BOUTONS ET STATS  ======================================= */
+/* ====================================================================================================== */
+
+.buttons-container
+{
+  flex: 1;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px;
+  height: 100px;
+  margin-bottom: 10px;
+  /* margin-top: 10px; */
+}
+
+.buttons-container button
+{
+  background-color: #000000;
+  color: #fff;
+  border: 4px solid yellow;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: "Press Start 2P", Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.buttons-container button span 
+{
+  font-size: 1.8rem;
+}
+
+.buttons-container button:hover 
+{
+  background-color: yellow;
+  color: #000;
+}
+
+.logout-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #ff5252;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 0.8em;
+  transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #ff0000;
+  color: white;
+}
+
+/* ====================================================================================================== */
+/* ==========================================   VICTOIRES DEFAITES   ==================================== */
+/* ====================================================================================================== */
+
+.win-loss 
+{
+  flex: 1;
+  padding: 10px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  text-align: center;
+  height: 100px;
+  margin-bottom: 10px;
+  /* margin-top: 10px; */
+  /* background-color: #00ff ; */
+}
+
+.win-loss .wins 
+{
+  color: #00ff00;
+  font-size: 1.5rem;
+}
+
+.win-loss .losses 
+{
+  color: red;
+  font-size: 1.5rem;
+}
+
+.win-loss .number 
+{
+  font-size: 2rem;
+  display: block;
+  margin-top: 5px;
+}
+
+
+/* ====================================================================================================== */
+/* =============================================    TOURNOI    ========================================== */
+/* ====================================================================================================== */
+
+.ten-cases 
+{
+  flex: 4;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 500px;
+  /* position: relative; */
+}
+
+.achievement-title
+{
+  width: 100%;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.achievement-content
+{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px;
+  box-sizing: border-box;
+  max-height: calc(100% - 80px); /* Tenir compte du titre, du bouton et de la barre */
+  overflow-y: auto;
+  
+  scrollbar-width: thin;
+  scrollbar-color: yellow #000;
+}
+
+.cases-grid 
+{
+  display: grid;
+  gap: 10px;
+  height: 100%;
+  padding: 10px;
+}
+
+.case-box 
+{
+  background-color: #222;
+  border: 2px solid white;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 0.6rem;
+  color: white;
+}
+
+
+/* ====================================================================================================== */
+/* ================================================ HISTORY ============================================= */
+/* ====================================================================================================== */
+
+
+/* ------------------------- Conteneur défilable ------------------------- */
+
+.history-list 
+{
+  overflow-y: auto;
+  
+  /* ------------------------- Firefox seulement ------------------------- */
+  
+  scrollbar-width: thin;
+  scrollbar-color: #000000 #000;
+}
+/* ------------------------- Chrome / Safari / Edge ------------------------- */
+
+.history-list::-webkit-scrollbar 
+{
+  width: 10px;
+}
+
+.history-list::-webkit-scrollbar-track 
+{
+  background: #000;
+  border-radius: 10px;
+}
+
+.history-list::-webkit-scrollbar-thumb 
+{
+  background: #fff;
+  border-radius: 10px;
+  border: 2px solid #000;
+}
+
+.history-list::-webkit-scrollbar-thumb:hover 
+{
+  background: #ccc;
+}
+
+/* ====================================================================================================== */
+/* =============================================  BOUTTONS  ============================================= */
+/* ====================================================================================================== */
+
+.create-tournament-btn 
+{
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.create-tournament-btn .btn 
+{
+  background-color: yellow;
+  color: #000;
+  font-family: "Press Start 2P", Arial, sans-serif;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  text-transform: uppercase;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.create-tournament-btn .btn:hover
+{
+  background-color: #fff700;
+  color: #000;
+  text-decoration: none;
+}
+
+.button-link 
+{
+  background-color: #000000;
+  color: #fff;
+  border: 4px solid yellow;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: "Press Start 2P", Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.button-link:hover
+{
+  background-color: yellow;
+  color: #000;
+}
+
+#friend-btn 
+{
+  display: inline-block; 
+  text-decoration: none; 
+  padding: 10px 20px; 
+  background-color: #000000; 
+  color: #fff; 
+  border: 4px solid yellow; 
+  cursor: pointer; 
+  font-family: 'Press Start 2P', Arial, sans-serif; 
+  z-index: 1000;
+}
+
+/* ====================================================================================================== */
+/* ============================================= GAME POPUP ============================================= */
+/* ====================================================================================================== */
+
+.game-popup
+{
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #222;
+  border: 5px solid yellow;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0px 0px 50px 33px rgba(0, 255, 255, 0.2);
+}
+
+.popup-content h3
+{
+  color: yellow;
+  margin-bottom: 10px;
+}
+
+.popup-content button 
+{
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: yellow;
+  color: black;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.popup-content .close-btn 
+{
+  background: red;
+  color: white;
+  border: none;
+  font-size: 1rem;
+  padding: 5px;
+  cursor: pointer;
+}
+
+/* ====================================================================================================== */
+/* ============================================== TOURNAMENTS TABLE ===================================== */
+/* ====================================================================================================== */
+
+.tournaments-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 5px;
+  color: white;
+  font-family: "Press Start 2P", Arial, sans-serif;
+  font-size: 0.7rem;
+  margin-top: 10px;
+  position: relative;
+}
+
+.tournaments-table thead {
+  background-color: #222;
+}
+
+.tournaments-table th {
+  padding: 12px 8px;
+  text-align: center;
+  border-bottom: 3px solid yellow;
+  text-transform: uppercase;
+  font-weight: bold;
+  background-color: #222;
+  color: yellow;
+}
+
+.tournaments-table tbody {
+  margin-top: 15px;
+}
+
+.tournaments-table tbody tr:first-child td {
+  padding-top: 15px;
+}
+
+.tournaments-table td {
+  padding: 10px 8px;
+  text-align: center;
+  border-bottom: 2px solid #333;
+}
+
+.tournaments-table tbody tr {
+  background-color: #111;
+  transition: background-color 0.3s;
+}
+
+.tournaments-table tbody tr:hover {
+  background-color: #222;
+}
+
+.tournaments-table .actions-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+}
+
+.tournaments-table .btn {
+  display: inline-block;
+  padding: 5px 10px;
+  margin: 2px 0;
+  border: 2px solid;
+  border-radius: 5px;
+  font-family: "Press Start 2P", Arial, sans-serif;
+  font-size: 0.6rem;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.tournaments-table .btn-primary {
+  background-color: #000;
+  color: yellow;
+  border-color: yellow;
+}
+
+.tournaments-table .btn-primary:hover {
+  background-color: yellow;
+  color: #000;
+}
+
+.tournaments-table .btn-info {
+  background-color: #000;
+  color: cyan;
+  border-color: cyan;
+}
+
+.tournaments-table .btn-info:hover {
+  background-color: cyan;
+  color: #000;
+}
+
+.tournaments-table .text-danger {
+  color: red;
+  margin: 5px 0;
+}
+
+.tournaments-table .text-success {
+  color: #00ff00;
+  margin: 5px 0;
+}
+
+.tournaments-table .empty-message {
+  padding: 20px;
+  font-style: italic;
+  color: #888;
+}
+
+/* ====================================================================================================== */
+/* =============================================   RESPONSIVE  ========================================== */
+/* ====================================================================================================== */
+
+@media (max-width: 900px) 
+{
+  .main-content {
+    display: block;
+    height: auto;
+  }
+
+  .container {
+    margin-top: 20px;
+    background-color: #00000000;
+  }
+  
+  .left-column, .right-column {
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 20px;
+  }
+  
+  .header-section {
+    /* flex-direction: column; */
+    width: 80%;
+    margin: 0 auto;
+    height: auto;
+    padding: 20px 10px;
+  }
+  
+  .progress-text {
+    font-size: 13px;
+    width: 100%;
+  }
+
+  .progress-container {
+    font-size: 5px;
+  }
+
+  .avatar {
+    display: none;
+  }
+
+  .player-info {
+    margin-top: 15px;
+    margin-left: 0;
+  }
+  
+  .buttons-container {
+    /* flex-direction: column; */
+    height: auto;
+    gap: 10px;
+  }
+
+  .buttons-container button{
+    font-size: 15px;
+  }
+
+  .button-link {
+    font-size: 15px;
+  }
+  
+  .button-link {
+    width: 30%;
+    margin-right: 1%;
+  }
+
+  .cases-grid 
+  {
+    gap: 8px;
+  }
+  
+  .case-box 
+  {
+    font-size: 0.7rem;
+  }
+
+  .win-loss .losses
+  {
+    font-size: 15px;
+  }
+
+  .win-loss .wins
+  {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) 
+{
+  .history-item {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .history-item .player-name {
+    padding: 5px 0;
+  }
+  
+  .progress-container {
+    width: 95%;
+  }
+
+  .progress-text {
+    width: 100%;
+  }
+  
+  .cases-grid 
+  {
+    gap: 5px;
+  }
+  
+  .case-box 
+  {
+    font-size: 0.6rem;
+  }
+}
+
+
+/* Responsive pour le tableau des tournois */
+@media (max-width: 768px) {
+  .tournaments-table {
+    font-size: 0.6rem;
+  }
+  
+  .tournaments-table th,
+  .tournaments-table td {
+    padding: 8px 4px;
+  }
+  
+  .tournaments-table .btn {
+    font-size: 0.5rem;
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tournaments-table thead {
+    display: none;
+  }
+  
+  .tournaments-table tbody tr {
+    display: block;
+    margin-bottom: 10px;
+    border: 2px solid yellow;
+    border-radius: 5px;
+  }
+  
+  .tournaments-table td {
+    display: block;
+    text-align: right;
+    padding: 8px;
+    position: relative;
+    padding-left: 50%;
+  }
+  
+  .tournaments-table td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 8px;
+    width: 45%;
+    text-align: left;
+    font-weight: bold;
+  }
+  
+  .tournaments-table td.actions-cell {
+    text-align: center;
+    padding-left: 8px;
+  }
+}
+
+/* Style de la barre de défilement pour Chrome, Safari, Edge */
+.achievement-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.achievement-content::-webkit-scrollbar-track {
+  background: #000;
+  border-radius: 10px;
+}
+
+.achievement-content::-webkit-scrollbar-thumb {
+  background: yellow;
+  border-radius: 10px;
+  border: 2px solid #000;
+}
+
+.achievement-content::-webkit-scrollbar-thumb:hover {
+  background: #ffff77;
+}
+
+/* ====================================================================================================== */
+/* ============================================== TOURNAMENTS TABLE ===================================== */
+/* ====================================================================================================== */
+
+.tournaments-table tbody tr.tournament-row {
+  cursor: pointer;
+  background-color: #111;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.tournaments-table tbody tr.tournament-row:hover {
+  background-color: #333;
+  transform: scale(1.02);
+  box-shadow: 0 0 10px rgba(255, 255, 0, 0.3);
+}
+
+/* ========================================================= */
+/* ===================== PIED DE PAGE  ===================== */
+/* ========================================================= */
+
+footer {
+
+}
+
+footer a {
+}
+
+footer a:hover {
+	color: #ff6a00;
+	box-shadow: 0 0 10px rgba(255, 153, 0, 0.5);
+	border-radius: 10px;
+	background-color:  rgba(255, 153, 0, 0.189);
+}
+
+/* ========================================================= */
+/* ===================== PIED DE PAGE  ===================== */
+/* ========================================================= */
+
+footer {
+	position: relative;  /* Change de fixed à relative */
+	width: 100%;
+	text-align: center;
+	background-color: #dfe2ea;
+	padding: 10px;
+	margin-top: 20px;  /* Ajoute de l'espace au-dessus du footer */
+	
+
+	background-color: #000000;
+	padding: 20px;
+	box-shadow: 0 10px 40px rgba(159, 162, 177, .8);
+	overflow: hidden;
+	overflow-x: auto;
+	top: 0;
+	width: 100%;
+	margin: 0 auto;
+	margin-top: 30px;
+	border-top: 5px solid white;
+	letter-spacing: 3px;
+}
+
+footer a {
+	color: yellow;
+	padding: 3px;
+	padding-right: 10px;
+	padding-left: 10px;
+  text-decoration:  ;
+}
+
+footer a:hover {
+	color: #ff6a00;
+	box-shadow: 0 0 10px rgba(255, 153, 0, 0.5);
+	border-radius: 10px;
+	background-color:  rgba(255, 153, 0, 0.189);
+}

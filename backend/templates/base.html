@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <title>{% block title %}{% endblock %}</title>
+    {% block stylesheets %}{% endblock %}
+    {% block css %}{% endblock %}
+</head>
+<body>
+	<header>
+		<nav>
+			<a href="{% url 'dashboard' %}" class="nav-item is-active">Home</a>
+			<a href="{% url 'amis' %}" class="nav-item">Amis</a>
+			<a href="{% url 'chat:conversations_list' %}" class="nav-item">Messages</a>
+			<a href="{% url 'logout' %}" class="nav-item">Logout</a>
+		</nav>
+    </header>
+	<main>
+		{% block content %}{% endblock %}
+    	{% block javascripts %}{% endblock %}
+	</main>
+	<footer>
+		<p>Designed by <a target="_blank" href="https://github.com/ouahdinaaaa">Ouahdina</a> & <a target="_blank" href="https://github.com/justforttest">Kamel</a></p>
+	</footer>
+</body>
+</html>

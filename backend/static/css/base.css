@@ -1,0 +1,201 @@
+/* =================================================== */
+/* ===================== Général ===================== */
+/* =================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* {
+	box-sizing: border-box;
+	text-decoration: none;
+	/* border: solid black 1px; */
+  }
+  
+body {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;  /* Assure que le body prend au moins toute la hauteur de la fenêtre */
+	margin: 0;  /* Retire les marges par défaut */
+	font-size: 15px;
+	font-weight: bold;
+	letter-spacing: 1px;
+}
+
+header {
+	position: relative;  /* Change de fixed à relative */
+	top: 0;
+	right: auto;
+	left: auto;
+	/* background-color: yellow; */
+	width: 100%;
+	padding-top: 10px;
+	margin-bottom: 20px;
+}
+
+main {
+	padding: 20px;  /* Garde le padding */
+	flex: 1;  /* Garde le flex:1 pour que le main prenne l'espace disponible */
+}
+
+/* =============================================================== */
+/* ===================== BARRE DE NAVIGATION ===================== */
+/* =============================================================== */
+
+
+nav 
+{
+	background-color: #000000;
+	padding: 0 20px;
+	border-radius: 10px;
+	box-shadow: 0 10px 40px rgba(159, 162, 177, .8);
+	display: flex;
+	justify-content: center;
+	overflow: hidden;
+	overflow-x: auto;
+	top: 0;
+	right: auto;
+	left: auto;
+	width: 60%;
+	margin: 0 auto;
+	margin-top: 10px;
+	border: 5px solid white;
+}
+
+/* Base styles pour tous les liens de navigation */
+.nav-item {
+    color: white;
+	font-family: "Press Start 2P", Arial, sans-serif;
+    padding: 20px;
+    margin: 0 6px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* Ligne de soulignement pour tous les liens */
+.nav-item:before {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    background-color: #ff9900;
+    height: 5px;
+    width: 100%;
+    border-radius: 8px 8px 0 0;
+    left: 0;
+    transition: all 0.3s ease;
+    opacity: 0;
+}
+
+/* Effet hover pour tous les liens */
+.nav-item:hover {
+    color: #ff9900 !important;
+    transform: translateY(-3px);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.nav-item:hover:before {
+    bottom: 0;
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(255, 153, 0, 0.5);
+}
+
+/* Style spécial pour le lien de déconnexion */
+.nav-item[href*="logout"] {
+    color: #ff5555;
+}
+
+.nav-item[href*="logout"]:before {
+    background-color: #ff0000;
+}
+
+.nav-item[href*="logout"]:hover {
+    color: #ff0000 !important;
+}
+
+/* Styles du lien actif (ne doit pas bloquer le hover) */
+.nav-item.is-active {
+    color: #ffffff;
+}
+
+/* Supprime l'indicateur de navigation s'il existe */
+.nav-indicator {
+    display: none;
+}
+
+/* ========================================================= */
+/* ===================== PIED DE PAGE  ===================== */
+/* ========================================================= */
+
+footer {
+	position: relative;  /* Change de fixed à relative */
+	width: 100%;
+	text-align: center;
+	background-color: #dfe2ea;
+	padding: 10px;
+	margin-top: 20px;  /* Ajoute de l'espace au-dessus du footer */
+	
+
+	background-color: #000000;
+	padding: 20px;
+	box-shadow: 0 10px 40px rgba(159, 162, 177, .8);
+	overflow: hidden;
+	overflow-x: auto;
+	top: 0;
+	width: 100%;
+	margin: 0 auto;
+	margin-top: 30px;
+	border-top: 5px solid white;
+	letter-spacing: 3px;
+}
+
+footer a {
+	color: yellow;
+	padding: 3px;
+	padding-right: 10px;
+	padding-left: 10px;
+}
+
+footer a:hover {
+	color: #ff6a00;
+	box-shadow: 0 0 10px rgba(255, 153, 0, 0.5);
+	border-radius: 10px;
+	background-color:  rgba(255, 153, 0, 0.189);
+}
+
+
+@media (max-width: 900px) 
+{
+
+	nav 
+	{
+		width: 90%;
+	}
+
+	.nav-item {
+		font-size: 10px;
+		padding-top: 15px;
+		padding-bottom: 15px;
+	}
+}
+
+@media (max-width: 480px) 
+{
+
+	nav 
+	{
+		width: 90%;
+		padding: 0 10px;
+	}
+
+	.nav-item {
+		font-size: 10px;
+		padding-top: 15px;
+		padding-bottom: 15px;
+		margin: 0 0px;
+	}
+}
+
+@media (max-width: 450px) 
+{
+	.nav-item {
+		font-size: 7px;
+	}
+}

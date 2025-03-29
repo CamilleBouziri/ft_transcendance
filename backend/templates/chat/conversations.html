@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/room.css' %}">
+	<link rel="stylesheet" href="{% static 'css/conversations.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Chat</h1>
+<div class="conversations-list">
+    {% if conversations %}
+        {% for conversation in conversations %}
+            <a href="{% url 'chat:room' room_name=conversation.other_user %}" class="conversation-item">
+                <div class="conversation-avatar">
+                    {{ conversation.other_user|first|upper }}
+                </div>
+                <div class="conversation-content">
+                    <div class="conversation-header">
+                        <span class="conversation-name">{{ conversation.other_user }}</span>
+                        <span class="conversation-time">{{ conversation.timestamp|date:"d/m/Y H:i" }}</span>
+                    </div>
+                    <div class="conversation-message">
+                        {% if conversation.last_message.user.nom == request.user.nom %}
+                            Vous: 
+                        {% else %}
+                            {{ conversation.other_user }}: 
+                        {% endif %}
+                        {{ conversation.last_message.content|truncatechars:50 }}
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    {% else %}
+        <div class="no-conversations">
+            Vous n'avez pas encore de conversations.
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 
