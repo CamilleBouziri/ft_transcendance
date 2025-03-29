@@ -346,14 +346,18 @@
 
         <div id="players-container">
             <div id="player1" class="player">
-                <img id="iconPlayer1" class="icon" src="{% static 'images/joueurs.png' %}" alt="Player 1 Icon">
+                {% if user.photo_url %}
+                    <img id="iconPlayer1" class="icon" src="{{ user.photo_url }}" alt="Player 1 Icon">
+                {% else %}
+                    <img id="iconPlayer1" class="icon" src="{% static 'img/joueurs.png' %}" alt="Player 1 Icon">
+                {% endif %}
                 <h2 id="player1-name">{{ joueur1_nom }}</h2>
                 <div class="scoreBubble" id="scorePlayer1">0</div>
             </div>
             <div id="player2" class="player">
                 <div class="scoreBubble" id="scorePlayer2">0</div>
                 <h2 id="player2-name">{{ joueur2_nom }}</h2>
-                <img id="iconPlayer2" class="icon" src="{% static 'images/joueurs.png' %}" alt="Player 2 Icon">
+                <img id="iconPlayer2" class="icon" src="{% static 'img/joueurs.png' %}" alt="Player 2 Icon">
             </div>
         </div>
 

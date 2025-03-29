@@ -1,4 +1,4 @@
-DOCKER_COMPOSE = docker-compose
+DOCKER_COMPOSE = docker  compose
 PROJECT_NAME = ft_transcendence
 
 up:
@@ -26,4 +26,4 @@ migration:
 	$(DOCKER_COMPOSE) exec backend python manage.py makemigrations
 
 stop:
-	docker-compose down
+	docker compose down

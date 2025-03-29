@@ -15,7 +15,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-pb5b8k71*v4x0jx8ajx=)sxtp0ze!$ah9@-9+on73f*n^p2l9c'
+
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -134,8 +135,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-SOCIAL_AUTH_42_KEY = 'u-s4t2ud-b0b7cf31a83e1e9c4d1c4a89275479d8d95e20c04205b7c3d4c8d64386f0aee2'
-SOCIAL_AUTH_42_SECRET = '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'
+SOCIAL_AUTH_42_KEY = os.getenv('SOCIAL_AUTH_42_KEY')
+SOCIAL_AUTH_42_SECRET = os.getenv('SOCIAL_AUTH_42_SECRET')
 SOCIAL_AUTH_42_SCOPE = ['public']
 SOCIAL_AUTH_SKIP_STATE = True
 
