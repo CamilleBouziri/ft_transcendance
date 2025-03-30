@@ -7,6 +7,7 @@ from django.contrib.auth  import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from .form import AvatarUploadForm
+from .form import ChangeNameForm
 
 
 def inscription(request):
@@ -57,3 +58,14 @@ def upload_avatar(request):
     else:
         form = AvatarUploadForm(instance=request.user)
     return render(request, 'upload_avatar.html', {'form': form})
+
+@login_required
+def change_name(request):
+    if request.method == 'POST':
+        form = ChangeNameForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')  # Redirige vers le tableau de bord après la modification
+    else:
+        form = ChangeNameForm(instance=request.user)
+    return render(request, 'change_name.html', {'form': form})

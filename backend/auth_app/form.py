@@ -44,3 +44,16 @@ class AvatarUploadForm(forms.ModelForm):
     class Meta:
         model = Utilisateurs
         fields = ['avatar']
+
+class ChangeNameForm(forms.ModelForm):
+    class Meta:
+        model = Utilisateurs
+        fields = ['nom']  # Inclure uniquement le champ `nom`
+        widgets = {
+            'nom': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your new name'}),
+        }
+    def clean_nom(self):
+        nom = self.cleaned_data.get('nom')
+        if len(nom) < 3:
+            raise forms.ValidationError("Le nom doit contenir au moins 3 caractères.")
+        return nom

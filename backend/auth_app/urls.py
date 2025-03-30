@@ -7,4 +7,5 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('connexion/', views.connexion, name='connexion'),
     path('upload-avatar/', views.upload_avatar, name='upload_avatar'),
+    path('change-name/', views.change_name, name='change_name'),
 ]

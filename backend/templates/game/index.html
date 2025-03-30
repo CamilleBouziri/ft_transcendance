@@ -142,6 +142,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
+
+        }
+        .player img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
         }
         .icon {
             width: 40px;
@@ -340,9 +347,9 @@
                     <img id="iconPlayer1" class="icon" src="{% static 'img/joueurs.png' %}" alt="Player 1 Icon">
                 {% endif %} -->
                 {% if user.avatar %}
-                    <img src="{{ user.avatar.url }}" alt="Avatar" style="width: 50px; height: 50px;">
+                    <img src="{{ user.avatar.url }}" alt="Avatar" style="width: 50px; height: 50px; object-fit: cover;">
                 {% elif user.photo_url %}
-                    <img src="{{ user.photo_url }}" alt="Profile Picture">
+                    <img src="{{ user.photo_url }}" alt="Profile Picture" style="width: 50px; height: 50px; object-fit: cover;">
                 {% else %}
                     <img src="{% static 'img/joueurs.png' %}" style="width: 100px; height: 100px;">
                 {% endif %}

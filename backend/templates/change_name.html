@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% load i18n %}
+
+{% block content %}
+<body>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/change_name.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+    </head>
+    <div class="container">
+        <h2>{% trans "Change Name" %}</h2>
+        <form method="post" enctype="multipart/form-data" class="form-container">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+        </form>
+    </div>
+</body>
+{% endblock %}

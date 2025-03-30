@@ -1,0 +1,71 @@
+body 
+{
+  margin: 0;
+  font-family: "Press Start 2P", Arial, sans-serif;
+  background-color: #000;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h2 
+{
+  color: yellow;
+  margin-bottom: 10px;
+  font-size: 2rem;
+  text-align: center;
+}
+
+/* .form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #000;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+} */
+
+.form-container {
+    max-width: 600px; /* Augmentez la largeur maximale */
+    margin: 20px auto; /* Ajoutez un espace autour du conteneur */
+    padding: 30px; /* Augmentez l'espace intérieur */
+    background-color: #000; /* Couleur de fond */
+    border: 1px solid #ddd; /* Bordure */
+    border-radius: 10px; /* Bordures arrondies */
+    box-shadow: 0 6px 10px rgba(255, 255, 255, 0.2); /* Ombre plus visible */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+button.btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button.btn-primary:hover {
+    background-color: #0056b3;
+}
