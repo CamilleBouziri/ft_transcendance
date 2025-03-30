@@ -56,6 +56,18 @@
           <div class="progress-text"> Level {{ level }} - {{ level_progress }}%</div>
       </div>
       <a href="{% url 'logout' %}" class="logout-btn">{% trans "Logout" %} <span></span></a>
+        <script>
+          window.addEventListener("beforeunload", function () {
+              fetch("{% url 'set_offline' %}", {
+                  method: "POST",
+                  headers: {
+                      "X-CSRFToken": "{{ csrf_token }}", // Ajoutez le token CSRF
+                  },
+                  credentials: "same-origin",
+              });
+          });
+      </script>
+      </script>
   </section>
     
 

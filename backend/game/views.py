@@ -6,12 +6,16 @@ from tournois.models import Tournoi
 import json
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+
 
 
 @login_required
 def start_game(request):
     if request.method == "POST":
         player1 = request.user
+        request.user.is_playing = True  # Marque l'utilisateur comme jouant
+        request.user.save()
         player1_score = int(request.POST.get("player1_score", 0))
         player2_score = int(request.POST.get("player2_score", 0))
         winner = player1.nom if player1_score > player2_score else "Player 2"

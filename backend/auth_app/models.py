@@ -27,6 +27,9 @@ class Utilisateurs(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+     # Champs pour les statuts
+    is_online = models.BooleanField(default=False)  # Indique si l'utilisateur est en ligne
+    is_playing = models.BooleanField(default=False)  # Indique si l'utilisateur joue actuellement
     # Champs pour les victoires et défaites
     wins = models.PositiveIntegerField(default=0)  # Victoires
     losses = models.PositiveIntegerField(default=0)  # Défaites

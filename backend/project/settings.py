@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     "allauth.account", # gerer creation user mano mano 
 	'allauth.socialaccount',
     'allauth.socialaccount.providers.oauth2',
-	'auth_app.apps.AccountConfig',
+	# 'auth_app.apps.AccountConfig',
+    'auth_app.apps.Auth_AppConfig',
 	'social_django',
     'game',
     'tournois',

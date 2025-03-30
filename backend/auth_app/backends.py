@@ -31,7 +31,10 @@ def pipeline(backend, user, response, *args, **kwargs):
                 'nom': response.get('login'),
                 'email': response.get('email'),
                 'photo_url': response.get('image', {}).get('versions', {}).get('medium')
+                
 
                 # Ajoutez d'autres champs si nécessaire
             }
         )
+        user.is_online = True
+        user.save()
