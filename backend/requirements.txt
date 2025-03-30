@@ -7,3 +7,4 @@ requests
 social-auth-app-django
 typing_extensions==4.12.2
 django-sslserver
+Pillow

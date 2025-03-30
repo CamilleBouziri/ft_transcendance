@@ -334,10 +334,17 @@
         <!-- Container pour les joueurs -->
         <div id="players-container">
             <div id="player1" class="player">
-                {% if user.photo_url %}
+                <!-- {% if user.photo_url %}
                     <img id="iconPlayer1" class="icon" src="{{ user.photo_url }}" alt="Player 1 Icon">
                 {% else %}
                     <img id="iconPlayer1" class="icon" src="{% static 'img/joueurs.png' %}" alt="Player 1 Icon">
+                {% endif %} -->
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="Avatar" style="width: 50px; height: 50px;">
+                {% elif user.photo_url %}
+                    <img src="{{ user.photo_url }}" alt="Profile Picture">
+                {% else %}
+                    <img src="{% static 'img/joueurs.png' %}" style="width: 100px; height: 100px;">
                 {% endif %}
 
                 <h2>{% trans "Player 1" %}</h2>

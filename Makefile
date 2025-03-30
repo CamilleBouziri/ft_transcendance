@@ -1,8 +1,10 @@
-DOCKER_COMPOSE = docker  compose
+DOCKER_COMPOSE = docker compose
 PROJECT_NAME = ft_transcendence
 
 up:
-	- $(DOCKER_COMPOSE) up --build
+	- $(DOCKER_COMPOSE) up --build -d
+	$(DOCKER_COMPOSE) exec backend python manage.py makemigrations
+	$(DOCKER_COMPOSE) exec backend python manage.py migrate
 
 down:
 	$(DOCKER_COMPOSE) down
@@ -11,6 +13,7 @@ clean:
 	$(DOCKER_COMPOSE) down --volumes
 	docker system prune -f
 	docker volume rm $(PROJECT_NAME)_db_data || true
+	rm -rf backend/media/avatars/*
 
 logs:
 	$(DOCKER_COMPOSE) logs -f

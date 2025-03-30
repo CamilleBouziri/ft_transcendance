@@ -35,11 +35,14 @@
 
   <section id="profile" class="header-section container">
       <div class="avatar">
-        {% if user.photo_url %}
+        {% if user.avatar %}
+          <img src="{{ user.avatar.url }}" alt="Avatar" style="width: 100px; height: 100px;">
+        {% elif user.photo_url %}
           <img src="{{ user.photo_url }}" alt="Profile Picture">
         {% else %}
           <img src="{% static 'img/joueurs.png' %}" style="width: 100px; height: 100px;">
         {% endif %}
+        <a href="{% url 'upload_avatar' %}" class="btn btn-secondary">{% trans "Change Avatar" %}</a>
       </div>
       <div class="player-info">
         <h2>{{ user.nom }}</h2>

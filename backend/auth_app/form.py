@@ -39,3 +39,8 @@ class CustomUserCreationForm(UserCreationForm):
         if Utilisateurs.objects.filter(email=email).exists():
             raise forms.ValidationError("Cette adresse email existe déjà")
         return email
+    
+class AvatarUploadForm(forms.ModelForm):
+    class Meta:
+        model = Utilisateurs
+        fields = ['avatar']

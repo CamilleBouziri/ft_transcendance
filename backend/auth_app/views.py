@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth  import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
+from .form import AvatarUploadForm
 
 
 def inscription(request):
@@ -45,3 +46,14 @@ def connexion(request):
 @login_required(login_url='/connexion/', redirect_field_name='suivant')
 def accueil(request):
        return render(request, 'accueil.html')
+
+@login_required
+def upload_avatar(request):
+    if request.method == 'POST':
+        form = AvatarUploadForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')  # Redirige vers le tableau de bord
+    else:
+        form = AvatarUploadForm(instance=request.user)
+    return render(request, 'upload_avatar.html', {'form': form})

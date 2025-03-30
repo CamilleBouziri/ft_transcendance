@@ -6,6 +6,8 @@ from game import views as game_views
 from tournois import views as tournois_views
 from django.conf.urls.i18n import set_language
 from django.views.generic import RedirectView  # Importe RedirectView
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
 
@@ -41,4 +43,4 @@ urlpatterns = [
     path('chat/', include('chat.urls', namespace='chat')),
 
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

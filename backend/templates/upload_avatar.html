@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<body>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/upload_avatar.css' %}">
+    </head>
+    <h2>{% trans "Upload Avatar" %}</h2>
+    <br>
+    <form method="post" enctype="multipart/form-data" class="form-container">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-primary">{% trans "Upload" %}</button>
+    </form>
+</body>
+{% endblock %}
