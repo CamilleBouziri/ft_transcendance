@@ -32,6 +32,7 @@ urlpatterns = [
     path("jeu_tournois/<int:match_id>/", tournois_views.jeu_tournois, name="jeu_tournois"),
     path('', include('social_django.urls', namespace='social')),
     path('save-result/', game_views.save_game_result, name='save_game_result'),
+    path('start-game/', game_views.start_game, name='start-game'),
     path('', RedirectView.as_view(url='auth/connexion/', permanent=True), name='connexion_redirect'),
     path('set_language/', set_language, name='set_language'),
 

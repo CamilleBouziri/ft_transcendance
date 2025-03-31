@@ -16,17 +16,6 @@
 			<a href="{% url 'amis' %}" class="nav-item">Amis</a>
 			<a href="{% url 'chat:conversations_list' %}" class="nav-item">Messages</a>
 			<a href="{% url 'logout' %}" class="nav-item">Logout</a>
-			<script>
-				window.addEventListener("beforeunload", function () {
-					fetch("{% url 'set_offline' %}", {
-						method: "POST",
-						headers: {
-							"X-CSRFToken": "{{ csrf_token }}", // Ajoutez le token CSRF
-						},
-						credentials: "same-origin",
-					});
-				});
-			</script>
 		</nav>
     </header>
 	<main>

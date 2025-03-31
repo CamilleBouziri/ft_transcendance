@@ -14,6 +14,7 @@ class Game(models.Model):
     winner = models.CharField(max_length=50, null=True, blank=True)  # Nom du gagnant
     player1_score = models.IntegerField(default=0)
     player2_score = models.IntegerField(default=0)
+    # player1_is_playing = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

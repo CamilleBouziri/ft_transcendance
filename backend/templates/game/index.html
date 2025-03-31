@@ -263,6 +263,7 @@
     </style>
 </head>
 <body>
+    {% csrf_token %}
 
     <!-- Fenêtre de configuration -->
     <div class="settings-container" id="settingsContainer">
@@ -486,6 +487,31 @@
 
         // Démarrer le jeu
         function startGame() {
+
+            console.log("Démarrage du jeu >>>>"); // Debug
+            fetch('/start-game/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+                body: JSON.stringify({
+                    player1_score: 0,
+                    player2_score: 0
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Réponse du serveur:", data); // Debug
+                if (data.status === 'success') {
+                    // Le jeu peut commencer
+                    console.log("Statut is_playing:", data.is_playing);
+                }
+            })
+            .catch(error => console.error('Erreur:', error));
+            console.log(">>>>>>>>>>>>>1"); // Debug
+
+
             document.getElementById('settingsContainer').style.display = 'none';
             document.getElementById('gameContainer').style.display = 'flex';
             setup(); // Appel à votre fonction d'initialisation du jeu (dans game2.js)
