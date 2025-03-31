@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from auth_app.models import Utilisateurs
 from .models import Ami
 from django.db import models
+from django.http import JsonResponse
 
 @login_required
 def rechercher_utilisateur(request):
@@ -93,3 +94,90 @@ def supprimer_ami(request, ami_id):
     )
     ami.delete()
     return redirect('amis')
+# 
+
+@login_required
+def get_friends_status(request):
+    amis_envoyes = Ami.objects.filter(utilisateur=request.user, statut='accepte')
+    amis_recus = Ami.objects.filter(ami=request.user, statut='accepte')
+    
+    friends_status = []
+    
+    # Changement de 'Ami' en 'ami' dans la variable de boucle
+    for ami in amis_envoyes:
+        friends_status.append({
+            'id': ami.ami.id,
+            'is_online': ami.ami.is_online,
+            'is_playing': ami.ami.is_playing
+        })
+    
+    # Changement de 'Ami' en 'ami' dans la variable de boucle
+    for ami in amis_recus:
+        friends_status.append({
+            'id': ami.utilisateur.id,
+            'is_online': ami.utilisateur.is_online,
+            'is_playing': ami.utilisateur.is_playing
+        })
+    
+    return JsonResponse({'friends': friends_status})
+
+@login_required
+def get_friend_requests(request):
+    demandes_recues = Ami.objects.filter(ami=request.user, statut='en_attente')
+    
+    requests_data = {
+        'received_requests': [
+            {
+                'id': demande.id,
+                'utilisateur': {
+                    'id': demande.utilisateur.id,
+                    'nom': demande.utilisateur.nom
+                }
+            } for demande in demandes_recues
+        ]
+    }
+    
+    return JsonResponse(requests_data)
+
+@login_required
+def get_pending(request):
+    demandes_envoyees = Ami.objects.filter(
+        utilisateur=request.user,
+        statut='en_attente'
+    )
+    
+    pending_requests = [{
+        'id': demande.id,
+        'ami': {
+            'id': demande.ami.id,
+            'nom': demande.ami.nom
+        }
+    } for demande in demandes_envoyees]
+    
+    return JsonResponse({'pending_requests': pending_requests})
+
+@login_required
+def get_friends(request):
+    amis_envoyes = Ami.objects.filter(utilisateur=request.user, statut='accepte')
+    amis_recus = Ami.objects.filter(ami=request.user, statut='accepte')
+    
+    friends = []
+    
+    for ami in amis_envoyes:
+        friends.append({
+            'id': ami.ami.id,
+            'nom': ami.ami.nom,
+            'is_online': ami.ami.is_online,
+            'is_playing': ami.ami.is_playing
+        })
+    
+    for ami in amis_recus:
+        friends.append({
+            'id': ami.utilisateur.id,
+            'nom': ami.utilisateur.nom,
+            'is_online': ami.utilisateur.is_online,
+            'is_playing': ami.utilisateur.is_playing
+        })
+    
+    return JsonResponse({'friends': friends})
+

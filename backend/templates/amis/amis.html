@@ -76,14 +76,25 @@
     </div>
 </div>
 
-<div class="container-amis">
+<div class="container-amis" id="friends-list">
     <h3>Amis</h3>
+    <ul  id="friends-container">
     {% if amis_acceptes.envoyes or amis_acceptes.recus %}
-        <ul>
             {% for ami in amis_acceptes.envoyes %}
-                <li>
+                <li data-friend-id="{{ ami.ami.id }}">
                     <div class="container-nom">
                         {{ ami.ami.nom }}
+                    </div>
+                    <div class="status_ami">
+                        {% if ami.ami.is_online %}
+                        {% if ami.ami.is_playing %}
+                            <span class="status-dot playing" title="En train de jouer">🎮</span>
+                        {% else %}
+                            <span class="status-dot online" title="En ligne">🟢</span>
+                        {% endif %}
+                        {% else %}
+                        <span class="status-dot offline" title="Hors ligne">⚫</span>
+                        {% endif %}
                     </div>
                     <div class="container-bouton">
                         <a href="{% url 'chat:room' room_name=ami.ami.nom %}" class="btn btn-primary">Chatter</a>
@@ -93,9 +104,20 @@
                 </li>
             {% endfor %}
             {% for ami in amis_acceptes.recus %}
-                <li>
+                <li data-friend-id="{{ ami.utilisateur.id }}">
                     <div class="container-nom">
                         {{ ami.utilisateur.nom }}
+                    </div>
+                    <div class="status_ami">
+                        {% if ami.utilisateur.is_online %}
+                            {% if ami.utilisateur.is_playing %}
+                                <span class="status-dot playing" title="En train de jouer">🎮</span>
+                            {% else %}
+                                <span class="status-dot online" title="En ligne">🟢</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="status-dot offline" title="Hors ligne">⚫</span>
+                        {% endif %}
                     </div>
                     <div class="container-bouton">
                         <a href="{% url 'chat:room' room_name=ami.utilisateur.nom %}" class="btn btn-primary">Chatter</a>
@@ -110,4 +132,155 @@
     {% endif %}
 </div>
 
+{% endblock %}
+
+{% block javascripts %}
+<script>
+
+const chatRoomUrl = "{% url 'chat:room' room_name='PLACEHOLDER' %}";
+
+function updateFriendsStatus() {
+    fetch('/amis/get-status/')
+        .then(response => response.json())
+        .then(data => {
+            data.friends.forEach(friend => {
+                const statusDiv = document.querySelector(`[data-friend-id="${friend.id}"] .status_ami`);
+                if (statusDiv) {
+                    let statusHTML = '';
+                    if (friend.is_online) {
+                        if (friend.is_playing) {
+                            statusHTML = '<span class="status-dot playing" title="En train de jouer">🎮</span>';
+                        } else {
+                            statusHTML = '<span class="status-dot online" title="En ligne">🟢</span>';
+                        }
+                    } else {
+                        statusHTML = '<span class="status-dot offline" title="Hors ligne">⚫</span>';
+                    }
+                    statusDiv.innerHTML = statusHTML;
+                }
+            });
+        });
+}
+
+function updateFriendRequests() {
+    fetch('/amis/get-requests/')
+        .then(response => response.json())
+        .then(data => {
+            // Mise à jour des demandes reçues
+            const receivedContainer = document.querySelector('.invitations-container .container-amis:nth-child(2) ul');
+            if (receivedContainer) {
+                receivedContainer.innerHTML = data.received_requests.map(request => `
+                    <li>
+                        <div class="container-nom">${request.utilisateur.nom}</div>
+                        <div class="container-bouton">
+                            <a href="/amis/accepter-demande/${request.id}/" class="btn btn-success">Accepter</a>
+                            <a href="/amis/refuser-demande/${request.id}/" class="btn btn-danger">Refuser</a>
+                        </div>
+                    </li>
+                `).join('');
+            }
+        });
+}
+
+function updatePendingRequests() {
+    fetch('/amis/get-pending/')
+        .then(response => response.json())
+        .then(data => {
+            // Mise à jour des demandes envoyées en attente
+            const pendingContainer = document.querySelector('.invitations-container .container-amis:first-child ul');
+            if (pendingContainer) {
+                if (data.pending_requests.length > 0) {
+                    pendingContainer.innerHTML = data.pending_requests.map(request => `
+                        <li>
+                            <div class="container-nom">
+                                ${request.ami.nom}
+                            </div>
+                            <div class="container-bouton">
+                                <span class="statut-attente">En attente</span>
+                            </div>
+                        </li>
+                    `).join('');
+                } else {
+                    pendingContainer.innerHTML = '<p>Aucune invitation en attente.</p>';
+                }
+            }
+        });
+}
+
+function waitForElement(selector, callback) {
+    const element = document.querySelector(selector);
+    if (element) {
+        callback(element);
+    } else {
+        setTimeout(() => waitForElement(selector, callback), 500);
+    }
+}
+
+// Fonction pour mettre à jour la liste des amis
+function updateFriendsList() {
+    waitForElement('#friends-container', (friendsContainer) => {
+        fetch('/amis/get-friends/')
+        .then(response => response.json())
+        .then(data => {
+            // Modification du sélecteur pour cibler le bon conteneur
+            const friendsContainer = document.getElementById('friends-container');
+            console.log('Container trouvé:', friendsContainer); // Debug
+
+            if (friendsContainer) {
+                if (data.friends && data.friends.length > 0) {
+                    const friendsHTML = data.friends.map(friend => `
+                        <li data-friend-id="${friend.id}">
+                            <div class="container-nom">
+                                ${friend.nom}
+                            </div>
+                            <div class="status_ami">
+                                ${friend.is_online 
+                                    ? friend.is_playing
+                                        ? '<span class="status-dot playing" title="En train de jouer">🎮</span>'
+                                        : '<span class="status-dot online" title="En ligne">🟢</span>'
+                                    : '<span class="status-dot offline" title="Hors ligne">⚫</span>'
+                                }
+                            </div>
+                            <div class="container-bouton">
+                                <a href="${chatRoomUrl.replace('PLACEHOLDER', friend.nom)}" class="btn btn-primary">Chatter</a>
+                                <a href="/amis/supprimer-ami/${friend.id}/" class="btn btn-danger" 
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet ami ?')">Supprimer</a>
+                            </div>
+                        </li>
+                    `).join('');
+                    friendsContainer.innerHTML = friendsHTML;
+                } else {
+                    friendsContainer.innerHTML = '<p>Aucun ami accepté.</p>';
+                }
+            } else {
+                console.error('Container des amis non trouvé - Vérifiez la structure HTML');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de la mise à jour de la liste des amis:', error);
+        });
+});
+}
+
+// Démarrer les mises à jour dès le chargement de la page
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM chargé');
+    const friendsContainer = document.getElementById('friends-container');
+    console.log('Container au chargement:', friendsContainer);
+
+    // // Première mise à jour immédiate
+    // updateFriendsStatus();
+    // updateFriendRequests();
+    // updatePendingRequests();
+    // updateFriendsList();
+
+    // Puis toutes les 4 secondes
+    setInterval(() => {
+        updateFriendsStatus();
+        updateFriendRequests();
+        updatePendingRequests();
+        updateFriendsList();
+    }, 1000);
+});
+</script>
 {% endblock %}
