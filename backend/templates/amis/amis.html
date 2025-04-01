@@ -56,8 +56,8 @@
 
     <div class="container-amis">
         <h3>Reçues</h3>
-        {% if demandes_recues %}
-            <ul>
+        <ul id="invit-container">
+            {% if demandes_recues %}
                 {% for demande in demandes_recues %}
                     <li>
                         <div class="container-nom">
@@ -139,6 +139,15 @@
 
 const chatRoomUrl = "{% url 'chat:room' room_name='PLACEHOLDER' %}";
 
+function waitForElement(selector, callback) {
+    const element = document.querySelector(selector);
+    if (element) {
+        callback(element);
+    } else {
+        setTimeout(() => waitForElement(selector, callback), 500);
+    }
+}
+
 function updateFriendsStatus() {
     fetch('/amis/get-status/')
         .then(response => response.json())
@@ -163,24 +172,47 @@ function updateFriendsStatus() {
 }
 
 function updateFriendRequests() {
-    fetch('/amis/get-requests/')
-        .then(response => response.json())
-        .then(data => {
-            // Mise à jour des demandes reçues
-            const receivedContainer = document.querySelector('.invitations-container .container-amis:nth-child(2) ul');
-            if (receivedContainer) {
-                receivedContainer.innerHTML = data.received_requests.map(request => `
-                    <li>
-                        <div class="container-nom">${request.utilisateur.nom}</div>
-                        <div class="container-bouton">
-                            <a href="/amis/accepter-demande/${request.id}/" class="btn btn-success">Accepter</a>
-                            <a href="/amis/refuser-demande/${request.id}/" class="btn btn-danger">Refuser</a>
-                        </div>
-                    </li>
-                `).join('');
+    const receivedContainer = document.getElementById('invit-container');
+    if (!receivedContainer) {
+        console.error('Container invit-container non trouvé');
+        return;
+    }
+        fetch('/amis/get-requests/')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur réseau');
             }
+            return response.json();
+        })
+        .then(data => {
+            // const receivedContainer = document.getElementById('invit-container');
+            console.log('Données reçues:', data); // Debug
+            console.log('Container trouvé:', receivedContainer); // Debug
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', data.received_requests.length); // Debug
+            
+            if (receivedContainer) {
+                if (data.received_requests && data.received_requests.length > 0) {
+                    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'); // Debug
+                    const requestsHTML = data.received_requests.map(request => `
+                        <li>
+                            <div class="container-nom">${request.utilisateur.nom}</div>
+                            <div class="container-bouton">
+                                <a href="/amis/accepter-demande/${request.id}/" class="btn btn-success">Accepter</a>
+                                <a href="/amis/refuser-demande/${request.id}/" class="btn btn-danger">Refuser</a>
+                            </div>
+                        </li>
+                    `).join('');
+                    receivedContainer.innerHTML = requestsHTML;
+                } else {
+                    receivedContainer.innerHTML = '<p>Aucune invitation en attente.</p>';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de la mise à jour des demandes reçues:', error);
         });
-}
+    };
+
 
 function updatePendingRequests() {
     fetch('/amis/get-pending/')
@@ -207,14 +239,6 @@ function updatePendingRequests() {
         });
 }
 
-function waitForElement(selector, callback) {
-    const element = document.querySelector(selector);
-    if (element) {
-        callback(element);
-    } else {
-        setTimeout(() => waitForElement(selector, callback), 500);
-    }
-}
 
 // Fonction pour mettre à jour la liste des amis
 function updateFriendsList() {
@@ -224,7 +248,7 @@ function updateFriendsList() {
         .then(data => {
             // Modification du sélecteur pour cibler le bon conteneur
             const friendsContainer = document.getElementById('friends-container');
-            console.log('Container trouvé:', friendsContainer); // Debug
+            // console.log('Container trouvé:', friendsContainer); // Debug
 
             if (friendsContainer) {
                 if (data.friends && data.friends.length > 0) {
@@ -266,6 +290,7 @@ function updateFriendsList() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM chargé');
     const friendsContainer = document.getElementById('friends-container');
+    const receivedContainer = document.getElementById('invit-container');
     console.log('Container au chargement:', friendsContainer);
 
     // // Première mise à jour immédiate
