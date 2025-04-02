@@ -21,6 +21,13 @@ class Tournoi(models.Model):
         blank=True,
         verbose_name="Joueurs",
     )
+    # avatar = models.ImageField(
+    #    settings.AUTH_USER_MODEL,
+    #     on_delete=models.CASCADE,
+    #     related_name="tournois_avatar",
+    #     blank=True,
+    #     verbose_name="Avatar",
+    # )
     gagnant_final = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -35,6 +42,12 @@ class Tournoi(models.Model):
         default="en_attente",
         verbose_name="Statut",
     )
+    joueurs_noms_personnalises = models.JSONField(
+        default=dict,
+        blank=True,
+        verbose_name="Noms personnalisés des joueurs"
+    )
+    
     date_creation = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
 
     def est_complet(self):

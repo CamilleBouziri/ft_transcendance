@@ -371,6 +371,18 @@
     text-align: center;
 }
 
+.creator-interface-message {
+        text-align: center;
+        font-family: "Press Start 2P", Arial, sans-serif;
+        color: #ffffff;
+        padding: 15px;
+        margin: 20px 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        box-shadow: 0px 0px 15px 5px rgba(0, 255, 255, 0.3);
+    }
+
+
 .start-btn:hover {
     background-color: #feed00;
 }
@@ -388,17 +400,28 @@
       </div>
       <div class="highlight-bar"></div>
       <p>{% trans "Creator" %}: {{ tournoi.createur.nom }}</p>
-      <p>{% trans "Status" %}: {{ tournoi.get_statut_display }}</p>
-      <p>{% trans "Players" %}: {{ tournoi.joueurs.count }}/4</p>
+      <p>{% trans "Status" %}: <span id="tournament-status">{{ tournoi.get_statut_display }}</span></p>
+  <p>{% trans "Players" %}: <span id="tournament-players">{{ tournoi.joueurs.count }}/4</span></p>
+      <p>{% trans "Name" %}: {{ nom_utilisateur_tournoi }}</p> <!-- Ajout du nom personnalisé -->
       <ul>
         {% for joueur in joueurs %}
           <li>{{ joueur.nom }}</li>
         {% endfor %}
       </ul>  
     </div>
-    
     </div>
+ 
+    {% if tournoi.statut == "en_cours" or tournoi.statut == "termine" %}
+    {% if request.user != tournoi.createur %}
+        <div id="interface-messages" class="tournament-info">
+            <p class="creator-interface-message">
+                    {% trans "The match is only possible in the creator's interface:" %} {{ tournoi.createur.nom }}
+            </p>
+        </div>
+    {% endif %}
+{% endif %}
 
+    {% if tournoi.statut == "en_attente" or tournoi.statut == "en_cours" and request.user == tournoi.createur or tournoi.statut == "termine" and request.user == tournoi.createur %}
     <h2>{% trans "Tournament Matches" %}</h2>
     <div class="highlight-bar"></div>
 
@@ -423,34 +446,38 @@
 <!-- Joueurs -->
  
 <div class="player-icon player1">
-  <div class="player-name-container">{% if joueur1 %}{{ joueur1.nom }}{% else %}Joueur 1{% endif %}</div>
+  <div class="player-name-container">{% if joueur1 %}{{ joueur1 }}{% else %}Joueur 1{% endif %}</div>
 </div>
 <div class="player-icon player2">
-  <div class="player-name-container">{% if joueur2 %}{{ joueur2.nom }}{% else %}Joueur 2{% endif %}</div>
+  <div class="player-name-container">{% if joueur2 %}{{ joueur2 }}{% else %}Joueur 2{% endif %}</div>
 </div>
 <div class="player-icon player3">
-  <div class="player-name-container">{% if joueur3 %}{{ joueur3.nom }}{% else %}Joueur 3{% endif %}</div>
+  <div class="player-name-container">{% if joueur3 %}{{ joueur3 }}{% else %}Joueur 3{% endif %}</div>
 </div>
 <div class="player-icon player4">
-  <div class="player-name-container">{% if joueur4 %}{{ joueur4.nom }}{% else %}Joueur 4{% endif %}</div>
+  <div class="player-name-container">{% if joueur4 %}{{ joueur4 }}{% else %}Joueur 4{% endif %}</div>
 </div>
 
 <!-- Gagnants intermédiaires -->
-{% if matches.0.gagnant and matches.1.gagnant %}
-  <div class="player-icon winner1">
-    <div class="player-name-container">{{ matches.0.gagnant.nom }}</div>
+<div class="player-icon winner1">
+  <div class="player-name-container">
+    {% if matches.0.gagnant %}
+      {{ matches.0.gagnant.nom }}
+    {% else %}
+      Winner 1
+    {% endif %}
   </div>
-  <div class="player-icon winner2">
-    <div class="player-name-container">{{ matches.1.gagnant.nom }}</div>
+</div>
+<div class="player-icon winner2">
+  <div class="player-name-container">
+    {% if matches.1.gagnant %}
+      {{ matches.1.gagnant.nom }}
+    {% else %}
+      Winner 2
+    {% endif %}
   </div>
-{% else %}
-  <div class="player-icon winner1">
-    <div class="player-name-container">Winner 1</div>
-  </div>
-  <div class="player-icon winner2">
-    <div class="player-name-container">Winner 2</div>
-  </div>
-{% endif %}
+</div>
+
 
 <!-- Gagnant final -->
 {% if matches|length == 3 and matches.2.gagnant %}
@@ -465,15 +492,15 @@
 
 
 <!-- Boutons PLAY corrigés -->
+{% if tournoi.statut == "en_cours" and request.user == tournoi.createur %}
     {% if matches.0 and not matches.0.gagnant %}
         <a href="{% url 'jeu_tournois' match_id=matches.0.id %}" class="play-button play1">PLAY1</a>
-    {% endif %}
-    {% if matches.1 and not matches.1.gagnant%}
+    {% elif matches.1 and not matches.1.gagnant %}
         <a href="{% url 'jeu_tournois' match_id=matches.1.id %}" class="play-button play2">PLAY2</a>
+    {% elif matches|length == 3 and matches.2.id and not matches.2.gagnant %}
+        <a href="{% url 'jeu_tournois' match_id=matches.2.id %}" class="play-button play-final">FINAL</a>
     {% endif %}
-    {% if matches|length == 3 and matches.2.id and not matches.2.gagnant %}
-    <a href="{% url 'jeu_tournois' match_id=matches.2.id %}" class="play-button play-final">FINAL</a>
-    {% endif %}
+{% endif %}
 
 
 
@@ -485,11 +512,10 @@
             {% csrf_token %}
             {% if request.user == tournoi.createur %}
                 <button type="submit" class="start-btn">{% trans "Start Tournament" %}</button>
-            {% else %}
-                <p>{% trans "The match is played on the creator's interface:" %} {{ tournoi.createur.nom }}</p>
             {% endif %}
         </form>
     </div>
+{% endif %}
 {% endif %}
 
 
@@ -504,7 +530,26 @@
 </body>
 </html>
 
+<script>
+  function updatePlayerNames() {
+    fetch("{% url 'get_joueurs_noms' tournoi.id %}")
+      .then(response => response.json())
+      .then(data => {
+        if (data.joueurs) {
+          data.joueurs.forEach((joueur, index) => {
+            const playerElement = document.querySelector(`.player${index + 1} .player-name-container`);
+            if (playerElement) {
+              playerElement.textContent = joueur.nom;
+            }
+          });
+        }
+      })
+      .catch(error => console.error("Error fetching player names:", error));
+  }
 
+  // Update player names every 2 seconds
+  setInterval(updatePlayerNames, 2000);
+</script>
 
 <script>
   function startMatch(matchId) {
@@ -523,3 +568,64 @@
   }
   </script>
 
+<script>
+  function updateTournamentInfo() {
+    fetch("{% url 'get_tournoi_info' tournoi.id %}")
+      .then(response => response.json())
+      .then(data => {
+        // Met à jour le statut du tournoi
+        const statusElement = document.querySelector("#tournament-status");
+        if (statusElement) {
+          statusElement.textContent = data.statut;
+        }
+
+        // Met à jour le nombre de joueurs
+        const playersElement = document.querySelector("#tournament-players");
+        if (playersElement) {
+          playersElement.textContent = `${data.joueurs_count}/4`;
+        }
+      })
+      .catch(error => console.error("Error fetching tournament info:", error));
+  }
+
+  // Met à jour les informations toutes les 2 secondes
+  setInterval(updateTournamentInfo, 2000);
+
+  // Appelle la fonction immédiatement au chargement
+  updateTournamentInfo();
+</script>
+
+<script>
+  function updateStartButton() {
+    fetch("{% url 'get_tournoi_ready_status' tournoi.id %}")
+      .then(response => response.json())
+      .then(data => {
+        const startButtonContainer = document.querySelector(".start-btn-container");
+
+        if (data.is_ready && data.is_creator) {
+          // Si le tournoi est prêt et que l'utilisateur est le créateur, afficher le bouton
+          if (!startButtonContainer) {
+            const container = document.createElement("div");
+            container.className = "start-btn-container";
+            container.innerHTML = `
+              <form method="POST" action="{% url 'lancer_tournois' tournoi.id %}">
+                {% csrf_token %}
+                <button type="submit" class="start-btn">{% trans "Start Tournament" %}</button>
+              </form>
+            `;
+            document.querySelector(".tournament-info").appendChild(container);
+          }
+        } else if (startButtonContainer) {
+          // Si le tournoi n'est pas prêt ou que l'utilisateur n'est pas le créateur, retirer le bouton
+          startButtonContainer.remove();
+        }
+      })
+      .catch(error => console.error("Error fetching tournament ready status:", error));
+  }
+
+  // Vérifie l'état du bouton toutes les 2 secondes
+  setInterval(updateStartButton, 2000);
+
+  // Appelle la fonction immédiatement au chargement
+  updateStartButton();
+</script>

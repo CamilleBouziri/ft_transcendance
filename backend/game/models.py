@@ -21,3 +21,41 @@ class Game(models.Model):
         return f"{self.name} - {self.player1.nom} vs {self.player2}"
 
 
+class MorpionMatch(models.Model):
+    STATUS_CHOICES = [
+        ("waiting", "Waiting for player"),
+        ("in_progress", "In Progress"),
+        ("finished", "Finished"),
+    ]
+
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="created_morpion_matches"
+    )
+    players = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name="morpion_matches",
+        blank=True
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="waiting"
+    )
+    winner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="won_morpion_matches",
+        null=True,
+        blank=True
+    )
+    player1_score = models.IntegerField(default=0)
+    player2_score = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_full(self):
+        return self.players.count() == 2
+
+    def can_start(self):
+        return self.is_full() and self.status == "waiting"

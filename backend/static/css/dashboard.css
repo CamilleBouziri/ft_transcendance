@@ -321,6 +321,14 @@ h2
   color: red;
 }
 
+.winner {
+  color: #00ff00; /* Vert pour le gagnant */
+}
+
+.loser {
+  color: red; /* Rouge pour le perdant */
+}
+
 /* ====================================================================================================== */
 /* ==========================================   BOUTONS ET STATS  ======================================= */
 /* ====================================================================================================== */
@@ -428,7 +436,7 @@ h2
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 500px;
+  /* height: 500px; */
   /* position: relative; */
 }
 
@@ -518,9 +526,12 @@ h2
   background: #ccc;
 }
 
+
+
 /* ====================================================================================================== */
 /* =============================================  BOUTTONS  ============================================= */
 /* ====================================================================================================== */
+
 
 .create-tournament-btn 
 {
@@ -581,6 +592,93 @@ h2
   cursor: pointer; 
   font-family: 'Press Start 2P', Arial, sans-serif; 
   z-index: 1000;
+}
+
+
+/* ====================================================================================================== */
+/* ===========================================  Matchs GAME  ============================================ */
+/* ====================================================================================================== */
+
+/* Style commun pour les sections de tournois et de matches */
+.matches-section {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.matches-section .achievement-title {
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.matches-section h2 {
+  color: #FFD700;
+  font-size: 1.5em;
+  margin: 0;
+}
+
+.matches-section .tournament-row {
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.matches-section .tournament-row:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.matches-section .btn {
+  background-color: #FFD700;
+  color: black;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.8em;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.matches-section .btn:hover {
+  background-color: #FFA500;
+  transform: scale(1.05);
+}
+
+.matches-section .empty-message {
+  text-align: center;
+  color: #888;
+  padding: 20px;
+}
+
+.matches-section .actions-cell {
+  text-align: center;
+}
+
+.matches-section .text-danger {
+  color: #FF4444;
+  margin: 0;
+}
+
+.matches-section .text-success {
+  color: #00C851;
+  margin: 0;
+}
+
+.match-row {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.match-row:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.matches-section .achievement-content {
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 /* ====================================================================================================== */

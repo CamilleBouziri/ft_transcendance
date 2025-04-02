@@ -1,7 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from .models import Game
+from .models import Game, MorpionMatch
 from tournois.models import Tournoi
 import json
 from django.views.decorators.csrf import csrf_protect
@@ -54,72 +54,6 @@ def start_game(request):
 
     return render(request, "game/index.html")
 
-# @login_required
-# def start_game(request):
-#     print("Début de start_game")  # Debug print
-#     if request.method == "POST":
-#         try:
-#             with transaction.atomic():
-#                 print(f"POST reçu pour l'utilisateur {request.user.nom}")  # Debug print
-                
-#                 # Récupérer une version fraîche de l'utilisateur
-#                 User = get_user_model()
-#                 player1 = User.objects.select_for_update().get(pk=request.user.pk)
-#                 print(f"Utilisateur récupéré: {player1.nom}")  # Debug print
-                
-#                 # Mettre à jour le statut
-#                 player1.is_playing = True
-#                 player1.save()
-#                 print(f"Statut mis à jour: is_playing = {player1.is_playing}")  # Debug print
-                
-#                 # Vérifier la mise à jour
-#                 player1.refresh_from_db()
-#                 print(f"Après refresh: is_playing = {player1.is_playing}")  # Debug print
-                
-#                 # Créer la partie
-#                 player1_score = int(request.POST.get("player1_score", 0))
-#                 player2_score = int(request.POST.get("player2_score", 0))
-#                 winner = player1.nom if player1_score > player2_score else "Player 2"
-                
-#                 game = Game.objects.create(
-#                     player1=player1,
-#                     player1_score=player1_score,
-#                     player2_score=player2_score,
-#                     winner=winner
-#                 )
-#                 print(f"Partie créée avec l'ID: {game.id}")  # Debug print
-                
-#                 return JsonResponse({
-#                     "status": "success", 
-#                     "game_id": game.id,
-#                     "is_playing": player1.is_playing
-#                 })
-                
-#         except Exception as e:
-#             print(f"ERREUR: {str(e)}")  # Debug print
-#             return JsonResponse({"status": "error", "message": str(e)})
-
-#     return render(request, "game/index.html")
-
-# @login_required
-# def start_game(request):
-
-#     if request.method == "POST":
-#         player1 = request.user
-#         player1_score = int(request.POST.get("player1_score", 0))
-#         player2_score = int(request.POST.get("player2_score", 0))
-#         winner = player1.nom if player1_score > player2_score else "Player 2"
-        
-#         # Crée une nouvelle partie
-#         game = Game.objects.create(
-#             player1=player1,
-#             player1_score=player1_score,
-#             player2_score=player2_score,
-#             winner=winner,
-#         )
-#         return JsonResponse({"status": "success", "game_id": game.id})
-
-#     return render(request, "game/index.html")
 
 
 @login_required
@@ -127,15 +61,6 @@ def start_game(request):
 def save_game_result(request):
     if request.method == 'POST':
         try:
-            # # Créer une nouvelle partie
-            # game = Game(
-            #     player1=request.user,
-            #     player2=request.POST.get('player2', 'Player 2'),
-            #     winner=request.POST.get('winner'),
-            #     player1_score=request.POST.get('player1_score'),
-            #     player2_score=request.POST.get('player2_score'),
-            # )
-            # Récupérer la dernière partie créée par l'utilisateur
             game = Game.objects.filter(
                 player1=request.user,
                 winner="En cours"
@@ -169,6 +94,10 @@ def dashboard(request):
     
     # Récupérer toutes les parties (Pong + Morpion)
     games = Game.objects.filter(player1=user).order_by("-created_at")
+    
+    # Récupérer les matches de Morpion
+    morpion_matches = MorpionMatch.objects.all().order_by("-created_at")
+    
     total_games = games.count()
 
     # Calculer les victoires et défaites
@@ -198,6 +127,7 @@ def dashboard(request):
         "level_progress": level_progress,
         "level": level,
         "tournois": tournois,
+        "morpion_matches": morpion_matches,  # Ajout des matches de Morpion au contexte
     }
 
     return render(request, "game/dashboard.html", context)
@@ -211,28 +141,116 @@ def morpion(request):
 
 
 
-
 @login_required
 @csrf_exempt
 def save_morpion_result(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
+            match = MorpionMatch.objects.get(id=data.get('match_id'))
+            
+            # Mettre à jour le statut du match
+            match.status = "finished"
+            match.player1_score = data.get('player1_score', 0)
+            match.player2_score = data.get('player2_score', 0)
+            
+            # Définir le gagnant
+            winner_name = data.get('winner')
+            if winner_name == match.creator.nom:
+                match.winner = match.creator
+            else:
+                match.winner = match.players.exclude(id=match.creator.id).first()
+            
+            match.save()
 
-            player1_score = int(data.get('player1_score', 0))
-            player2_score = int(data.get('player2_score', 0))
+            # Récupérer le second joueur
+            player2 = match.players.exclude(id=match.creator.id).first()
 
-            game = Game.objects.create(
-                player1=request.user,
-                name="Morpion Game",
-                player2=data.get('player2', 'Player 2'),
-                winner=data.get('winner'),
-                player1_score=player1_score,
-                player2_score=player2_score
+            # Créer une entrée pour le créateur (joueur 1)
+            Game.objects.create(
+                player1=match.creator,
+                player2=player2.nom,
+                winner=winner_name,
+                player1_score=data.get('player1_score', 0),
+                player2_score=data.get('player2_score', 0),
+                name="Morpion Game"
             )
 
-            return JsonResponse({'status': 'success', 'game_id': game.id})
+            # Créer une entrée pour le second joueur
+            Game.objects.create(
+                player1=player2,
+                player2=match.creator.nom,
+                winner=winner_name,
+                player1_score=data.get('player2_score', 0),  # Inversé pour le point de vue du joueur 2
+                player2_score=data.get('player1_score', 0),  # Inversé pour le point de vue du joueur 2
+                name="Morpion Game"
+            )
+
+            return JsonResponse({'status': 'success', 'match_id': match.id})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+
+
+
+@login_required
+def create_morpion_match(request):
+    match = MorpionMatch.objects.create(creator=request.user)
+    match.players.add(request.user)
+    return redirect('morpion_match_detail', match_id=match.id)
+
+@login_required
+def join_morpion_match(request, match_id):
+    match = get_object_or_404(MorpionMatch, id=match_id)
+    
+    if not match.is_full():
+        match.players.add(request.user)
+        if match.can_start():
+            match.status = "in_progress"
+            match.save()
+        return redirect('morpion_match_detail', match_id=match.id)
+    
+    messages.error(request, "This match is already full.")
+    return redirect('dashboard')
+
+@login_required
+def morpion_match_detail(request, match_id):
+    match = get_object_or_404(MorpionMatch, id=match_id)
+    # Vérifie si la partie est en cours
+    if match.status == "in_progress":
+        # Si l'utilisateur est le créateur, lance la partie
+        if request.user == match.creator:
+            opponent = match.players.exclude(id=request.user.id).first()
+            context = {
+                "match": match,
+                "opponent": opponent,
+                "is_creator": True
+            }
+            return render(request, "game/morpion.html", context)
+        # Si l'utilisateur n'est pas le créateur, redirige vers une page d'information
+        else:
+            context = {
+                "match": match,
+                "creator_name": match.creator.nom
+            }
+            return render(request, "game/not_creator_room.html", context)
+    # Si la partie n'est pas encore en cours, affiche la salle d'attente
+    return render(request, "game/waiting_room.html", {"match": match})
+
+
+
+@login_required
+def check_match_status(request, match_id):
+    """Vérifie le statut d'un match de Morpion."""
+    try:
+        match = MorpionMatch.objects.get(id=match_id)
+        return JsonResponse({
+            'status': match.status,
+            'winner': match.winner.nom if match.winner else None,
+            'players_count': match.players.count(),
+            'is_full': match.is_full()
+        })
+    except MorpionMatch.DoesNotExist:
+        return JsonResponse({'error': 'Match not found'}, status=404)

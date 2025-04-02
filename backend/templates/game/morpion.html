@@ -59,14 +59,28 @@
       font-size: 3rem;
       cursor: pointer;
       transition: background 0.3s, transform 0.2s;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .cell span {
+      animation: popIn 0.3s ease-in-out;
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
  
     .player-info p {
     margin: 0;
     color: #ffffff;
 }
-    .cell.x { color: cyan; }
-    .cell.o { color: red; }
 
     .player-info {
       border: 3px solid yellow;
@@ -127,17 +141,150 @@
     .dashboard-btn {
       display: none;
     }
+
+
+.settings-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.settings-popup-content {
+  background-color: #1a1a1a;
+  color: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0px 0px 20px 10px rgba(255, 255, 255, 0.3);
+  animation: slideDown 0.5s ease-in-out;
+  width: 90%;
+  max-width: 400px;
+}
+
+.settings-popup-content h2 {
+  color: #ffd700;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.settings-popup-content div {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.settings-popup-content label {
+  font-size: 1rem;
+  color: #fff;
+}
+
+.settings-popup-content input,
+.settings-popup-content select {
+  padding: 8px;
+  font-size: 1rem;
+  border: 2px solid #ffd700;
+  border-radius: 5px;
+  background-color: #000;
+  color: white;
+}
+
+#startGameBtn {
+  padding: 12px 25px;
+  background-color: #ffd700;
+  color: black;
+  font-family: 'Press Start 2P', sans-serif;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#startGameBtn:hover {
+  background-color: #ffae00;
+  color: white;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
   </style>
 </head>
 <body>
 
 <h1>{% trans "Morpion" %}</h1>
 
+<div id="settingsPopup" class="settings-popup">
+  <div class="settings-popup-content">
+    <h2>{% trans "Game Settings" %}</h2>
+    <div>
+        <label>{% trans "Player 1" %}: {{ match.creator.nom }}</label>
+    </div>
+    <div>
+        <label>{% trans "Player 2" %}: {{ opponent.nom }}</label>
+    </div>
+    <div>
+      <label for="player1Color">{% trans "Player 1 Color" %}:</label>
+      <input type="color" id="player1Color" value="#00ffff">
+    </div>
+    <div>
+      <label for="player2Color">{% trans "Player 2 Color" %}:</label>
+      <input type="color" id="player2Color" value="#ff0000">
+    </div>
+    <div>
+      <label for="player1Shape">{% trans "Player 1 Shape" %}:</label>
+      <select id="player1Shape">
+        <option value="X">X</option>
+        <option value="O">O</option>
+      </select>
+    </div>
+    <div>
+      <label for="player2Shape">{% trans "Player 2 Shape" %}:</label>
+      <select id="player2Shape">
+        <option value="O">O</option>
+        <option value="X">X</option>
+      </select>
+    </div>
+    <!-- Déplacement du champ Win Condition ici -->
+    <div style="margin-top: 20px;">
+      <label for="winCondition">{% trans "Matchs" %}:</label>
+      <input type="number" id="winCondition" min="1" value="1">
+    </div>
+    <button id="startGameBtn">{% trans "Play" %}</button>
+  </div>
+</div>
+
+
 <div class="turn-indicator" id="turnIndicator"> Turn: {{ user.nom }}</div>
 <div class="game-container">
   <div class="player-info">
-    <p><span style="color: cyan;">X</span> - {{ user.nom }}</p>
-    <p><span style="color: red;">O</span> - Joueur 2</p>
+    <p><span style="color: cyan;">X</span> - {{ match.creator.nom }}</p>
+    <p><span style="color: red;">O</span> - {{ opponent.nom }}</p>
   </div>
 
   <div class="board" id="board">
@@ -153,129 +300,223 @@
   </div>
 </div>
 
+
+
 <p class="winner-message" id="winnerMessage"></p>
 
 <div class="button-container">
   <button class="reset-btn" onclick="resetGame()">{% trans "Restart" %}</button>
   <a href="{% url 'dashboard' %}"><button class="dashboard-btn" id="dashboardBtn">{% trans "Dashboard" %}</button></a>
 </div>
+
 <script>
-  let currentPlayer = "X";
+document.addEventListener("DOMContentLoaded", () => {
+  const settingsPopup = document.getElementById("settingsPopup");
+  const startGameBtn = document.getElementById("startGameBtn");
+  const boardContainer = document.querySelector(".game-container");
+  const turnIndicator = document.getElementById("turnIndicator");
+  const winnerMessage = document.getElementById("winnerMessage");
+  
+  // Référence aux sélecteurs de forme
+  const player1ShapeSelect = document.getElementById("player1Shape");
+  const player2ShapeSelect = document.getElementById("player2Shape");
+
   let board = ["", "", "", "", "", "", "", "", ""];
   let gameOver = false;
-  let playerX = "{{ user.nom }}";
-  let playerO = "Joueur 2";
+  let currentPlayer = "X";
+  let player1Color = "#00ffff";
+  let player2Color = "#ff0000";
+  let player1Shape = "X";
+  let player2Shape = "O";
+  let winCondition = 1;
+  let player1Wins = 0;
+  let player2Wins = 0;
 
+  // Cache le jeu au début
+  boardContainer.style.display = "none";
+  turnIndicator.style.display = "none";
+
+  // Synchronisation des sélecteurs de forme pour éviter les doublons
+  player1ShapeSelect.addEventListener("change", function() {
+    // Si joueur 1 choisit une forme, on met l'autre forme pour joueur 2
+    player2ShapeSelect.value = this.value === "X" ? "O" : "X";
+  });
+
+  player2ShapeSelect.addEventListener("change", function() {
+    // Si joueur 2 choisit une forme, on met l'autre forme pour joueur 1
+    player1ShapeSelect.value = this.value === "X" ? "O" : "X";
+  });
+
+  // Démarre le jeu après avoir appliqué les paramètres
+  startGameBtn.addEventListener("click", () => {
+    player1Color = document.getElementById("player1Color").value;
+    player2Color = document.getElementById("player2Color").value;
+    player1Shape = player1ShapeSelect.value;
+    player2Shape = player2ShapeSelect.value;
+    winCondition = parseInt(document.getElementById("winCondition").value);
+
+    // Applique les couleurs aux informations des joueurs
+    document.querySelector(".player-info p:nth-child(1) span").textContent = player1Shape;
+    document.querySelector(".player-info p:nth-child(2) span").textContent = player2Shape;
+    document.querySelector(".player-info p:nth-child(1) span").style.color = player1Color;
+    document.querySelector(".player-info p:nth-child(2) span").style.color = player2Color;
+
+    // Affiche le jeu et cache le pop-up
+    settingsPopup.style.display = "none";
+    boardContainer.style.display = "flex";
+    turnIndicator.style.display = "block";
+
+    resetGame();
+  });
+
+  // Réinitialise le jeu
+  function resetGame() {
+    board = ["", "", "", "", "", "", "", "", ""];
+    gameOver = false;
+    currentPlayer = player1Shape;
+    winnerMessage.textContent = "";
+    document.querySelectorAll(".cell").forEach(cell => {
+      cell.innerHTML = ""; // Utilise innerHTML pour supprimer tout contenu
+      cell.style.backgroundColor = "#222"; // Réinitialise le fond à sa couleur d'origine
+    });
+    updateTurnIndicator();
+  }
+
+  // Met à jour l'indicateur de tour
+  function updateTurnIndicator() {
+    turnIndicator.textContent = `{% trans 'Turn: ' %}` + (currentPlayer === player1Shape ? "{{ user.nom }}" : "{{ opponent.nom }}");
+  }
+
+  // Vérifie le gagnant
   function checkWinner() {
-  const winPatterns = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8],
-    [0, 3, 6], [1, 4, 7], [2, 5, 8],
-    [0, 4, 8], [2, 4, 6]
-  ];
+    const winPatterns = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6]
+    ];
 
-  for (let pattern of winPatterns) {
-    let [a, b, c] = pattern;
-    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-      gameOver = true;
-      let winnerName = board[a] === "X" ? playerX : playerO;
+    for (let pattern of winPatterns) {
+      let [a, b, c] = pattern;
+      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+        gameOver = true;
+        let winnerName = board[a] === player1Shape ? "{{ user.nom }}" : "{{ opponent.nom }}";
 
-      document.getElementById("winnerMessage").textContent = " {% trans 'Winner :' %}" + winnerName + " 🏆";
+        if (board[a] === player1Shape) {
+          player1Wins++;
+        } else {
+          player2Wins++;
+        }
 
-      const gameData = {
-        player1: playerX,
-        player2: playerO,
-        winner: winnerName,
-        player1_score: winnerName === playerX ? 1 : 0,
-        player2_score: winnerName === playerO ? 1 : 0
-      };
+        // Met à jour les scores
+        document.querySelector(".player-info p:nth-child(1)").textContent =
+          `${player1Shape} - {{ user.nom }} (${player1Wins}/${winCondition})`;
+        document.querySelector(".player-info p:nth-child(2)").textContent =
+          `${player2Shape} - Joueur 2 (${player2Wins}/${winCondition})`;
 
-      console.log("Sending game data:", gameData);
+        // Vérifie si un joueur a atteint la condition de victoire
+        if (player1Wins === winCondition || player2Wins === winCondition) {
+          winnerMessage.textContent = `{% trans 'Winner :' %}` + winnerName + " 🏆";
+          document.getElementById("dashboardBtn").style.display = "inline-block";
 
-      fetch("{% url 'save_morpion_result' %}", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": "{{ csrf_token }}"
-        },
-        body: JSON.stringify(gameData)
-      })
-      .then(response => response.json())
-      .then(data => console.log("Game Saved Response:", data))
-      .catch(error => console.error("Error saving game:", error));
+          // Sauvegarde les résultats dans la base de données
+          saveGameResult(winnerName, player1Wins, player2Wins);
+        } else {
+          resetGame(); // Réinitialise pour la prochaine manche
+        }
+        return;
+      }
+    }
 
-      document.getElementById("dashboardBtn").style.display = "inline-block";
-      return;
+    // Vérifie si le jeu est nul
+    if (!board.includes("") && !gameOver) {
+      winnerMessage.textContent = "{% trans 'Draw!' %}";
+      resetGame(); // Ne pas envoyer de résultat à la base de données pour un match nul
     }
   }
 
-  if (!board.includes("") && !gameOver) {
-    document.getElementById("winnerMessage").textContent = "{% trans 'Draw!' %}";
-
-    fetch("{% url 'save_morpion_result' %}", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": "{{ csrf_token }}"
-      },
-      body: JSON.stringify({
-        player1: playerX,
-        player2: playerO,
-        winner: "Draw",
-        player1_score: 0,
-        player2_score: 0
-      })
-    })
-    .then(response => response.json())
-    .then(data => console.log("Draw Game Saved Response:", data))
-    .catch(error => console.error("Error saving draw game:", error));
-
-    gameOver = true;
-  }
-}
-
-
+  // Ajoute les événements aux cellules
   document.querySelectorAll(".cell").forEach(cell => {
+    // Survol de la case
     cell.addEventListener("mouseover", () => {
-      if (!cell.textContent && !gameOver) {
-        cell.style.backgroundColor = currentPlayer === "X" ? "cyan" : "red";
+      if (!cell.innerHTML && !gameOver) {
+        // Change la couleur de l'arrière-plan en fonction du joueur actuel
+        cell.style.backgroundColor = currentPlayer === player1Shape ? player1Color : player2Color;
       }
     });
 
+    // Sortie de la case
     cell.addEventListener("mouseleave", () => {
-      if (!cell.textContent && !gameOver) {
+      if (!cell.innerHTML && !gameOver) {
+        // Réinitialise l'arrière-plan à sa couleur par défaut
         cell.style.backgroundColor = "#222";
       }
     });
 
+    // Clic sur la case
     cell.addEventListener("click", () => {
       let index = cell.getAttribute("data-index");
 
       if (!board[index] && !gameOver) {
+        // Enregistre le symbole dans le tableau
         board[index] = currentPlayer;
-        cell.textContent = currentPlayer;
-        cell.classList.add(currentPlayer.toLowerCase());
-        cell.style.backgroundColor = "#222"; // Reset background after click
+
+        // Crée un span pour l'animation
+        const span = document.createElement("span");
+        span.textContent = currentPlayer;
+        span.style.color = currentPlayer === player1Shape ? player1Color : player2Color;
+        
+        // Réinitialise la couleur de fond à la valeur initiale
+        cell.style.backgroundColor = "#222";
+        
+        // Ajoute le span à la cellule
+        cell.innerHTML = "";
+        cell.appendChild(span);
+
+        // Vérifie le gagnant
         checkWinner();
-        currentPlayer = currentPlayer === "X" ? "O" : "X";
-        document.getElementById("turnIndicator").textContent = 
-          "{% trans 'Turn: ' %}" + (currentPlayer === "X" ? playerX : playerO);
+
+        // Change le joueur actuel
+        currentPlayer = currentPlayer === player1Shape ? player2Shape : player1Shape;
+
+        // Met à jour l'indicateur de tour
+        updateTurnIndicator();
       }
     });
   });
+});
 
-  function resetGame() {
-    board = ["", "", "", "", "", "", "", "", ""];
-    gameOver = false;
-    document.getElementById("winnerMessage").textContent = "";
-    document.querySelectorAll(".cell").forEach(cell => {
-      cell.textContent = "";
-      cell.classList.remove("x", "o");
-      cell.style.backgroundColor = "#222";
+function saveGameResult(winner, player1Score, player2Score) {
+    if (winner === "Draw") {
+        return;
+    }
+    
+    fetch("{% url 'save_morpion_result' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({
+            match_id: "{{ match.id }}",
+            player1_score: player1Score,
+            player2_score: player2Score,
+            winner: winner,
+            player1: "{{ match.creator.nom }}",
+            player2: "{{ opponent.nom }}"
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            console.log("Résultat sauvegardé avec succès :", data);
+        } else {
+            console.error("Erreur lors de la sauvegarde :", data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Erreur réseau :", error);
     });
-    currentPlayer = "X";
-    document.getElementById("turnIndicator").textContent = "{% trans 'Turn: ' %}" + playerX;
-  }
-
+}
 </script>
 
 </body>

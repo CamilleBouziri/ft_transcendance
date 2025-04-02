@@ -331,6 +331,15 @@
             </div>
         </div>
 
+        <!-- Choix du mode de jeu -->
+        <div class="option-group">
+            <h2 class="option-group-title">{% trans "Game Mode" %}</h2>
+            <div class="points-container" id="gameModeGroup">
+                <div class="point-box" data-mode="ia">{% trans "IA" %}</div>
+                <div class="point-box" data-mode="2players">{% trans "2 Players" %}</div>
+            </div>
+        </div>
+        
         <!-- Bouton Play -->
         <button class="play-button" onclick="applySettings()">{% trans "Play" %}</button>
     </div>
@@ -413,6 +422,7 @@
         let selectedPaddle2 = null;
         let selectedTerrain = null;
         let selectedPoints = null;
+        let selectedGameMode = null;
 
         // Ajout d'écouteurs de clic sur les bulles "ballColorBubbles"
         const ballBubbles = document.getElementById('ballColorBubbles').getElementsByClassName('color-bubble');
@@ -464,23 +474,35 @@
             });
         }
 
+        // Mode de jeu
+        const gameModeContainer = document.getElementById('gameModeGroup').getElementsByClassName('point-box');
+        for (let box of gameModeContainer) {
+            box.addEventListener('click', () => {
+                for (let b of gameModeContainer) b.classList.remove('selected');
+                box.classList.add('selected');
+                selectedGameMode = box.getAttribute('data-mode');
+            });
+        }
+
         // Appliquer les réglages et démarrer
         function applySettings() {
-            // Par sécurité, si jamais l'utilisateur n'a rien sélectionné, on met quelques valeurs par défaut
+    // Par sécurité, si jamais l'utilisateur n'a rien sélectionné, on met quelques valeurs par défaut
             if (!selectedBallColor) selectedBallColor = '#FF0000';
             if (!selectedPaddle1)  selectedPaddle1  = '#FFFFFF';
             if (!selectedPaddle2)  selectedPaddle2  = '#00FF00';
             if (!selectedTerrain)  selectedTerrain  = '#00FF00';
             if (!selectedPoints)   selectedPoints   = '5';
-
+            if (!selectedGameMode) selectedGameMode = '2players'; // Mode par défaut : 2 joueurs
+                
             const settings = {
                 ballColor:     selectedBallColor,
                 paddleColor1:  selectedPaddle1,
                 paddleColor2:  selectedPaddle2,
                 terrainColor:  selectedTerrain,
                 maxScore:      parseInt(selectedPoints),
+                mode:          selectedGameMode, // Ajout du mode de jeu
             };
-
+        
             localStorage.setItem('pongSettings', JSON.stringify(settings));
             startGame();
         }

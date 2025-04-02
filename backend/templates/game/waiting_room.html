@@ -1,0 +1,128 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% trans "Waiting Room" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Press Start 2P', sans-serif;
+            text-align: center;
+            padding-top: 50px;
+        }
+        
+        .waiting-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .player-list {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid white;
+            border-radius: 10px;
+        }
+        
+        .waiting-text {
+            color: yellow;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            50% { opacity: 0.5; }
+        }
+        .back-button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #000;
+        color: yellow;
+        border: 2px solid yellow;
+        font-family: 'Press Start 2P', sans-serif;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .back-button:hover {
+        background-color: yellow;
+        color: black;
+    }
+
+    .winner-container {
+        margin-top: 20px;
+        padding: 20px;
+        border: 2px solid red;
+        border-radius: 10px;
+        background-color: rgba(255, 0, 0, 0.1);
+    }
+
+    .winner-title {
+        color: red;
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    .winner-name {
+        color: white;
+        font-size: 1.2rem;
+    }
+
+    .winner-container.visible {
+        display: block;
+    }
+    </style>
+</head>
+<body>
+    <div class="waiting-container">
+        <h1>{% trans "Waiting Room" %}</h1>
+        <div class="player-list">
+            <h2>{% trans "Players" %} ({{ match.players.count }}/2)</h2>
+            {% for player in match.players.all %}
+                <p>{{ player.nom }}</p>
+            {% endfor %}
+        </div>
+
+        {% if match.status == "waiting" %}
+            <p class="waiting-text">{% trans "Waiting for another player..." %}</p>
+        {% elif match.status == "finished" %}
+            <div class="winner-container">
+                <h2 class="winner-title">{% trans "Winner" %}</h2>
+                <p class="winner-name">{{ match.winner.nom }}</p>
+            </div>
+        {% endif %}
+
+        <a href="{% url 'dashboard' %}" class="back-button">
+            {% trans "Return to Dashboard" %}
+        </a>
+    </div>
+    
+
+<script>
+    function checkMatchStatus() {
+        fetch("{% url 'check_match_status' match.id %}")
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "in_progress") {
+                    window.location.href = "{% url 'morpion_match_detail' match.id %}";
+                } else if (data.status === "finished") {
+                    // Affiche le vainqueur dans la salle d'attente
+                    const winnerContainer = document.querySelector('.winner-container');
+                    if (winnerContainer && !winnerContainer.classList.contains('visible')) {
+                        winnerContainer.style.display = 'block';
+                        winnerContainer.querySelector('.winner-name').textContent = data.winner;
+                        winnerContainer.classList.add('visible'); // Marque comme visible pour éviter de réinitialiser
+                    }
+                }
+            });
+    }
+
+    setInterval(checkMatchStatus, 2000);
+</script>
+
+</body>
+</html>

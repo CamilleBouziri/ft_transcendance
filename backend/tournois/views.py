@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from random import shuffle
+from django.http import JsonResponse
 from .models import Tournoi, Match, Classement
 from django.views.decorators.csrf import csrf_exempt
 
@@ -11,27 +12,60 @@ from django.views.decorators.csrf import csrf_exempt
 def creer_tournoi(request):
     if request.method == "POST":
         nom = request.POST.get("nom")
+        joueur_nom = request.POST.get("joueur_nom", "").strip()  # Récupère le nom personnalisé
+
         if not nom:
             messages.error(request, "Le nom du tournoi est obligatoire.")
             return redirect("creer_tournois")
+
+        # Crée le tournoi
         tournoi = Tournoi.objects.create(nom=nom, createur=request.user)
+
+        # Utilise le nom personnalisé ou le nom d'utilisateur par défaut
+        joueur_nom = joueur_nom if joueur_nom else request.user.nom
+
+        # Ajoute le joueur au tournoi
         tournoi.joueurs.add(request.user)
-        messages.success(request, "Tournoi créé avec succès.")
+
+        # Enregistre le nom personnalisé dans le champ JSON
+        tournoi.joueurs_noms_personnalises[str(request.user.id)] = joueur_nom
+        tournoi.save()
+
+        messages.success(request, f"Tournoi créé avec succès. Vous jouerez sous le nom '{joueur_nom}'.")
         return redirect("dashboard")
+
     return render(request, "tournois/creer_tournois.html")
+
 
 @login_required
 def rejoindre_tournoi(request, tournoi_id):
     tournoi = get_object_or_404(Tournoi, id=tournoi_id)
-    if tournoi.est_complet():
-        messages.error(request, "Ce tournoi est déjà complet.")
+
+    if request.method == "POST":
+        joueur_nom = request.POST.get("joueur_nom", "").strip()  # Récupère le nom personnalisé
+
+        if tournoi.est_complet():
+            messages.error(request, "Le tournoi est déjà complet.")
+            return redirect("dashboard")
+
+        if request.user in tournoi.joueurs.all():
+            messages.error(request, "Vous êtes déjà inscrit à ce tournoi.")
+            return redirect("dashboard")
+
+        # Utilise le nom personnalisé ou le nom d'utilisateur par défaut
+        joueur_nom = joueur_nom if joueur_nom else request.user.nom
+
+        # Ajoute le joueur au tournoi
+        tournoi.joueurs.add(request.user)
+
+        # Enregistre le nom personnalisé dans le champ JSON
+        tournoi.joueurs_noms_personnalises[str(request.user.id)] = joueur_nom
+        tournoi.save()
+
+        messages.success(request, f"Vous avez rejoint le tournoi sous le nom '{joueur_nom}'.")
         return redirect("dashboard")
-    if request.user in tournoi.joueurs.all():
-        messages.error(request, "Vous êtes déjà inscrit à ce tournoi.")
-        return redirect("dashboard")
-    tournoi.joueurs.add(request.user)
-    messages.success(request, "Vous avez rejoint le tournoi avec succès.")
-    return redirect("dashboard")
+
+    return render(request, "tournois/rejoindre_tournois.html", {"tournoi": tournoi})
 
 
 @login_required
@@ -164,24 +198,36 @@ def save_game_result(request):
 @login_required
 def detail_tournoi(request, tournoi_id):
     tournoi = get_object_or_404(Tournoi, id=tournoi_id)
-    joueurs = list(tournoi.joueurs.all().order_by("id"))
-    matchs = list(tournoi.matchs.all().order_by("round", "date_match"))  # 🔥 Assure-toi que ça récupère bien les matchs !
+    joueurs = list(tournoi.joueurs.all())
+    matches = list(tournoi.matchs.all().order_by('round'))
+    # avatars = list(tounoi.joueurs_avatars.all())
 
-    return render(request, "tournois/detail_tournois.html", {
-        "tournoi": tournoi,
-        "joueur1": joueurs[0] if len(joueurs) > 0 else None,
-        "joueur2": joueurs[1] if len(joueurs) > 1 else None,
-        "joueur3": joueurs[2] if len(joueurs) > 2 else None,
-        "joueur4": joueurs[3] if len(joueurs) > 3 else None,
-        "matches": matchs,  # 🔥 Vérifie que tu passes bien "matches" au template
-    })
+    # Récupère les noms personnalisés ou les noms par défaut
+    joueurs_affichage = [
+        tournoi.joueurs_noms_personnalises.get(str(joueur.id), joueur.nom)
+        for joueur in joueurs
+    ]
+    # Récupère le nom personnalisé de l'utilisateur connecté
+    nom_utilisateur_tournoi = tournoi.joueurs_noms_personnalises.get(str(request.user.id), request.user.nom)
 
+    context = {
+        'tournoi': tournoi,
+        'joueur1': joueurs_affichage[0] if len(joueurs_affichage) > 0 else None,
+        'joueur2': joueurs_affichage[1] if len(joueurs_affichage) > 1 else None,
+        'joueur3': joueurs_affichage[2] if len(joueurs_affichage) > 2 else None,
+        'joueur4': joueurs_affichage[3] if len(joueurs_affichage) > 3 else None,
+        'matches': matches,
+        # 'avatars': avatars,
+        'nom_utilisateur_tournoi': nom_utilisateur_tournoi,  # Ajout du nom personnalisé
+    }
+    return render(request, 'tournois/detail_tournois.html', context)
 
 @login_required
 def historique_tournoi(request, tournoi_id):
     tournoi = get_object_or_404(Tournoi, id=tournoi_id)
     matchs = tournoi.matchs.all().order_by("date_match")
     return render(request, "tournois/historique_tournoi.html", {"tournoi": tournoi, "matchs": matchs})
+
 
 @login_required
 def classement_tournoi(request, tournoi_id):
@@ -205,3 +251,46 @@ def mettre_a_jour_tournoi(self):
         self.save()
 
 
+@login_required
+def get_joueurs_noms(request, tournoi_id):
+    tournoi = get_object_or_404(Tournoi, id=tournoi_id)
+    joueurs = tournoi.joueurs.all()
+    # Construire une liste avec les noms personnalisés ou les noms par défaut
+    joueurs_data = [
+        {
+            "id": joueur.id,
+            "nom": tournoi.joueurs_noms_personnalises.get(str(joueur.id), joueur.nom)
+        }
+        for joueur in joueurs
+    ]
+    return JsonResponse({"joueurs": joueurs_data})
+
+
+@login_required
+def get_tournament_status(request, tournoi_id):
+    tournoi = get_object_or_404(Tournoi, id=tournoi_id)
+    return JsonResponse({
+        'statut': tournoi.statut,
+        'is_creator': request.user == tournoi.createur,
+        'creator_name': tournoi.createur.nom,
+        'players_count': tournoi.joueurs.count()
+    })
+
+
+@login_required
+def get_tournoi_info(request, tournoi_id):
+    tournoi = get_object_or_404(Tournoi, id=tournoi_id)
+    data = {
+        "statut": tournoi.get_statut_display(),
+        "joueurs_count": tournoi.joueurs.count(),
+    }
+    return JsonResponse(data)
+
+@login_required
+def get_tournoi_ready_status(request, tournoi_id):
+    tournoi = get_object_or_404(Tournoi, id=tournoi_id)
+    data = {
+        "is_ready": tournoi.joueurs.count() == 4 and tournoi.statut == "en_attente",
+        "is_creator": request.user == tournoi.createur,
+    }
+    return JsonResponse(data)
