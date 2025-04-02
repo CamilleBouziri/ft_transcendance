@@ -16,7 +16,10 @@
 </head>
 <body>
     <div class="chat-room">
-        <h1>{{ room_name }}</h1>
+        <div class="room-header">
+            <h1>{{ room_name }}</h1>
+            <button id="block-user" class="block-button">Bloquer</button>
+        </div>
         <div id="connection-status" style="color: red;"></div>
         
         <div class="messages-container" id="messages">

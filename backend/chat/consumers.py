@@ -3,6 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.apps import apps
 from datetime import datetime
+from django.db.models import Q
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -45,6 +46,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
             data = json.loads(text_data)
             message = data['message']
             user = self.scope["user"]
+
+            is_blocked = await self.is_user_blocked()
+            if is_blocked:
+                await self.send(text_data=json.dumps({
+                    'error': 'Vous ne pouvez pas envoyer de message à cet utilisateur',
+                    'is_blocked': True
+                }))
+                return
+
             
             saved_message = await self.save_message(user, message)
             if saved_message:
@@ -88,4 +98,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return message
         except Exception as e:
             print(f"Erreur lors de la sauvegarde du message: {str(e)}")
-            return None 
+            return None
+
+    @database_sync_to_async
+    def is_user_blocked(self):
+        # Le format est maintenant "private_user1_user2"
+        users = self.room_name.replace('private_', '').split('_')
+        other_user = users[1] if users[0] == self.scope["user"].nom else users[0]
+        
+        UserBlock = apps.get_model('chat', 'UserBlock')
+        block_exists = UserBlock.objects.filter(
+            (Q(blocker=self.scope["user"]) & Q(blocked__nom=other_user)) |
+            (Q(blocker__nom=other_user) & Q(blocked=self.scope["user"]))
+        ).exists()
+        
+        return block_exists

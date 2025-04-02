@@ -1,6 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Room, Message
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+import json
+from .models import UserBlock
 
 @login_required
 def index(request):
@@ -72,3 +78,51 @@ def conversations_list(request):
     return render(request, 'chat/conversations.html', {
         'conversations': conversations
     })
+
+
+User = get_user_model()
+
+@login_required
+@require_POST
+def block_user(request):
+    try:
+        data = json.loads(request.body)
+        blocked_username = data.get('blocked_user')
+        
+        print(f"Tentative de blocage de l'utilisateur: {blocked_username}")
+        print(f"Par l'utilisateur: {request.user.nom}")
+        
+        # Récupérer l'utilisateur à bloquer en ignorant la casse
+        blocked_user = User.objects.filter(nom__iexact=blocked_username).first()
+        
+        if not blocked_user:
+            print(f"Utilisateur non trouvé: {blocked_username}")
+            return JsonResponse({
+                'success': False,
+                'message': f"Utilisateur '{blocked_username}' non trouvé"
+            }, status=404)
+            
+        # Vérifier si le blocage existe déjà
+        block, created = UserBlock.objects.get_or_create(
+            blocker=request.user,
+            blocked=blocked_user
+        )
+        
+        if not created:  # Si le blocage existait déjà, on le supprime
+            block.delete()
+            is_blocked = False
+        else:
+            is_blocked = True
+            
+        return JsonResponse({
+            'success': True,
+            'is_blocked': is_blocked,
+            'message': 'Utilisateur bloqué' if is_blocked else 'Utilisateur débloqué'
+        })
+        
+    except Exception as e:
+        print(f"Erreur lors du blocage: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=400)

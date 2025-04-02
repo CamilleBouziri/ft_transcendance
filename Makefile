@@ -3,6 +3,7 @@ PROJECT_NAME = ft_transcendence
 
 up:
 	- $(DOCKER_COMPOSE) up --build -d
+	sleep 10
 	$(DOCKER_COMPOSE) exec backend python manage.py makemigrations
 	$(DOCKER_COMPOSE) exec backend python manage.py migrate
 
