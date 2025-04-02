@@ -119,6 +119,10 @@
       <label for="nom">{% trans "Tournament Name" %}</label>
       <input type="text" name="nom" id="nom" required>
     </div>
+    <div class="form-group">
+      <label for="joueur_nom">{% trans "Player Name" %}</label>
+      <input type="text" name="joueur_nom" id="joueur_nom" placeholder="{% trans 'Default: Your Username' %}">
+    </div>
     <button type="submit" class="btn-create">{% trans "Create" %}</button>
   </form>
 </div>

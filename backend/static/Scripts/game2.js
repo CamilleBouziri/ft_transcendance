@@ -25,7 +25,7 @@ var maxScore = 7;
 var cameraSide = 0;
 
 // Game mode
-var mode = "ia";
+var mode = "2players"; 
 
 // For pause
 var paused = false;

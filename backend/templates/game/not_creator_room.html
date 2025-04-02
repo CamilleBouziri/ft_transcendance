@@ -1,0 +1,62 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% trans "Access Restricted" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Press Start 2P', sans-serif;
+            text-align: center;
+            padding-top: 50px;
+        }
+
+        .info-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 2px solid yellow;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .info-container h1 {
+            color: yellow;
+            margin-bottom: 20px;
+        }
+
+        .info-container p {
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: yellow;
+            color: black;
+            border: none;
+            font-family: 'Press Start 2P', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .back-button:hover {
+            background-color: orange;
+        }
+    </style>
+</head>
+<body>
+    <div class="info-container">
+        <h1>{% trans "Access Restricted" %}</h1>
+        <p>{% trans "The game can only be played in the creator's interface:" %} <strong>{{ creator_name }}</strong></p>
+        <a href="{% url 'dashboard' %}" class="back-button">{% trans "Return to Dashboard" %}</a>
+    </div>
+</body>
+</html>

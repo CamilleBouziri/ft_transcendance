@@ -86,7 +86,7 @@
           <a href="{% url 'start_game' %}">
             <button>{% trans "Pong" %}</button>
           </a>
-          <a href="{% url 'morpion' %}">
+          <a href="{% url 'create_morpion_match' %}">
             <button>{% trans "Morpion" %}</button>
           </a>
           <button id="close-popup" class="close-btn">✖</button>
@@ -147,6 +147,54 @@
           </table>
         </div>
       </div>
+     <!-- Dans votre dashboard.html, vérifiez que cette section existe et est correctement placée -->
+<div class="matches-section container">
+  <div class="achievement-title">
+    <h2>{% trans "Morpion Matches" %}</h2>
+    <!-- <div class="create-tournament-btn">
+      <a href="{% url 'create_morpion_match' %}" class="btn">
+        {% trans "Create Match" %}
+      </a>
+    </div> -->
+    <div class="highlight-bar"></div>
+  </div>
+  <div class="achievement-content">
+    <table class="tournaments-table">
+      <thead>
+        <tr>
+          <th>{% trans "Creator" %}</th>
+          <th>{% trans "Status" %}</th>
+          <th>{% trans "Players" %}</th>
+          <th>{% trans "Actions" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for match in morpion_matches %}
+          <tr class="match-row" data-url="{% url 'morpion_match_detail' match.id %}">
+            <td>{{ match.creator.nom }}</td>
+            <td>{{ match.get_status_display }}</td>
+            <td>{{ match.players.count }}/2</td>
+            <td class="actions-cell">
+              {% if match.is_full %}
+                <p class="text-danger">{% trans "Match is full" %}</p>
+              {% elif user in match.players.all %}
+                <p class="text-success">{% trans "You have joined this match" %}</p>
+              {% else %}
+                <a href="{% url 'join_morpion_match' match.id %}" class="btn btn-primary" onclick="event.stopPropagation();">
+                  {% trans "Join Match" %}
+                </a>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" class="empty-message">{% trans "No Morpion matches available." %}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
     </div>
   
   <!-- ------------------------------------------------------------------------------- -->
@@ -173,15 +221,23 @@
         <div class="history-list">
           {% for game in games %}
             <div class="history-item">
-              <div class="player-name {% if game.winner == user.nom and game.player1 == user.nom %}winner{% elif game.player1 == user.nom %}loser{% endif %}">
+              <!-- Joueur 1 -->
+              <div class="player-name {% if game.winner == game.player1 %}winner{% else %}loser{% endif %}">
                 {{ game.player1 }}
               </div>
               <div class="score-display">
-                <span class="{% if game.winner == game.player1 %}winner{% else %}loser{% endif %}">{{ game.player1_score }}</span>
+                <!-- Score du joueur 1 -->
+                <span class="{% if game.winner == game.player1 %}winner{% else %}loser{% endif %}">
+                  {{ game.player1_score }}
+                </span>
                 <span class="score-separator">-</span>
-                <span class="{% if game.winner == game.player2 %}winner{% else %}loser{% endif %}">{{ game.player2_score }}</span>
+                <!-- Score du joueur 2 -->
+                <span class="{% if game.winner == game.player2 %}winner{% else %}loser{% endif %}">
+                  {{ game.player2_score }}
+                </span>
               </div>
-              <div class="player-name {% if game.winner == user.nom and game.player2 == user.nom %}winner{% elif game.player2 == user.nom %}loser{% endif %}">
+              <!-- Joueur 2 -->
+              <div class="player-name {% if game.winner == game.player2 %}winner{% else %}loser{% endif %}">
                 {{ game.player2 }}
               </div>
             </div>
@@ -197,6 +253,13 @@
   document.addEventListener('DOMContentLoaded', function() {
     const tournamentRows = document.querySelectorAll('.tournament-row');
     tournamentRows.forEach(row => {
+      row.addEventListener('click', function() {
+        window.location.href = this.dataset.url;
+      });
+    });
+    // Gestion des clics sur les lignes de matches de Morpion
+    const matchRows = document.querySelectorAll('.match-row');
+    matchRows.forEach(row => {
       row.addEventListener('click', function() {
         window.location.href = this.dataset.url;
       });

@@ -20,6 +20,10 @@ urlpatterns = [
     path('accueil/', auth_views.accueil, name='accueil'),
     path('dashboard/', game_views.dashboard, name='dashboard'),
     path('game/', game_views.start_game, name='start_game'), 
+    path('morpion/create/', game_views.create_morpion_match, name='create_morpion_match'),
+    path('morpion/join/<int:match_id>/', game_views.join_morpion_match, name='join_morpion_match'),
+    path('morpion/match/<int:match_id>/', game_views.morpion_match_detail, name='morpion_match_detail'),
+    path('morpion/match/<int:match_id>/status/', game_views.check_match_status, name='check_match_status'),
 
     path("create_tournois/", tournois_views.creer_tournoi, name="creer_tournois"),
     path("join_tournament/<int:tournoi_id>/", tournois_views.rejoindre_tournoi, name="rejoindre_tournoi"),
@@ -28,7 +32,12 @@ urlpatterns = [
     path("tournoi/<int:tournoi_id>/historique/", tournois_views.historique_tournoi, name="historique_tournoi"),
     path("tournoi/<int:tournoi_id>/classement/", tournois_views.classement_tournoi, name="classement_tournoi"),
     path("enregistrer_resultat_match/<int:match_id>/", tournois_views.enregistrer_resultat_match, name="enregistrer_resultat_match"),
+    path("rejoindre_tournoi/<int:tournoi_id>/", tournois_views.rejoindre_tournoi, name="rejoindre_tournois"),
+    path('tournois/<int:tournoi_id>/info/', tournois_views.get_tournoi_info, name='get_tournoi_info'),
+    path('tournois/<int:tournoi_id>/ready-status/', tournois_views.get_tournoi_ready_status, name='get_tournoi_ready_status'),
 
+    path('tournois/<int:tournoi_id>/status/', tournois_views.get_tournament_status, name='get_tournament_status'),
+    path('get_joueurs_noms/<int:tournoi_id>/', tournois_views.get_joueurs_noms, name='get_joueurs_noms'),
     path("jeu_tournois/<int:match_id>/", tournois_views.jeu_tournois, name="jeu_tournois"),
     path('', include('social_django.urls', namespace='social')),
     path('save-result/', game_views.save_game_result, name='save_game_result'),
