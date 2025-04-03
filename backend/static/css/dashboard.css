@@ -228,9 +228,9 @@ h2
 .left-column, .right-column 
 {
   flex: 1;
-  /* display: flex; */
+  display: flex;
   flex-direction: column;
-  height: 800px;
+  /* height: 800px; */
   width: 48%;
   border-radius: 10px;
   box-shadow: 0px 0px 50px 33px rgba(0, 255, 255, 0.168);
@@ -247,7 +247,7 @@ h2
 .left-column
 {
   margin-left: 1%;
-  height: fit-content;
+  height: auto;
   /* background-color: #00ff00; */
 } 
 
@@ -263,7 +263,7 @@ h2
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 500px;
+  height: auto;
   /* margin-bottom: 50px; */
 }
 
@@ -288,6 +288,7 @@ h2
   justify-content: space-between;
   align-items: center;
   gap: 10px;
+  margin-bottom: 20px;
   font-size: 1.2rem;
 }
 
@@ -329,9 +330,92 @@ h2
   color: red; /* Rouge pour le perdant */
 }
 
+
+.history-item .match-date {
+  font-size: 0.8rem;
+  color: #00ff00; /* Vert pour rappeler le thème du jeu */
+  text-align: center;
+  margin-top: 5px;
+  font-family: "Press Start 2P", Arial, sans-serif;
+  background: #222; /* Fond sombre pour le contraste */
+  padding: 5px;
+  border-radius: 5px;
+  border: 2px solid white;
+  box-shadow: 0px 0px 10px rgba(0, 255, 0, 0.5);
+}
+
 /* ====================================================================================================== */
 /* ==========================================   BOUTONS ET STATS  ======================================= */
 /* ====================================================================================================== */
+
+.btn2 {
+  /* margin-top: +50px; */
+  right: -30px;
+  padding: 0.6em 2em;
+  border: none;
+  outline: none;
+  color: rgb(255, 255, 255);
+  background: #111;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.btn2:before {
+  content: "";
+  background: linear-gradient(
+    45deg,
+    #ff0000,
+    #ff7300,
+    #fffb00,
+    #48ff00,
+    #00ffd5,
+    #002bff,
+    #7a00ff,
+    #ff00c8,
+    #ff0000
+  );
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  -webkit-filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowing-btn2 20s linear infinite;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 10px;
+}
+
+@keyframes glowing-btn2 {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+.btn2:after {
+  z-index: -1;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #222;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+}
 
 .buttons-container
 {
@@ -393,13 +477,13 @@ h2
 
 .win-loss 
 {
-  flex: 1;
-  padding: 10px;
+  /* flex: 1; */
+  padding: 20px;
   display: flex;
   justify-content: space-around;
   align-items: center;
   text-align: center;
-  height: 100px;
+  /* height: 100px; */
   margin-bottom: 10px;
   /* margin-top: 10px; */
   /* background-color: #00ff ; */
@@ -581,6 +665,7 @@ h2
   color: #000;
 }
 
+
 #friend-btn 
 {
   display: inline-block; 
@@ -609,10 +694,9 @@ h2
 }
 
 .matches-section .achievement-title {
-  display: flex;
-  /* justify-content: space-between; */
+  justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  text-align: center; 
 }
 
 .matches-section h2 {
