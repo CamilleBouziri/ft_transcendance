@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 import json
 from .models import UserBlock
+from auth_app.models import Utilisateurs
+from amis.models import Ami
 
 @login_required
 def index(request):
@@ -20,6 +22,10 @@ def room(request, room_name):
     users = sorted([request.user.nom, room_name])
     unique_room_name = f"private_{users[0]}_{users[1]}"
     
+     # Récupérer l'ami (l'autre utilisateur)
+    other_username = room_name  # car room_name contient le nom de l'autre utilisateur
+    ami = get_object_or_404(Utilisateurs, nom=other_username)
+    
     room, created = Room.objects.get_or_create(
         name=unique_room_name,
         defaults={'created_by': request.user}
@@ -31,6 +37,7 @@ def room(request, room_name):
     return render(request, 'chat/room.html', {
         'room_name': room_name,
         'room': room,
+        'ami': ami,
         'messages': messages
     })
 

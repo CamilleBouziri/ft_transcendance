@@ -18,6 +18,8 @@
     <div class="chat-room">
         <div class="room-header">
             <h1>{{ room_name }}</h1>
+            <!-- <a href="{% url 'profil_ami' ami_nom=ami.nom %}" class="btn">Voir le profil</a> -->
+            <button onclick="window.location.href='{% url 'profil_ami' ami_nom=ami.nom %}'" class="btn">Voir le profil</button>
             <button id="block-user" class="block-button">Bloquer</button>
         </div>
         <div id="connection-status" style="color: red;"></div>
