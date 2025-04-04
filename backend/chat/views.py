@@ -133,3 +133,30 @@ def block_user(request):
             'success': False,
             'message': str(e)
         }, status=400)
+
+@login_required
+def get_room_messages(request, room_id):
+    """Récupère tous les messages d'une salle de chat."""
+    room = get_object_or_404(Room, id=room_id)
+    
+    # Récupérer les messages (les 50 derniers)
+    messages = Message.objects.filter(room=room).order_by('created_at')[:50]
+    
+    # Formater les messages pour le JSON
+    messages_data = []
+    for msg in messages:
+        message_data = {
+            'id': msg.id,
+            'user': msg.user.nom,
+            'content': msg.content,
+            'timestamp': msg.created_at.strftime("%H:%M"),
+            'message_type': msg.message_type
+        }
+        
+        # Ajouter les données de jeu si c'est une invitation
+        if msg.message_type == 'game_invite' and msg.game_data:
+            message_data['game_data'] = msg.game_data
+        
+        messages_data.append(message_data)
+    
+    return JsonResponse({'messages': messages_data})

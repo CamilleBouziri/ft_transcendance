@@ -26,6 +26,12 @@ class Message(models.Model):
     user = models.ForeignKey(Utilisateurs, on_delete=models.CASCADE)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    MESSAGE_TYPES = [
+        ('text', 'Message texte'),
+        ('game_invite', 'Invitation à jouer')
+    ]
+    message_type = models.CharField(max_length=20, choices=MESSAGE_TYPES, default='text')
+    game_data = models.JSONField(null=True, blank=True)
 
     class Meta:
         ordering = ['timestamp']

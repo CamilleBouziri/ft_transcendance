@@ -20,6 +20,7 @@ urlpatterns = [
     path('accueil/', auth_views.accueil, name='accueil'),
     path('dashboard/', game_views.dashboard, name='dashboard'),
     path('game/', game_views.start_game, name='start_game'), 
+    path('game/join/', game_views.join_game, name='join_game'),
     path('morpion/create/', game_views.create_morpion_match, name='create_morpion_match'),
     path('morpion/join/<int:match_id>/', game_views.join_morpion_match, name='join_morpion_match'),
     path('morpion/match/<int:match_id>/', game_views.morpion_match_detail, name='morpion_match_detail'),
@@ -51,6 +52,5 @@ urlpatterns = [
 
     path('amis/', include('amis.urls')),
     path('chat/', include('chat.urls', namespace='chat')),
-
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

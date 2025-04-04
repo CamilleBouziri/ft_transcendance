@@ -53,6 +53,12 @@ class MorpionMatch(models.Model):
     player1_score = models.IntegerField(default=0)
     player2_score = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='initiated_morpion_matches',
+        null=True
+    )
 
     def is_full(self):
         return self.players.count() == 2

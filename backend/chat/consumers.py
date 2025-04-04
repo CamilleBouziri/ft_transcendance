@@ -4,6 +4,8 @@ from channels.db import database_sync_to_async
 from django.apps import apps
 from datetime import datetime
 from django.db.models import Q
+from django.contrib.auth import get_user_model
+from chat.models import Room, Message
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -43,61 +45,85 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         try:
-            data = json.loads(text_data)
-            message = data['message']
-            user = self.scope["user"]
-
-            is_blocked = await self.is_user_blocked()
-            if is_blocked:
-                await self.send(text_data=json.dumps({
-                    'error': 'Vous ne pouvez pas envoyer de message à cet utilisateur',
-                    'is_blocked': True
-                }))
-                return
-
+            text_data_json = json.loads(text_data)
+            message_type = text_data_json.get('type', 'text')
+            message_text = text_data_json.get('message', '')
             
-            saved_message = await self.save_message(user, message)
-            if saved_message:
-                print(f"[{datetime.now()}] Message sauvegardé de {user.nom}: {message}")
+            current_user = self.scope["user"].nom
+            room_name = self.room_name
+            current_time = datetime.now().strftime("%H:%M")
+            
+            print(f"Message reçu: type={message_type}, text={message_text}, user={current_user}")
+            
+            # Préparer le message à envoyer
+            message_data = {
+                'sender': current_user,
+                'timestamp': current_time,
+                'message': message_text,
+                'type': message_type,
+                'room': room_name
+            }
+            
+            # Ajouter des infos pour invitation de jeu
+            if message_type == 'game_invite':
+                game_type = text_data_json.get('game')
+                message_data['game'] = game_type
+                game_data = {'game': game_type}
                 
-                await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {
-                        'type': 'chat.message',
-                        'message': message,
-                        'user': user.nom,
-                        'timestamp': saved_message.timestamp.isoformat()
-                    }
-                )
+                # Sauvegarder en BDD
+                await self.save_message(current_user, message_text, room_name, 'game_invite', game_data)
+            else:
+                # Message texte normal
+                await self.save_message(current_user, message_text, room_name, 'text')
+            
+            # Envoyer au groupe
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': message_data
+                }
+            )
+            
+            print(f"Message envoyé au groupe: {self.room_group_name}")
         except Exception as e:
             print(f"Erreur dans receive: {str(e)}")
+            import traceback
+            traceback.print_exc()
 
     async def chat_message(self, event):
-        try:
-            await self.send(text_data=json.dumps({
-                'message': event['message'],
-                'user': event['user'],
-                'timestamp': event['timestamp']
-            }))
-            print(f"[{datetime.now()}] Message envoyé au client: {event['message']} de {event['user']}")
-        except Exception as e:
-            print(f"Erreur dans chat_message: {str(e)}")
+        message = event['message']
+        
+        # Envoyer au WebSocket
+        await self.send(text_data=json.dumps(message))
 
     @database_sync_to_async
-    def save_message(self, user, message):
+    def save_message(self, sender, message_text, room_name, message_type='text', game_data=None):
         try:
-            Room = apps.get_model('chat', 'Room')
-            Message = apps.get_model('chat', 'Message')
+            User = get_user_model()
             
-            room = Room.objects.get(name=self.room_name)
+            # Récupérer l'utilisateur et la salle
+            user = User.objects.get(nom=sender)
+            room = Room.objects.get(name=room_name)
+            
+            # Afficher des logs pour débogage
+            print(f"Sauvegarde du message: {sender}, '{message_text}', type={message_type}")
+            
+            # Créer le message avec les nouveaux champs
             message = Message.objects.create(
-                room=room,
                 user=user,
-                content=message
+                room=room,
+                content=message_text,
+                message_type=message_type,
+                game_data=game_data
             )
+            
+            print(f"Message sauvegardé avec succès, ID: {message.id}")
             return message
         except Exception as e:
             print(f"Erreur lors de la sauvegarde du message: {str(e)}")
+            import traceback
+            traceback.print_exc()
             return None
 
     @database_sync_to_async

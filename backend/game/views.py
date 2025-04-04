@@ -11,6 +11,9 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.contrib.auth import get_user_model
 import logging
+from auth_app.models import Utilisateurs  # Import du modèle utilisateur personnalisé
+from django.db.models import Q
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -61,25 +64,105 @@ def start_game(request):
 def save_game_result(request):
     if request.method == 'POST':
         try:
-            game = Game.objects.filter(
-                player1=request.user,
-                winner="En cours"
-            ).latest('created_at')
+            # Récupérer les données POST
+            winner = request.POST.get('winner')
+            player1_score = int(request.POST.get('player1_score', 0))
+            player2_score = int(request.POST.get('player2_score', 0))
             
-            # Mettre à jour les données de la partie
-            game.player2 = request.POST.get('player2', 'Player 2')
-            game.winner = request.POST.get('winner')
-            game.player1_score = request.POST.get('player1_score')
-            game.player2_score = request.POST.get('player2_score')
-            game.save()
-
-            player1 = request.user
-            player1.is_playing = False
-            player1.save(update_fields=['is_playing'])
-
+            invited_by = request.session.get('invited_by')
+            if invited_by:
+                player2_name = invited_by
+            else:
+                player2_name = request.POST.get('player2', 'Player 2')
+            
+            print(f"Sauvegarde de partie: {request.user.nom} vs {player2_name}, Score: {player1_score}-{player2_score}, Winner: {winner}")
+            
+            # Supprimer toutes les parties "En cours" obsolètes pour ce joueur
+            old_games = Game.objects.filter(
+                player1=request.user,
+                winner="En cours",
+                player1_score=0,
+                player2_score=0
+            )
+            deleted_count = old_games.count()
+            old_games.delete()
+            print(f"Nettoyage: {deleted_count} parties 'En cours' supprimées")
+            
+            # Une seule entrée pour le joueur actuel
+            game, created = Game.objects.update_or_create(
+                player1=request.user,
+                player2=player2_name,
+                winner="En cours",  # Condition pour trouver une partie existante
+                defaults={
+                    'player1_score': player1_score,
+                    'player2_score': player2_score,
+                    'winner': winner,
+                    'name': "Pong Match"
+                }
+            )
+            
+            if created:
+                print(f"Nouvelle partie créée: ID={game.id}")
+            else:
+                print(f"Partie existante mise à jour: ID={game.id}")
+            
+            # Désactiver l'état "en train de jouer" pour le joueur actuel
+            request.user.is_playing = False
+            request.user.save(update_fields=['is_playing'])
+            
+            # 3. PARTIE MIROIR: Créer/mettre à jour une entrée pour l'adversaire si c'était une invitation
+            if invited_by:
+                try:
+                    player2_user = Utilisateurs.objects.get(nom=invited_by)
+                    
+                    # Supprimer aussi les parties "En cours" obsolètes pour l'adversaire
+                    old_mirror_games = Game.objects.filter(
+                        player1=player2_user,
+                        winner="En cours",
+                        player1_score=0,
+                        player2_score=0
+                    )
+                    deleted_mirror_count = old_mirror_games.count()
+                    old_mirror_games.delete()
+                    print(f"Nettoyage miroir: {deleted_mirror_count} parties 'En cours' supprimées pour {player2_user.nom}")
+                    
+                    # Créer/mettre à jour l'entrée miroir pour l'adversaire
+                    mirror_game, mirror_created = Game.objects.update_or_create(
+                        player1=player2_user,
+                        player2=request.user.nom,
+                        winner="En cours",  # Condition pour trouver une partie existante
+                        defaults={
+                            'player1_score': player2_score,
+                            'player2_score': player1_score,
+                            'winner': winner,
+                            'name': "Pong Game (via invitation)"
+                        }
+                    )
+                    
+                    if mirror_created:
+                        print(f"Nouvelle partie miroir créée: ID={mirror_game.id}")
+                    else:
+                        print(f"Partie miroir mise à jour: ID={mirror_game.id}")
+                    
+                    # Désactiver l'état "en train de jouer" pour l'adversaire
+                    player2_user.is_playing = False
+                    player2_user.save(update_fields=['is_playing'])
+                    
+                    # Nettoyer la session
+                    if 'invited_by' in request.session:
+                        del request.session['invited_by']
+                        
+                except Utilisateurs.DoesNotExist:
+                    print(f"Utilisateur {invited_by} non trouvé")
+                except Exception as e:
+                    print(f"Erreur lors de la gestion de l'entrée miroir: {str(e)}")
             
             return JsonResponse({'status': 'success'})
+            
         except Exception as e:
+            print(f"Erreur dans save_game_result: {str(e)}")
+            import traceback
+            traceback.print_exc()
             return JsonResponse({'status': 'error', 'message': str(e)})
             
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
@@ -89,22 +172,75 @@ def save_game_result(request):
 @login_required
 def dashboard(request):
     user = request.user
-
-    tournois = Tournoi.objects.all()
     
-    # Récupérer toutes les parties (Pong + Morpion)
-    games = Game.objects.filter(player1=user).order_by("-created_at")
+    # NETTOYAGE: Supprimer les parties 0-0 "En cours" qui traînent
+    Game.objects.filter(
+        player1=user,
+        player1_score=0,
+        player2_score=0,
+        winner="En cours"
+    ).delete()
+    
+    # Récupérer uniquement les parties terminées
+    all_games = Game.objects.filter(
+        Q(player1=user) | Q(player2=user.nom)
+    ).exclude(
+        winner="En cours"
+    ).order_by('-created_at')
+    
+    # Création d'une liste sans doublons avec normalisation des participants
+    unique_games = []
+    seen_matches = set()
+    
+    for game in all_games:
+        # Normaliser les noms de joueurs (convertir player1 en chaîne si c'est un objet)
+        player1_name = game.player1.nom if hasattr(game.player1, 'nom') else str(game.player1)
+        player2_name = str(game.player2)
+        
+        # Normaliser la signature en triant les joueurs alphabétiquement
+        players = sorted([player1_name, player2_name])
+        
+        # Trier les scores selon l'ordre des joueurs normalisés
+        if players[0] == player1_name:
+            scores = [game.player1_score, game.player2_score]
+        else:
+            scores = [game.player2_score, game.player1_score]
+        
+        # Créer une signature qui identifie le match indépendamment de qui est player1/player2
+        match_signature = f"{game.created_at.strftime('%Y%m%d%H%M')}_{players[0]}_{players[1]}_{scores[0]}_{scores[1]}"
+        
+        if match_signature not in seen_matches:
+            # Privilégier les parties où l'utilisateur actuel est player1
+            if player1_name == user.nom:
+                unique_games.append(game)
+            else:
+                # Ajouter la partie sans vérification supplémentaire (simplification)
+                unique_games.append(game)
+                    
+            seen_matches.add(match_signature)
+    
+    # Utiliser uniquement les parties uniques
+    games = unique_games[:10]  # Limiter à 10 parties
+    
+    # Calculer les statistiques (ajuster pour utiliser player1_name)
+    games_won = 0
+    games_lost = 0
+    
+    for g in unique_games:
+        p1_name = g.player1.nom if hasattr(g.player1, 'nom') else str(g.player1)
+        p2_name = str(g.player2)
+        
+        if (p1_name == user.nom and g.player1_score > g.player2_score) or (p2_name == user.nom and g.player2_score > g.player1_score):
+            games_won += 1
+        elif (p1_name == user.nom and g.player1_score < g.player2_score) or (p2_name == user.nom and g.player2_score < g.player1_score):
+            games_lost += 1
+    
+    total_games = len(unique_games)
     
     # Récupérer les matches de Morpion
     morpion_matches = MorpionMatch.objects.all().order_by("-created_at")
     
-    total_games = games.count()
-
-    # Calculer les victoires et défaites
-    games_won = games.filter(winner=user.nom).count()
-    games_lost = total_games - games_won
-
-    # Calcul de la progression et du niveau
+    # Calculer la progression et le niveau
     level_progress = (games_won * 20) % 100
     level = games_won // 5
 
@@ -118,6 +254,9 @@ def dashboard(request):
     # Score total de l'utilisateur
     total_score = sum(game.player1_score for game in games)
 
+    print(f"Parties uniques trouvées: {total_games} (affichées: {len(games)})")
+    print(f"Statistiques: {games_won} victoires, {games_lost} défaites")
+    
     context = {
         "user": user,
         "games": games,
@@ -126,8 +265,9 @@ def dashboard(request):
         "games_lost": games_lost,
         "level_progress": level_progress,
         "level": level,
-        "tournois": tournois,
+        "tournois": Tournoi.objects.all(),
         "morpion_matches": morpion_matches,  # Ajout des matches de Morpion au contexte
+        "total_games": total_games,
     }
 
     return render(request, "game/dashboard.html", context)
@@ -254,3 +394,76 @@ def check_match_status(request, match_id):
         })
     except MorpionMatch.DoesNotExist:
         return JsonResponse({'error': 'Match not found'}, status=404)
+
+@login_required
+def join_game(request):
+    game_type = request.GET.get('game')
+    creator = request.GET.get('creator')
+    
+    # Récupérer l'utilisateur créateur
+    creator_user = get_object_or_404(Utilisateurs, nom=creator)
+    
+    if game_type == 'morpion':
+        # Logique pour le Morpion (inchangée)
+        match, created = MorpionMatch.objects.get_or_create(
+            creator=creator_user,
+            status='waiting'
+        )
+        
+        match.players.add(request.user)
+        
+        if match.is_full():
+            match.status = 'in_progress'
+            match.save()
+            
+        return redirect('morpion_match_detail', match_id=match.id)
+    
+    elif game_type == 'pong':
+        try:
+            # Marquer l'utilisateur qui rejoint comme étant en train de jouer
+            request.user.is_playing = True
+            request.user.save(update_fields=['is_playing'])
+            
+            # Marquer également le créateur comme étant en train de jouer
+            creator_user.is_playing = True
+            creator_user.save(update_fields=['is_playing'])
+            
+            # Chercher si une partie existe déjà avec ce créateur
+            existing_game = Game.objects.filter(
+                player1=creator_user,
+                winner="En cours"
+            ).first()
+            
+            if existing_game:
+                # Si une partie existe, la rejoindre
+                existing_game.player2 = request.user.nom
+                existing_game.save()
+                
+                # Stockage de l'information sur qui est le créateur dans la session
+                request.session['invited_by'] = creator
+                
+                return redirect('start_game')
+            else:
+                # Créer une nouvelle partie explicitement pour cette invitation
+                with transaction.atomic():
+                    # Créer la partie avec ce joueur comme player1 et le créateur comme player2
+                    game = Game.objects.create(
+                        player1=request.user,
+                        player2=creator_user.nom,  # Nom de l'expéditeur comme player2
+                        player1_score=0,
+                        player2_score=0,
+                        winner="En cours"
+                    )
+                    
+                    # Stockage de l'information sur qui est le créateur dans la session
+                    request.session['invited_by'] = creator
+                    
+                    print(f"Partie créée - ID: {game.id}, Joueur2: {creator_user.nom}")
+                    
+                    return redirect('start_game')
+                    
+        except Exception as e:
+            print(f"Erreur lors de la redirection vers Pong: {str(e)}")
+            return redirect('start_game')
+    
+    return redirect('dashboard')
