@@ -1,0 +1,21 @@
+*.pyc
+backend/__pycache__/
+*.pyo
+*.pyd
+__pycache__/
+*.db
+*.sqlite3
+*.log
+# *.env
+*.DS_Store
+*.egg-info/
+*.egg
+*.coverage
+*.cover
+*.tox/
+*.pytest_cache/
+*.mypy_cache/
+*.pdb
+*.coverage.*
+*.hypothesis/
+backend?debug.log

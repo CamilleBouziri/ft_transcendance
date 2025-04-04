@@ -27,7 +27,18 @@ function connectWebSocket() {
 
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        console.log("Message reçu:", data); // Pour déboguer
+        console.log("Message reçu:", data);
+        
+        // Gérer les messages d'erreur
+        if (data.error) {
+            const messagesContainer = document.getElementById('messages');
+            const errorElement = document.createElement('div');
+            errorElement.classList.add('message', 'error');
+            errorElement.textContent = data.error;
+            messagesContainer.appendChild(errorElement);
+            setTimeout(() => errorElement.remove(), 3000); // Disparaît après 3 secondes
+            return;
+        }
         
         // Référence à la zone d'affichage des messages
         const messagesContainer = document.getElementById('messages');

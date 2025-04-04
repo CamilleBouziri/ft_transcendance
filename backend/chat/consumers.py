@@ -45,6 +45,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         try:
+            # Vérifier si l'un des utilisateurs a bloqué l'autre
+            is_blocked = await self.is_user_blocked()
+            if is_blocked:
+                # Optionnel: informer l'expéditeur que le message n'a pas été envoyé
+                await self.send(text_data=json.dumps({
+                    'error': 'Message non envoyé - Communication bloquée'
+                }))
+                return
+
             text_data_json = json.loads(text_data)
             message_type = text_data_json.get('type', 'text')
             message_text = text_data_json.get('message', '')
@@ -128,14 +137,26 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def is_user_blocked(self):
-        # Le format est maintenant "private_user1_user2"
-        users = self.room_name.replace('private_', '').split('_')
-        other_user = users[1] if users[0] == self.scope["user"].nom else users[0]
-        
-        UserBlock = apps.get_model('chat', 'UserBlock')
-        block_exists = UserBlock.objects.filter(
-            (Q(blocker=self.scope["user"]) & Q(blocked__nom=other_user)) |
-            (Q(blocker__nom=other_user) & Q(blocked=self.scope["user"]))
-        ).exists()
-        
-        return block_exists
+        try:
+            User = get_user_model()
+            current_user = self.scope["user"]
+            
+            # Le format est "private_user1_user2"
+            users = self.room_name.replace('private_', '').split('_')
+            other_username = users[1] if users[0] == current_user.nom else users[0]
+            
+            try:
+                other_user = User.objects.get(nom=other_username)
+            except User.DoesNotExist:
+                return False
+            
+            UserBlock = apps.get_model('chat', 'UserBlock')
+            block_exists = UserBlock.objects.filter(
+                Q(blocker=current_user, blocked=other_user) |
+                Q(blocker=other_user, blocked=current_user)
+            ).exists()
+            
+            return block_exists
+        except Exception as e:
+            print(f"Erreur lors de la vérification du blocage: {str(e)}")
+            return False

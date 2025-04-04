@@ -235,3 +235,19 @@ body {
   top: 0;
   border-radius: 10px;
 }
+
+.message.error {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 4px;
+    text-align: center;
+    animation: fadeOut 3s forwards;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+}
