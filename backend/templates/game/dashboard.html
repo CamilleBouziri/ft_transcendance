@@ -221,27 +221,21 @@
         <div class="highlight-bar"></div>
         <div class="history-list">
           {% for game in games %}
-            <div class="history-item">
-              <!-- Joueur 1 -->
-              <div class="player-name {% if game.winner == game.player1 %}winner{% else %}loser{% endif %}">
-                {{ game.player1 }}
+          <div class="match-date">
+            🕒 {{ game.created_at|date:"M d, Y" }} - {{ game.created_at|time:"H:i" }}
+          </div>
+          <div class="history-item">
+            <!-- Joueur 1 -->
+              <div class="player {% if game.winner == user.nom %}winner{% else %}loser{% endif %}">
+                {{ game.player1 }} {{ game.player1_score }}
               </div>
-              <div class="score-display">
-                <!-- Score du joueur 1 -->
-                <span class="{% if game.winner == game.player1 %}winner{% else %}loser{% endif %}">
-                  {{ game.player1_score }}
-                </span>
-                <span class="score-separator">-</span>
-                <!-- Score du joueur 2 -->
-                <span class="{% if game.winner == game.player2 %}winner{% else %}loser{% endif %}">
-                  {{ game.player2_score }}
-                </span>
-              </div>
+              <span>-</span>
               <!-- Joueur 2 -->
-              <div class="player-name {% if game.winner == game.player2 %}winner{% else %}loser{% endif %}">
-                {{ game.player2 }}
+              <div class="player {% if game.winner == user.nom %}loser{% else %}winner{% endif %}">
+                {{ game.player2_score }} {{ game.player2 }}
               </div>
             </div>
+            <!-- Date et heure -->
           {% empty %}
             <p>{% trans "No games played yet." %}</p>
           {% endfor %}

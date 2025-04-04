@@ -25,13 +25,14 @@ def creer_tournoi(request):
         joueur_nom = joueur_nom if joueur_nom else request.user.nom
 
         # Ajoute le joueur au tournoi
-        tournoi.joueurs.add(request.user)
-
         # Enregistre le nom personnalisé dans le champ JSON
         tournoi.joueurs_noms_personnalises[str(request.user.id)] = joueur_nom
         tournoi.save()
 
-        messages.success(request, f"Tournoi créé avec succès. Vous jouerez sous le nom '{joueur_nom}'.")
+        tournoi.joueurs.add(request.user)
+
+
+        # messages.success(request, f"Tournoi créé avec succès. Vous jouerez sous le nom '{joueur_nom}'.")
         return redirect("dashboard")
 
     return render(request, "tournois/creer_tournois.html")
@@ -62,7 +63,7 @@ def rejoindre_tournoi(request, tournoi_id):
         tournoi.joueurs_noms_personnalises[str(request.user.id)] = joueur_nom
         tournoi.save()
 
-        messages.success(request, f"Vous avez rejoint le tournoi sous le nom '{joueur_nom}'.")
+        # messages.success(request, f"Vous avez rejoint le tournoi sous le nom '{joueur_nom}'.")
         return redirect("dashboard")
 
     return render(request, "tournois/rejoindre_tournois.html", {"tournoi": tournoi})
@@ -72,79 +73,75 @@ def rejoindre_tournoi(request, tournoi_id):
 def lancer_tournoi(request, tournoi_id):
     tournoi = get_object_or_404(Tournoi, id=tournoi_id)
 
-    # Vérifie qu'il y a bien 4 joueurs inscrits
     if tournoi.joueurs.count() != 4:
         messages.error(request, "Le tournoi doit avoir 4 joueurs pour être lancé.")
         return redirect('details_tournois', tournoi_id=tournoi.id)
 
-    # Récupère les joueurs
-    joueurs = list(tournoi.joueurs.all())  # Convertit QuerySet en liste pour indexation
+    joueurs = list(tournoi.joueurs.all())
 
-    # Vérification supplémentaire
-    if len(joueurs) < 4:
-        messages.error(request, "Problème : pas assez de joueurs pour démarrer le tournoi.")
-        return redirect('details_tournois', tournoi_id=tournoi.id)
-
-    # Création des premiers matchs (Demi-finales)
-    match1 = Match.objects.create(
+    # Création des matchs avec les noms personnalisés
+    Match.objects.create(
         tournoi=tournoi,
         joueur1=joueurs[0],
         joueur2=joueurs[1],
-        round="demi_finale"  # Utilisation du bon champ
+        joueur1_nom=tournoi.joueurs_noms_personnalises.get(str(joueurs[0].id), joueurs[0].nom),
+        joueur2_nom=tournoi.joueurs_noms_personnalises.get(str(joueurs[1].id), joueurs[1].nom),
+        round="demi_finale",
+        ordre=0
     )
-    
-    match2 = Match.objects.create(
+    Match.objects.create(
         tournoi=tournoi,
         joueur1=joueurs[2],
         joueur2=joueurs[3],
-        round="demi_finale"  # Utilisation du bon champ
+        joueur1_nom=tournoi.joueurs_noms_personnalises.get(str(joueurs[2].id), joueurs[2].nom),
+        joueur2_nom=tournoi.joueurs_noms_personnalises.get(str(joueurs[3].id), joueurs[3].nom),
+        round="demi_finale",
+        ordre=1
     )
 
-    # Marque le tournoi comme en cours
     tournoi.statut = "en_cours"
     tournoi.save()
 
-    messages.success(request, "Le tournoi a été lancé avec succès !")
+    # messages.success(request, "Le tournoi a été lancé avec succès !")
     return redirect('details_tournois', tournoi_id=tournoi.id)
+
 
 
 from django.http import JsonResponse
 import json
 
+
 @login_required
 @csrf_exempt
 def enregistrer_resultat_match(request, match_id):
     match = get_object_or_404(Match, id=match_id)
-
     if request.method == "POST":
         try:
             data = json.loads(request.body)
             gagnant_id = data.get("winner")
             score_joueur1 = int(data.get("player1_score", 0))
             score_joueur2 = int(data.get("player2_score", 0))
-
             if not gagnant_id:
                 return JsonResponse({"status": "error", "message": "Gagnant non défini"}, status=400)
-
+            # Récupérer le gagnant
             gagnant = get_object_or_404(match.tournoi.joueurs.model, id=gagnant_id)
+            # Récupérer le nom personnalisé du gagnant
+            gagnant_nom_personnalise = match.tournoi.joueurs_noms_personnalises.get(str(gagnant.id), gagnant.nom)
+            # Mettre à jour le match
             match.gagnant = gagnant
+            match.gagnant_nom = gagnant_nom_personnalise  # Enregistrer le nom personnalisé
             match.score_joueur1 = score_joueur1
             match.score_joueur2 = score_joueur2
             match.save()
-
-            # 🔥 Mettre à jour le tournoi après l'enregistrement du match
+            # Mettre à jour le tournoi après l'enregistrement du match
             match.tournoi.mettre_a_jour_tournoi()
 
-            return JsonResponse({"status": "success", "message": "Résultat enregistré"})
-
+            return JsonResponse({"status": "success", "message": f"Résultat enregistré pour {gagnant_nom_personnalise}"})
         except json.JSONDecodeError:
             return JsonResponse({"status": "error", "message": "Format JSON invalide"}, status=400)
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
-
     return JsonResponse({"status": "error", "message": "Requête invalide"}, status=400)
-
-
 
 
 @login_required
@@ -154,14 +151,12 @@ def jeu_tournois(request, match_id):
 
     context = {
         "match": match,
-        "joueur1_nom": match.joueur1.nom if match.joueur1 else "Joueur 1",
-        "joueur2_nom": match.joueur2.nom if match.joueur2 else "Joueur 2",
+        "joueur1_nom": match.joueur1_nom,
+        "joueur2_nom": match.joueur2_nom,
         "tournoi_id": tournoi.id,
         "match_id": match_id
     }
     return render(request, "tournois/jeu_tournois.html", context)
-
-
 
 @csrf_exempt
 def save_game_result(request):
@@ -194,19 +189,18 @@ def save_game_result(request):
 
 
 
-
 @login_required
 def detail_tournoi(request, tournoi_id):
     tournoi = get_object_or_404(Tournoi, id=tournoi_id)
     joueurs = list(tournoi.joueurs.all())
-    matches = list(tournoi.matchs.all().order_by('round'))
-    # avatars = list(tounoi.joueurs_avatars.all())
+    matches = list(tournoi.matchs.all().order_by('ordre'))
 
     # Récupère les noms personnalisés ou les noms par défaut
     joueurs_affichage = [
         tournoi.joueurs_noms_personnalises.get(str(joueur.id), joueur.nom)
         for joueur in joueurs
     ]
+
     # Récupère le nom personnalisé de l'utilisateur connecté
     nom_utilisateur_tournoi = tournoi.joueurs_noms_personnalises.get(str(request.user.id), request.user.nom)
 
@@ -217,8 +211,8 @@ def detail_tournoi(request, tournoi_id):
         'joueur3': joueurs_affichage[2] if len(joueurs_affichage) > 2 else None,
         'joueur4': joueurs_affichage[3] if len(joueurs_affichage) > 3 else None,
         'matches': matches,
-        # 'avatars': avatars,
-        'nom_utilisateur_tournoi': nom_utilisateur_tournoi,  # Ajout du nom personnalisé
+        'joueurs': joueurs_affichage,  # Liste des noms personnalisés des joueurs
+        'nom_utilisateur_tournoi': nom_utilisateur_tournoi,  # Nom personnalisé de l'utilisateur connecté
     }
     return render(request, 'tournois/detail_tournois.html', context)
 
@@ -272,10 +266,10 @@ def get_tournament_status(request, tournoi_id):
     return JsonResponse({
         'statut': tournoi.statut,
         'is_creator': request.user == tournoi.createur,
-        'creator_name': tournoi.createur.nom,
+        'creator_name': tournoi.joueurs_noms_personnalises.get(str(tournoi.createur.id), tournoi.createur.nom),
         'players_count': tournoi.joueurs.count()
     })
-
+    
 
 @login_required
 def get_tournoi_info(request, tournoi_id):

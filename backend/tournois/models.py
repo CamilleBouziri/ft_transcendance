@@ -21,13 +21,6 @@ class Tournoi(models.Model):
         blank=True,
         verbose_name="Joueurs",
     )
-    # avatar = models.ImageField(
-    #    settings.AUTH_USER_MODEL,
-    #     on_delete=models.CASCADE,
-    #     related_name="tournois_avatar",
-    #     blank=True,
-    #     verbose_name="Avatar",
-    # )
     gagnant_final = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -55,24 +48,27 @@ class Tournoi(models.Model):
         return self.joueurs.count() == 4
 
     def mettre_a_jour_tournoi(self):
-        """Gère la progression du tournoi et crée le prochain match automatiquement."""
-        matchs = list(self.matchs.all().order_by("round"))
+        """Gère la progression du tournoi et crée le match final automatiquement."""
+        matchs = list(self.matchs.all().order_by("ordre"))
 
-        # Vérifier si la finale doit être créée
-        if len(matchs) == 2 and all(m.gagnant for m in matchs):
-            Match.objects.create(
-                tournoi=self,
-                joueur1=matchs[0].gagnant,
-                joueur2=matchs[1].gagnant,
-                round="finale"
-            )
+        # Vérifier si les deux premiers matchs sont terminés
+        if len(matchs) == 2 and matchs[0].gagnant and matchs[1].gagnant:
+            # Créer le match final s'il n'existe pas déjà
+            if not Match.objects.filter(tournoi=self, round="finale").exists():
+                Match.objects.create(
+                    tournoi=self,
+                    joueur1=matchs[0].gagnant,
+                    joueur2=matchs[1].gagnant,
+                    round="finale",
+                    ordre=2
+                )
         
         # Vérifier si le tournoi est terminé
-        elif len(matchs) == 3 and matchs[2].gagnant:
-            self.gagnant_final = matchs[2].gagnant
+        finale = Match.objects.filter(tournoi=self, round="finale").first()
+        if finale and finale.gagnant:
+            self.gagnant_final = finale.gagnant
             self.statut = "termine"
             self.save()
-            self.mettre_a_jour_classement()
 
     def mettre_a_jour_classement(self):
         """Met à jour le classement des joueurs selon leurs performances."""
@@ -137,6 +133,12 @@ class Match(models.Model):
         blank=True,
         verbose_name="Gagnant",
     )
+    gagnant_nom = models.CharField(
+    max_length=100, 
+    blank=True, 
+    verbose_name="Nom personnalisé du gagnant",
+    )
+
     score_joueur1 = models.IntegerField(default=0, verbose_name="Score Joueur 1")
     score_joueur2 = models.IntegerField(default=0, verbose_name="Score Joueur 2")
     round = models.CharField(
@@ -146,6 +148,20 @@ class Match(models.Model):
         verbose_name="Phase du match",
     )
     date_match = models.DateTimeField(auto_now_add=True, verbose_name="Date du match")
+    ordre = models.IntegerField(default=0, verbose_name="Ordre du match")
+    joueur1_nom = models.CharField(max_length=100, blank=True, verbose_name="Nom personnalisé Joueur 1")
+    joueur2_nom = models.CharField(max_length=100, blank=True, verbose_name="Nom personnalisé Joueur 2")
+
+    class Meta:
+        ordering = ['ordre']  # Tri par défaut selon l'ordre
+
+    def save(self, *args, **kwargs):
+        # Remplir les noms personnalisés si non définis
+        if not self.joueur1_nom and self.joueur1:
+            self.joueur1_nom = self.tournoi.joueurs_noms_personnalises.get(str(self.joueur1.id), self.joueur1.nom)
+        if not self.joueur2_nom and self.joueur2:
+            self.joueur2_nom = self.tournoi.joueurs_noms_personnalises.get(str(self.joueur2.id), self.joueur2.nom)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Match: {self.joueur1} vs {self.joueur2} ({self.tournoi.nom})"
