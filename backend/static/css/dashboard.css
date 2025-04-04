@@ -21,7 +21,7 @@ h2
 {
   color: yellow;
   margin-bottom: 10px;
-  font-size: 2rem;
+  font-size: 25px;
   text-align: center;
 }
 
@@ -31,6 +31,7 @@ h2
   height: 0px; 
   background-color: white;
   margin: 10px auto;
+  display: none;
 }
 
 /* ====================================================================================================== */
@@ -294,7 +295,7 @@ h2
 .history-item .player-name {
   flex: 1;
   text-align: center;
-  font-size: 1rem;
+  font-size: 15px;
   padding: 0 5px;
 }
 
@@ -514,6 +515,11 @@ h2
   width: 100%;
   text-align: center;
   margin-bottom: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px; 
+  flex-direction: column;
 }
 
 .achievement-content
@@ -686,8 +692,8 @@ h2
 }
 
 .matches-section h2 {
-  color: #FFD700;
-  font-size: 1.5em;
+  color: yellow;
+  font-size: 25px;
   margin: 0;
 }
 
@@ -910,6 +916,23 @@ h2
 
 @media (max-width: 900px) 
 {
+
+  h2 {
+    font-size: 17px;
+  }
+
+  .matches-section h2 {
+    font-size: 17px;
+  } 
+
+  .btn-secondary {
+    display: none;
+  }
+
+  .btn2 {
+    display: none;
+  }
+
   .main-content {
     display: block;
     height: auto;
@@ -988,6 +1011,10 @@ h2
 
   .win-loss .wins
   {
+    font-size: 15px;
+  }
+
+  section h2 {
     font-size: 15px;
   }
 }
@@ -1168,4 +1195,51 @@ footer a:hover {
 	box-shadow: 0 0 10px rgba(255, 153, 0, 0.5);
 	border-radius: 10px;
 	background-color:  rgba(255, 153, 0, 0.189);
+}
+
+/* Styles pour les parties gagnées et perdues */
+.win-game {
+  background-color: rgba(0, 255, 0, 0.15) !important;
+  border-left: 4px solid #2ecc71 !important;
+  border : #2ecc71 !important;
+  color: #2ecc71 !important; /* Texte en vert pour les victoires */
+  transition: all 0.3s ease;
+}
+
+.loss-game {
+  background-color: rgba(255, 0, 0, 0.15) !important;
+  border-left: 4px solid #e74c3c !important;
+  border : #e74c3c !important;
+  color: #e74c3c !important; /* Texte en rouge pour les défaites */
+  transition: all 0.3s ease;
+}
+
+/* Améliorer la lisibilité des scores */
+.win-game .score-display,
+.loss-game .score-display {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+/* Si vous voulez que seuls certains éléments aient une couleur différente */
+.win-game .player-name, 
+.win-game .score-display {
+  color: #2ecc71 !important;
+}
+
+.loss-game .player-name, 
+.loss-game .score-display {
+  color: #e74c3c !important;
+}
+
+.draw-game {
+  background-color: rgba(150, 150, 150, 0.15) !important;
+  border-left: 4px solid #95a5a6 !important;
+  color: #7f8c8d !important;
+  transition: all 0.3s ease;
+}
+
+.draw-game:hover {
+  background-color: rgba(150, 150, 150, 0.25) !important;
+  transform: translateX(2px);
 }

@@ -26,13 +26,15 @@
       color: yellow;
       text-align: center;
       margin-bottom: 20px;
+      margin-top: 50px;
     }
 
     .highlight-bar {
       width: 50%;
-      height: 15px;
+      height: 0px;
       background-color: white;
       margin: 10px auto;
+      margin-bottom: 40px;
     }
 
     .tournament-container {
@@ -57,6 +59,7 @@
       max-width: 1000px;
 
       margin: 50px auto;
+      padding-bottom: 100px;
     }
 
     .player-icon {
@@ -255,13 +258,10 @@
 }
  
 .finished-container {
-    position: fixed;
-    /* bottom: 20px; */
-    top: 75%;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
 
 .finished-btn {
@@ -291,16 +291,18 @@
 }
 
 .tournament-header {
-    display: flex;
+    /* display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: center; */
     width: 100%;
+    padding: 20px;
 }
 
 .tournament-title {
     flex: 1; /* Permet au titre de prendre toute la place centrale */
     text-align: center;
     margin: 0;
+    margin-top: 40px;
 }
 
 .empty-space {
@@ -320,6 +322,9 @@
     text-decoration: none;
     box-shadow: 0px 0px 15px 5px rgba(0, 255, 255, 0.7);
     transition: all 0.3s ease-in-out;
+    width: 30%;
+    margin: 0 auto;
+    margin-bottom: 40px;
 }
 
 /* RESPONSIVE DESIGN */
@@ -386,6 +391,8 @@
 .start-btn:hover {
     background-color: #feed00;
 }
+
+
   </style>
 </head>
 <body>
@@ -420,6 +427,14 @@
         </div>
     {% endif %}
 {% endif %}
+
+    {% if tournoi.statut == "termine" %}
+    <div class="finished-container">
+        <h2 class="winner-text">{% trans "Winner" %}: {{ tournoi.gagnant_final.nom }}</h2>
+        <button class="finished-btn">{% trans "FINISHED" %}</button>
+    </div>
+    {% endif %}
+
 
     {% if tournoi.statut == "en_attente" or tournoi.statut == "en_cours" and request.user == tournoi.createur or tournoi.statut == "termine" and request.user == tournoi.createur %}
     <h2>{% trans "Tournament Matches" %}</h2>
@@ -519,14 +534,10 @@
 {% endif %}
 
 
-  </div>
-  {% if tournoi.statut == "termine" %}
-  <div class="finished-container">
-      <h2 class="winner-text">{% trans "Winner" %}: {{ tournoi.gagnant_final.nom }}</h2>
-      <button class="finished-btn">{% trans "FINISHED" %}</button>
-  </div>
-{% endif %}
 
+  </div>
+
+  
 </body>
 </html>
 
