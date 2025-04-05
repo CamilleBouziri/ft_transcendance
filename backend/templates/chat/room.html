@@ -23,6 +23,14 @@
             <button id="block-user" class="block-button">Bloquer</button>
         </div>
         <div id="connection-status" style="color: red;"></div>
+        <div class="user-status">
+            <span id="user-status-indicator" class="offline">●</span>
+            <span id="user-status-text">Hors ligne</span>
+        </div>
+        
+        <!-- <button id="send-game-invite" disabled title="L'utilisateur doit être en ligne pour recevoir une invitation">
+            Inviter à jouer
+        </button> -->
         
         <div class="messages-container" id="messages">
             {% for message in messages %}
@@ -36,7 +44,10 @@
         <div class="message-input">
             <input type="text" id="chat-message-input" placeholder="Votre message...">
             <div class="message-actions" style="display: flex; margin-top: 10px;">
-                <button id="send-game-invite" class="btn game-invite-btn">Inviter à jouer</button>
+                <!-- <button id="send-game-invite" class="btn game-invite-btn">Inviter à jouer</button> -->
+                <button id="send-game-invite" disabled title="L'utilisateur doit être en ligne pour recevoir une invitation"  class="btn">
+                    Inviter à jouer
+                </button>
                 <button id="chat-message-submit" class="btn">Envoyer</button>
             </div>
         </div>

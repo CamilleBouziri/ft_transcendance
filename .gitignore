@@ -18,4 +18,4 @@ __pycache__/
 *.pdb
 *.coverage.*
 *.hypothesis/
-backend?debug.log
+backend/debug.log

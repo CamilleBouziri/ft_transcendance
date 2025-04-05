@@ -251,3 +251,27 @@ body {
     70% { opacity: 1; }
     100% { opacity: 0; }
 }
+
+#send-game-invite:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.user-status {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#user-status-indicator {
+    font-size: 20px;
+    margin-right: 5px;
+}
+
+#user-status-indicator.online {
+    color: #2ecc71;
+}
+
+#user-status-indicator.offline {
+    color: #e74c3c;
+}

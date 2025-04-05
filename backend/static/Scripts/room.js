@@ -1,6 +1,9 @@
 const roomName = document.currentScript.getAttribute('data-room-name');
 const userName = document.currentScript.getAttribute('data-user-name');
 let chatSocket = null;
+let isOtherUserOnline = false;
+const otherUserName = roomName; // Car roomName contient le nom de l'autre utilisateur
+let connectedUsers = new Set(); // Ajouter au début du fichier avec les autres variables globales
 
 // Fonction pour scroll en bas
 function scrollToBottom() {
@@ -28,6 +31,21 @@ function connectWebSocket() {
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         console.log("Message reçu:", data);
+
+        if (data.type === 'user_status') {
+            if (data.status === 'online') {
+                connectedUsers.add(data.user);
+            } else {
+                connectedUsers.delete(data.user);
+            }
+            
+            // Mettre à jour le statut si le message concerne l'autre utilisateur
+            if (data.user === otherUserName) {
+                isOtherUserOnline = connectedUsers.has(otherUserName);
+                updateInviteButton();
+            }
+            return;
+        }
         
         // Gérer les messages d'erreur
         if (data.error) {
@@ -198,6 +216,10 @@ const gameChoices = document.querySelectorAll('.game-choice');
 
 // Ouvrir modal au clic sur "Inviter à jouer"
 sendGameInviteBtn.addEventListener('click', function() {
+    if (!isOtherUserOnline) {
+        alert("L'utilisateur doit être en ligne pour recevoir une invitation");
+        return;
+    }
     gameInviteModal.style.display = 'block';
 });
 
@@ -286,38 +308,58 @@ function createGameInviteElement(data) {
 
 // Fonction pour charger les messages existants
 function loadExistingMessages(roomId) {
-    // Faire une requête AJAX pour récupérer les messages
     fetch(`/chat/messages/${roomId}/`)
         .then(response => response.json())
         .then(data => {
             const messagesContainer = document.getElementById('messages');
             
-            // Afficher chaque message
             data.messages.forEach(msg => {
-                let messageElement = document.createElement('div');
-                messageElement.classList.add('message');
+                let messageElement;
                 
-                if (msg.user === userName) {
-                    messageElement.classList.add('sent');
-                } else {
-                    messageElement.classList.add('received');
-                }
-                
-                // Si c'est une invitation de jeu
                 if (msg.message_type === 'game_invite') {
+                    messageElement = document.createElement('div');
+                    messageElement.classList.add('message');
+                    
+                    // Utiliser msg.user au lieu de msg.sender pour la cohérence
+                    if (msg.user === userName) {
+                        messageElement.classList.add('sent');
+                    } else {
+                        messageElement.classList.add('received');
+                    }
+                    
+                    const gameType = msg.game || (msg.game_data && msg.game_data.game);
                     messageElement.innerHTML = `
                         <strong>${msg.user}</strong>
                         <div class="game-invitation">
                             ${msg.content}
                             ${msg.user !== userName ? 
-                                `<button class="join-game-btn" data-game="${msg.game_data.game}" data-sender="${msg.user}">
+                                `<button class="join-game-btn" data-game="${gameType}" data-sender="${msg.user}">
                                     Rejoindre la partie
                                 </button>` : ''}
                         </div>
                         <span class="timestamp">${msg.timestamp}</span>
                     `;
+                    
+                    // Ajouter l'événement au bouton si présent
+                    const joinButton = messageElement.querySelector('.join-game-btn');
+                    if (joinButton) {
+                        joinButton.addEventListener('click', function() {
+                            const gameType = this.getAttribute('data-game');
+                            const creator = this.getAttribute('data-sender');
+                            window.location.href = `/game/join/?game=${gameType}&creator=${creator}`;
+                        });
+                    }
                 } else {
-                    // Message texte normal
+                    // Message texte normal (code existant)
+                    messageElement = document.createElement('div');
+                    messageElement.classList.add('message');
+                    
+                    if (msg.user === userName) {
+                        messageElement.classList.add('sent');
+                    } else {
+                        messageElement.classList.add('received');
+                    }
+                    
                     messageElement.innerHTML = `
                         <strong>${msg.user}</strong>${msg.content}
                         <span class="timestamp">${msg.timestamp}</span>
@@ -327,10 +369,36 @@ function loadExistingMessages(roomId) {
                 messagesContainer.appendChild(messageElement);
             });
             
-            // Faire défiler vers le bas
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            scrollToBottom();
         })
         .catch(error => console.error('Erreur lors du chargement des messages:', error));
+}
+
+// Modifier la fonction updateInviteButton pour inclure la mise à jour du statut
+function updateInviteButton() {
+    const inviteButton = document.getElementById('send-game-invite');
+    const statusIndicator = document.getElementById('user-status-indicator');
+    const statusText = document.getElementById('user-status-text');
+    
+    const isOnline = connectedUsers.has(otherUserName);
+    
+    // Mettre à jour le bouton d'invitation
+    if (inviteButton) {
+        inviteButton.disabled = !isOnline;
+        inviteButton.title = isOnline ? 
+            "Inviter à jouer" : 
+            "L'utilisateur doit être en ligne pour recevoir une invitation";
+    }
+    
+    // Mettre à jour l'indicateur de statut
+    if (statusIndicator) {
+        statusIndicator.className = isOnline ? 'online' : 'offline';
+    }
+    
+    // Mettre à jour le texte du statut
+    if (statusText) {
+        statusText.textContent = isOnline ? 'En ligne' : 'Hors ligne';
+    }
 }
 
 // Appeler cette fonction au chargement de la page
