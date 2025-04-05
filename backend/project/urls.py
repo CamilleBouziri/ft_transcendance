@@ -19,11 +19,16 @@ urlpatterns = [
     path('login/', auth_views.connexion, name='login'),
     path('accueil/', auth_views.accueil, name='accueil'),
     path('dashboard/', game_views.dashboard, name='dashboard'),
+     path('invited-game/', game_views.invited_game, name='invited_game'),
     path('game/', game_views.start_game, name='start_game'), 
+    path('game/join/', game_views.join_game, name='join_game'),
+
     path('morpion/create/', game_views.create_morpion_match, name='create_morpion_match'),
     path('morpion/join/<int:match_id>/', game_views.join_morpion_match, name='join_morpion_match'),
     path('morpion/match/<int:match_id>/', game_views.morpion_match_detail, name='morpion_match_detail'),
     path('morpion/match/<int:match_id>/status/', game_views.check_match_status, name='check_match_status'),
+    path('get-tournaments/', game_views.get_tournaments, name='get_tournaments'),
+    path('get-morpion-matches/', game_views.get_morpion_matches, name='get_morpion_matches'),
 
     path("create_tournois/", tournois_views.creer_tournoi, name="creer_tournois"),
     path("join_tournament/<int:tournoi_id>/", tournois_views.rejoindre_tournoi, name="rejoindre_tournoi"),
@@ -51,6 +56,5 @@ urlpatterns = [
 
     path('amis/', include('amis.urls')),
     path('chat/', include('chat.urls', namespace='chat')),
-
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

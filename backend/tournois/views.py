@@ -12,30 +12,27 @@ from django.views.decorators.csrf import csrf_exempt
 def creer_tournoi(request):
     if request.method == "POST":
         nom = request.POST.get("nom")
-        joueur_nom = request.POST.get("joueur_nom", "").strip()  # Récupère le nom personnalisé
-
-        if not nom:
-            messages.error(request, "Le nom du tournoi est obligatoire.")
-            return redirect("creer_tournois")
-
-        # Crée le tournoi
+        joueur_nom = request.POST.get("joueur_nom", "").strip()
+        # Vérifier si le nom du tournoi existe déjà
+        if Tournoi.objects.filter(nom=nom).exists():
+            messages.error(request, "Un tournoi avec ce nom existe déjà.")
+            return render(request, "tournois/creer_tournois.html")
+        # Créer le tournoi
         tournoi = Tournoi.objects.create(nom=nom, createur=request.user)
-
-        # Utilise le nom personnalisé ou le nom d'utilisateur par défaut
+        # Utiliser le nom personnalisé ou le nom d'utilisateur par défaut
         joueur_nom = joueur_nom if joueur_nom else request.user.nom
-
-        # Ajoute le joueur au tournoi
-        # Enregistre le nom personnalisé dans le champ JSON
+        # Vérifier si le nom du joueur est déjà utilisé dans ce tournoi
+        if joueur_nom in tournoi.joueurs_noms_personnalises.values():
+            messages.error(request, "Ce nom de joueur est déjà utilisé dans ce tournoi.")
+            tournoi.delete()  # Supprimer le tournoi créé
+            return render(request, "tournois/creer_tournois.html")
+        # Ajouter le joueur au tournoi avec son nom personnalisé
         tournoi.joueurs_noms_personnalises[str(request.user.id)] = joueur_nom
         tournoi.save()
-
         tournoi.joueurs.add(request.user)
-
-
-        # messages.success(request, f"Tournoi créé avec succès. Vous jouerez sous le nom '{joueur_nom}'.")
         return redirect("dashboard")
-
     return render(request, "tournois/creer_tournois.html")
+
 
 
 @login_required
@@ -43,30 +40,29 @@ def rejoindre_tournoi(request, tournoi_id):
     tournoi = get_object_or_404(Tournoi, id=tournoi_id)
 
     if request.method == "POST":
-        joueur_nom = request.POST.get("joueur_nom", "").strip()  # Récupère le nom personnalisé
-
+        joueur_nom = request.POST.get("joueur_nom", "").strip()
         if tournoi.est_complet():
             messages.error(request, "Le tournoi est déjà complet.")
             return redirect("dashboard")
-
         if request.user in tournoi.joueurs.all():
             messages.error(request, "Vous êtes déjà inscrit à ce tournoi.")
             return redirect("dashboard")
-
-        # Utilise le nom personnalisé ou le nom d'utilisateur par défaut
+        # Utiliser le nom personnalisé ou le nom d'utilisateur par défaut
         joueur_nom = joueur_nom if joueur_nom else request.user.nom
-
-        # Ajoute le joueur au tournoi
+        # Vérifier si le nom est déjà utilisé dans ce tournoi
+        if joueur_nom in tournoi.joueurs_noms_personnalises.values():
+            messages.error(request, "Ce nom de joueur est déjà utilisé dans ce tournoi.")
+            return render(request, "tournois/rejoindre_tournois.html", {
+                "tournoi": tournoi,
+                "error": "Ce nom de joueur est déjà utilisé dans ce tournoi."
+            })
+        # Ajouter le joueur au tournoi
         tournoi.joueurs.add(request.user)
-
-        # Enregistre le nom personnalisé dans le champ JSON
         tournoi.joueurs_noms_personnalises[str(request.user.id)] = joueur_nom
         tournoi.save()
-
-        # messages.success(request, f"Vous avez rejoint le tournoi sous le nom '{joueur_nom}'.")
         return redirect("dashboard")
-
     return render(request, "tournois/rejoindre_tournois.html", {"tournoi": tournoi})
+
 
 
 @login_required

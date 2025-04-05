@@ -181,3 +181,20 @@ def get_friends(request):
     
     return JsonResponse({'friends': friends})
 
+@login_required
+def profil_ami(request, ami_nom):
+    ami = get_object_or_404(Utilisateurs, nom=ami_nom)
+    
+    # Vérifier si l'utilisateur est ami avec la personne
+    est_ami = Ami.objects.filter(
+        (models.Q(utilisateur=request.user, ami=ami) |
+         models.Q(utilisateur=ami, ami=request.user)),
+        statut='accepte'
+    ).exists()
+    
+    if not est_ami:
+        return redirect('amis')
+        
+    return render(request, 'amis/profil_ami.html', {
+        'ami': ami,
+    })

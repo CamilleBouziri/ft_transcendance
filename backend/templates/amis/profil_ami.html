@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/profil_ami.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<Body>
+    <div class="profil-container">
+        <h1>Profil de {{ ami.nom }}</h1>
+    
+        {% if ami.avatar %}
+              <img src="{{ ami.avatar.url }}" alt="Avatar" style="width: 100px; height: 100px;">
+        {% elif ami.photo_url %}
+              <img src="{{ ami.photo_url }}" alt="Profile Picture">
+        {% else %}
+              <img src="{% static 'img/joueurs.png' %}" style="width: 100px; height: 100px;">
+        {% endif %}
+        
+        <div class="stats">
+            <p>Victoires : {{ ami.wins }}</p>
+            <p>Défaites : {{ ami.losses }}</p>
+            <p>Statut : 
+                {% if ami.is_online %}
+                    {% if ami.is_playing %}En jeu{% else %}En ligne{% endif %}
+                {% else %}
+                    Hors ligne
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</Body>
+
+{% endblock %}
