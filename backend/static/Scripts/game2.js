@@ -225,14 +225,12 @@ function ballPhysics() {
         document.getElementById("scorePlayer2").innerHTML = score2;
         resetBall(2);
         matchScoreCheck();
-        cameraSide = 1 - cameraSide;
     }
     if (ball.position.x >= fieldWidth / 2) {
         score1++;
         document.getElementById("scorePlayer1").innerHTML = score1;
         resetBall(1);
         matchScoreCheck();
-        cameraSide = 1 - cameraSide;
     }
     if (ball.position.y <= -fieldHeight / 2 || ball.position.y >= fieldHeight / 2) {
         ballDirY = -ballDirY;

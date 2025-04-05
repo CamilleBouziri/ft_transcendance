@@ -7,7 +7,7 @@ import json
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-
+from django.contrib import messages 
 from django.db import transaction
 from django.contrib.auth import get_user_model
 import logging
@@ -68,7 +68,6 @@ def save_game_result(request):
             winner = request.POST.get('winner')
             player1_score = int(request.POST.get('player1_score', 0))
             player2_score = int(request.POST.get('player2_score', 0))
-            
             invited_by = request.session.get('invited_by')
             if invited_by:
                 player2_name = invited_by
@@ -87,7 +86,6 @@ def save_game_result(request):
             deleted_count = old_games.count()
             old_games.delete()
             print(f"Nettoyage: {deleted_count} parties 'En cours' supprimées")
-            
             # Une seule entrée pour le joueur actuel
             game, created = Game.objects.update_or_create(
                 player1=request.user,
@@ -100,21 +98,17 @@ def save_game_result(request):
                     'name': "Pong Match"
                 }
             )
-            
             if created:
                 print(f"Nouvelle partie créée: ID={game.id}")
             else:
                 print(f"Partie existante mise à jour: ID={game.id}")
-            
             # Désactiver l'état "en train de jouer" pour le joueur actuel
             request.user.is_playing = False
             request.user.save(update_fields=['is_playing'])
-            
             # 3. PARTIE MIROIR: Créer/mettre à jour une entrée pour l'adversaire si c'était une invitation
             if invited_by:
                 try:
                     player2_user = Utilisateurs.objects.get(nom=invited_by)
-                    
                     # Supprimer aussi les parties "En cours" obsolètes pour l'adversaire
                     old_mirror_games = Game.objects.filter(
                         player1=player2_user,
@@ -125,7 +119,6 @@ def save_game_result(request):
                     deleted_mirror_count = old_mirror_games.count()
                     old_mirror_games.delete()
                     print(f"Nettoyage miroir: {deleted_mirror_count} parties 'En cours' supprimées pour {player2_user.nom}")
-                    
                     # Créer/mettre à jour l'entrée miroir pour l'adversaire
                     mirror_game, mirror_created = Game.objects.update_or_create(
                         player1=player2_user,
@@ -138,12 +131,10 @@ def save_game_result(request):
                             'name': "Pong Game (via invitation)"
                         }
                     )
-                    
                     if mirror_created:
                         print(f"Nouvelle partie miroir créée: ID={mirror_game.id}")
                     else:
                         print(f"Partie miroir mise à jour: ID={mirror_game.id}")
-                    
                     # Désactiver l'état "en train de jouer" pour l'adversaire
                     player2_user.is_playing = False
                     player2_user.save(update_fields=['is_playing'])
@@ -151,12 +142,10 @@ def save_game_result(request):
                     # Nettoyer la session
                     if 'invited_by' in request.session:
                         del request.session['invited_by']
-                        
                 except Utilisateurs.DoesNotExist:
                     print(f"Utilisateur {invited_by} non trouvé")
                 except Exception as e:
                     print(f"Erreur lors de la gestion de l'entrée miroir: {str(e)}")
-            
             return JsonResponse({'status': 'success'})
             
         except Exception as e:
@@ -467,3 +456,57 @@ def join_game(request):
             return redirect('start_game')
     
     return redirect('dashboard')
+
+@login_required
+def invited_game(request):
+    inviter_name = request.GET.get('from')
+    if not inviter_name:
+        return redirect('dashboard')
+        
+    inviter = get_object_or_404(Utilisateurs, nom=inviter_name)
+    
+    # Stockez l'inviteur dans la session pour une utilisation ultérieure
+    request.session['invited_by'] = inviter_name
+    
+    context = {
+        'inviter': inviter,
+        'is_invited_game': True,
+        'user': request.user
+    }
+    
+    return render(request, "game/invited_game.html", context)
+
+
+@login_required
+def get_morpion_matches(request):
+    try:
+        matches = MorpionMatch.objects.all().order_by('-created_at')
+        data = {
+            'matches': [{
+                'id': match.id,
+                'creator_name': match.creator.nom,
+                'status': match.get_status_display(),
+                'player_count': match.players.count(),
+                'is_full': match.players.count() >= 2,
+                'has_joined': request.user in match.players.all()
+            } for match in matches]
+        }
+        return JsonResponse(data)
+    except Exception as e:
+        print(f"Error in get_morpion_matches: {str(e)}")
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+def get_tournaments(request):
+    tournaments = Tournoi.objects.all()
+    data = {
+        'tournaments': [{
+            'id': tournament.id,
+            'creator_name': tournament.createur.nom,
+            'status': tournament.get_statut_display(),
+            'player_count': tournament.joueurs.count(),
+            'is_full': tournament.est_complet(),
+            'has_joined': request.user in tournament.joueurs.all()
+        } for tournament in tournaments]
+    }
+    return JsonResponse(data)

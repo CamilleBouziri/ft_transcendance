@@ -94,7 +94,7 @@ function connectWebSocket() {
                 joinButton.addEventListener('click', function() {
                     const gameType = this.getAttribute('data-game');
                     const creator = this.getAttribute('data-sender');
-                    window.location.href = `/game/join/?game=${gameType}&creator=${creator}`;
+                    window.location.href = `/invited-game/?from=${creator}`;
                 });
             }
         } else {

@@ -2,6 +2,9 @@
 // ------- 3D PONG built with Three.JS --------- //
 // --------------------------------------------- //
 
+
+var paddle2DirY = 0;
+
 var renderer, scene, camera, pointLight, spotLight;
 var fieldWidth = 400, fieldHeight = 200;
 
@@ -22,7 +25,7 @@ var maxScore = 7;
 var cameraSide = 0;
 
 // Game mode
-var mode = "ia";
+var mode = "2players"; 
 
 // For pause
 var paused = false;
@@ -63,15 +66,19 @@ function cameraPhysics() {
 
 // ------------------- SETUP -------------------
 function setup() {
-    const settings = getSettings(); // Get saved settings
+    const settings = getSettings();
     if (settings) {
         maxScore = settings.maxScore;
-        mode = settings.mode; // Set game mode
+        mode = settings.mode;
     }
 
-    document.getElementById("winnerBoard").innerHTML = "First to " + maxScore + " wins!";
+    // Initialiser les scores à 0 et mettre à jour l'affichage
     score1 = 0;
     score2 = 0;
+    document.querySelector('#score1').textContent = '0';
+    document.querySelector('#score2').textContent = '0';
+    document.getElementById("winnerBoard").innerHTML = "First to " + maxScore + " wins!";
+    
     createScene(settings);
     draw();
 }
@@ -219,13 +226,13 @@ function draw() {
 function ballPhysics() {
     if (ball.position.x <= -fieldWidth / 2) {
         score2++;
-        document.getElementById("scorePlayer2").innerHTML = score2;
+        document.querySelector('#score2').textContent = score2;
         resetBall(2);
         matchScoreCheck();
     }
     if (ball.position.x >= fieldWidth / 2) {
         score1++;
-        document.getElementById("scorePlayer1").innerHTML = score1;
+        document.querySelector('#score1').textContent = score1;
         resetBall(1);
         matchScoreCheck();
     }
@@ -305,95 +312,67 @@ function resetBall(loser) {
     ballDirY = 1;
 }
 
-
-
 // ------------------- MATCH SCORE CHECK -------------------
-
-
-// Mise à jour de la fonction matchScoreCheck
-// ... (rest of the code remains the same until matchScoreCheck function)
-
 function matchScoreCheck() {
-    if (score1 >= maxScore) {
+    if (score1 >= maxScore || score2 >= maxScore) {
         ballSpeed = 0;
-        const player1Name = document.querySelector('#player1 h2').textContent || 'Player 1';
-        // Envoyer directement les scores au backend
-        sendGameResult(player1Name, "Player 2", score1, score2);
-        displayWinner(player1Name, "Player 2", score1, score2);
-    } else if (score2 >= maxScore) {
-        ballSpeed = 0;
-        const player1Name = document.querySelector('#player1 h2').textContent || 'Player 1';
-        // Envoyer directement les scores au backend
-        sendGameResult(player1Name, "Player 2", score1, score2);
-        displayWinner("Player 2", player1Name, score2, score1);
+        
+        const player1Name = document.querySelector('#player1 h2').textContent;
+        const player2Name = document.querySelector('#player2 h2').textContent;
+        const winner = score1 > score2 ? player1Name : player2Name;
+        
+        // Sauvegarder et afficher le résultat
+        displayWinner(winner, score1 > score2 ? player2Name : player1Name, 
+                     Math.max(score1, score2), Math.min(score1, score2));
     }
 }
 
 function displayWinner(winner, loser, winnerScore, loserScore) {
-    const overlay = document.createElement('div');
-    overlay.id = 'gameResultOverlay';
-    overlay.innerHTML = `
-    <div class="result-container">
-    <h2>Partie Terminée !</h2>
-    <div class="result-content">
-    <p class="winner-text"><strong>Vainqueur :</strong> ${winner}</p>
-    <p class="score-text"><strong>Score Final :</strong> ${winnerScore} - ${loserScore}</p>
-    </div>
-    <button class="result-button" onclick="closeResultAndRedirect()">Fermer</button>
-    </div>
-    `;
+    const overlay = document.getElementById('gameResultOverlay');
+    const winnerText = overlay.querySelector('.winner-text');
+    const scoreText = overlay.querySelector('.score-text');
     
-    document.body.appendChild(overlay);
+    winnerText.textContent = `Vainqueur : ${winner}`;
+    scoreText.textContent = `Score Final : ${winnerScore} - ${loserScore}`;
+    
+    // Sauvegarder les données pour handleGameEnd
+    localStorage.setItem('gameResult', JSON.stringify({
+        winner: winner,
+        player1Score: score1,
+        player2Score: score2,
+        player1Name: document.querySelector('#player1 h2').textContent,
+        player2Name: document.querySelector('#player2 h2').textContent
+    }));
+    
+    overlay.style.display = 'flex';
 }
 
-// Garder une seule version de sendGameResult
-function sendGameResult(player1Name, player2Name, player1Score, player2Score) {
-    const csrfToken = document.cookie
-    .split('; ')
-    .find(row => row.startsWith('csrftoken='))
-    ?.split('=')[1];
-    
-    if (!csrfToken) {
-        console.error("CSRF token not found");
-        return;
-    }
-    
-    const formData = new FormData();
-    formData.append('player1_score', player1Score);
-    formData.append('player2_score', player2Score);
-    formData.append('player2', player2Name);
-    formData.append('winner', player1Score > player2Score ? player1Name : player2Name);
-    
+function handleGameEnd() {
+    const gameData = JSON.parse(localStorage.getItem('gameResult'));
+    if (!gameData) return;
+
+    const formData = new URLSearchParams();
+    formData.append('winner', gameData.winner);
+    formData.append('player1_score', gameData.player1Score);
+    formData.append('player2_score', gameData.player2Score);
+
     fetch('/save-result/', {
         method: 'POST',
         headers: {
-            'X-CSRFToken': csrfToken
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         },
-        body: formData,
-        credentials: 'same-origin'
+        body: formData
     })
     .then(response => response.json())
     .then(data => {
-        console.log("Response from server:", data);
         if (data.status === 'success') {
-            console.log("Game result saved successfully");
-        } else {
-            console.error("Failed to save game result:", data.message);
+            localStorage.removeItem('gameResult');
+            window.location.href = '/dashboard/';
         }
     })
-    .catch(error => {
-        console.error("Error saving game result:", error);
-    });
+    .catch(error => console.error('Erreur:', error));
 }
-
-function closeResultAndRedirect() {
-    const overlay = document.getElementById('gameResultOverlay');
-    if (overlay) {
-        overlay.remove();
-    }
-    window.location.href = "/details_tournois/";
-}
-
 
 // Fonction utilitaire pour obtenir le token CSRF
 function getCSRFToken() {

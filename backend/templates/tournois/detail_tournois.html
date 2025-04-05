@@ -264,7 +264,9 @@
     flex-direction: column;
 }
 
-.finished-btn {
+/* Modifier dans la section <style> du même fichier */
+  .finished-btn {
+    display: inline-block;
     background-color: red;
     color: white;
     font-size: 1.5rem;
@@ -272,13 +274,18 @@
     padding: 15px 30px;
     border: 5px solid white;
     border-radius: 10px;
-    cursor: not-allowed;
+    cursor: pointer;
     text-transform: uppercase;
     box-shadow: 0px 0px 15px 5px rgba(255, 0, 0, 0.5);
+    text-decoration: none;
+    transition: all 0.3s ease;
 }
 
 .finished-btn:hover {
     background-color: darkred;
+    transform: scale(1.05);
+    text-decoration: none;
+    color: white;
 }
 
 .winner-text {
@@ -426,12 +433,13 @@
     {% if tournoi.statut == "termine" %}
     <div class="finished-container">
         <h2 class="winner-text">{% trans "Winner" %}: {{ tournoi.gagnant_final.nom }}</h2>
-        <button class="finished-btn">{% trans "FINISHED" %}</button>
+        <a href="{% url 'dashboard' %}" class="finished-btn">
+            {% trans "FINISHED" %}
+        </a>
     </div>
     {% endif %}
 
-
-    {% if tournoi.statut == "en_attente" or tournoi.statut == "en_cours" and request.user == tournoi.createur or tournoi.statut == "termine" and request.user == tournoi.createur %}
+    {% if tournoi.statut == "en_attente" or tournoi.statut == "en_cours" and request.user == tournoi.createur %}
     <h2>{% trans "Tournament Matches" %}</h2>
     <div class="highlight-bar"></div>
 
@@ -468,8 +476,7 @@
   <div class="player-name-container">{% if joueur4 %}{{ joueur4 }}{% else %}Joueur 4{% endif %}</div>
 </div>
 
-<!-- <p> match gagnant 1 : {{ matches.1.gagnant.nom }} </p>
-<p> match gaganant0 : {{ matches.0.gagnant.nom }} </p>   -->
+
 
 <!-- Gagnants intermédiaires -->
 <div class="player-icon winner1">
@@ -534,12 +541,6 @@
 
 
   </div>
-  {% if tournoi.statut == "termine" %}
-  <div class="finished-container">
-      <h2 class="winner-text">{% trans "Winner" %}: {{ matches.2.gagnant_nom  }}</h2>
-      <button class="finished-btn">{% trans "FINISHED" %}</button>
-  </div>
-{% endif %}
 
 
   

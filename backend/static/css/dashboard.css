@@ -260,7 +260,8 @@ h2
 {
   flex: 1;
   padding: 10px;
-  /* overflow: hidden; */
+  overflow: hidden;
+  max-height: 500px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -268,15 +269,30 @@ h2
   /* margin-bottom: 50px; */
 }
 
-.history-list 
-{
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  overflow-y: auto;
-  max-height: calc(100% - 60px); /* Tenir compte du titre et de la barre */
+.history-list {
   width: 100%;
+  max-height: 400px; /* Hauteur maximale de la liste */
+  overflow-y: auto; /* Ajoute une barre de défilement verticale si nécessaire */
+  padding-right: 0px; /* Espace pour la barre de défilement */
+  scrollbar-width: thin; /* Pour Firefox */
+}
+
+.history-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.history-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+.history-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .history-item 
@@ -284,13 +300,21 @@ h2
   background: #000;
   padding: 10px;
   border: 4px solid white;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 5px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   font-size: 1.2rem;
+}
+
+.match-date {
+  margin-bottom: 5px;
+  color: #ffffff;
+  margin-top: 15px;
+  font-size: 0.9em;
 }
 
 .history-item .player-name {
@@ -516,13 +540,13 @@ h2
 
 .ten-cases 
 {
-  flex: 4;
+  flex: 2;
   padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* height: 500px; */
-  /* position: relative; */
+  max-height: 270px;
+  overflow: hidden;
 }
 
 .achievement-title
@@ -530,7 +554,7 @@ h2
   width: 100%;
   text-align: center;
   margin-bottom: 5px;
-  display: flex;
+  /* display: flex; */
   justify-content: center;
   align-items: center;
   margin-top: 10px; 
@@ -540,17 +564,13 @@ h2
 .achievement-content
 {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
+  max-height: 250px;
+  overflow-y: auto;
   padding: 10px;
   box-sizing: border-box;
-  max-height: calc(100% - 80px); /* Tenir compte du titre, du bouton et de la barre */
-  overflow-y: auto;
   
   scrollbar-width: thin;
-  scrollbar-color: yellow #000;
+  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
 }
 
 .cases-grid 
@@ -574,6 +594,195 @@ h2
   color: white;
 }
 
+/* Ajoutez ou modifiez la section pour le morpion */
+.morpion-section {
+    flex: 2;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: 300px;  /* Même hauteur que le bloc tournois */
+    overflow: hidden;
+}
+
+.morpion-content {
+    width: 100%;
+    max-height: 250px;  /* Même hauteur que achievement-content */
+    overflow-y: auto;
+    padding: 10px;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
+}
+
+/* Style de la barre de défilement pour Chrome/Safari/Edge */
+.morpion-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.morpion-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.morpion-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+.morpion-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Adapter le tableau du morpion */
+.morpion-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 5px;
+    color: white;
+    font-family: "Press Start 2P", Arial, sans-serif;
+    font-size: 0.55rem;
+    margin-top: 10px;
+    position: relative;
+    margin-bottom: 0;
+}
+
+/* Responsive design pour le morpion */
+@media (max-width: 1200px) {
+    .morpion-table {
+        font-size: 0.6rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .morpion-table {
+        font-size: 0.55rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .morpion-section {
+        max-height: 250px;
+    }
+    
+    .morpion-content {
+        max-height: 200px;
+    }
+    
+    .morpion-table {
+        font-size: 0.5rem;
+    }
+}
+
+.matches-section {
+    flex: 2;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: 300px; 
+    overflow: hidden;
+}
+
+.matches-section .achievement-content {
+    width: 100%;
+    max-height: 250px; 
+    overflow-y: auto;
+    padding: 10px;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
+}
+
+.matches-section .achievement-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.matches-section .achievement-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.matches-section .achievement-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+.matches-section .achievement-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Ajustements responsifs */
+@media (max-width: 480px) {
+    .matches-section {
+        max-height: 250px;
+    }
+    
+    .matches-section .achievement-content {
+        max-height: 200px;
+    }
+}
+
+/* Styles for Morpion matches section */
+.matches-section.container {
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: 200px;  
+    overflow: hidden;
+    /* margin: 10px 0; */
+    border: 4px solid white;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.matches-section .achievement-content {
+    width: 100%;
+    max-height: 200px;  /* Reduced height to fit within container */
+    overflow-y: auto;
+    padding-right: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
+}
+
+/* Scrollbar styling for Webkit browsers */
+.matches-section .achievement-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.matches-section .achievement-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.matches-section .achievement-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+.matches-section .achievement-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Table styling within Morpion matches */
+.matches-section .tournaments-table {
+    width: 100%;
+    margin: 0;
+    font-size: 0.60rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .matches-section.container {
+        max-height: 250px;
+    }
+    
+    .matches-section .achievement-content {
+        max-height: 150px;
+    }
+}
 
 /* ====================================================================================================== */
 /* ================================================ HISTORY ============================================= */
@@ -635,11 +844,11 @@ h2
   background-color: yellow;
   color: #000;
   font-family: "Press Start 2P", Arial, sans-serif;
-  padding: 10px 20px;
+  padding: 8px 15px;  /* Réduire le padding */
   border: none;
   border-radius: 5px;
   text-transform: uppercase;
-  font-size: 1rem;
+  font-size: 0.8rem;  /* Réduire la taille de la police */
   text-decoration: none;
 }
 
@@ -697,6 +906,8 @@ h2
   background-color: rgba(0, 0, 0, 0.7);
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  max-height: 500px;
+  overflow: hidden;
 }
 
 .matches-section .achievement-title {
@@ -707,7 +918,7 @@ h2
 
 .matches-section h2 {
   color: yellow;
-  font-size: 25px;
+  font-size: 20px;
   margin: 0;
 }
 
@@ -767,7 +978,7 @@ h2
 }
 
 .matches-section .achievement-content {
-  max-height: 300px;
+  max-height: 400px;
   overflow-y: auto;
 }
 
@@ -824,9 +1035,10 @@ h2
   border-spacing: 0 5px;
   color: white;
   font-family: "Press Start 2P", Arial, sans-serif;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   margin-top: 10px;
   position: relative;
+  margin-bottom: 0;
 }
 
 .tournaments-table thead {
@@ -834,7 +1046,7 @@ h2
 }
 
 .tournaments-table th {
-  padding: 12px 8px;
+  padding: 8px 6px;
   text-align: center;
   border-bottom: 3px solid yellow;
   text-transform: uppercase;
@@ -852,7 +1064,7 @@ h2
 }
 
 .tournaments-table td {
-  padding: 10px 8px;
+  padding: 8px 6px;
   text-align: center;
   border-bottom: 2px solid #333;
 }
@@ -860,6 +1072,7 @@ h2
 .tournaments-table tbody tr {
   background-color: #111;
   transition: background-color 0.3s;
+  margin-bottom: 3px;
 }
 
 .tournaments-table tbody tr:hover {
@@ -928,15 +1141,29 @@ h2
 /* =============================================   RESPONSIVE  ========================================== */
 /* ====================================================================================================== */
 
+@media (max-width: 1200px) {
+  .tournaments-table {
+    font-size: 0.6rem;
+  }
+
+  .case-box {
+    font-size: 0.55rem;
+  }
+
+  .history-item {
+    font-size: 1rem;
+  }
+}
+
 @media (max-width: 900px) 
 {
 
   h2 {
-    font-size: 17px;
+    font-size: 15px;
   }
 
   .matches-section h2 {
-    font-size: 17px;
+    font-size: 15px;
   } 
 
   .btn-secondary {
@@ -1031,6 +1258,23 @@ h2
   section h2 {
     font-size: 15px;
   }
+
+  .tournaments-table {
+    font-size: 0.55rem;
+  }
+
+  .history-item {
+    font-size: 0.9rem;
+  }
+
+  .create-tournament-btn .btn {
+    font-size: 0.7rem;
+    padding: 6px 12px;
+  }
+
+  .win-loss {
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 480px) 
@@ -1059,7 +1303,20 @@ h2
   
   .case-box 
   {
+    font-size: 0.5rem;
+  }
+
+  .create-tournament-btn .btn {
     font-size: 0.6rem;
+    padding: 5px 10px;
+  }
+
+  .win-loss {
+    font-size: 0.8rem;
+  }
+
+  .player-info {
+    font-size: 0.8rem;
   }
 }
 
@@ -1118,22 +1375,21 @@ h2
 
 /* Style de la barre de défilement pour Chrome, Safari, Edge */
 .achievement-content::-webkit-scrollbar {
-  width: 10px;
+  width: 6px;
 }
 
 .achievement-content::-webkit-scrollbar-track {
-  background: #000;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
 }
 
 .achievement-content::-webkit-scrollbar-thumb {
-  background: yellow;
+  background: rgba(255, 255, 255, 0.3);
   border-radius: 10px;
-  border: 2px solid #000;
 }
 
 .achievement-content::-webkit-scrollbar-thumb:hover {
-  background: #ffff77;
+  background: rgba(255, 255, 255, 0.5);
 }
 
 /* ====================================================================================================== */

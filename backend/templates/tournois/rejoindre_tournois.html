@@ -38,8 +38,25 @@
     }
 
     /* ========== Tournament Container ========== */
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+      transition: color 0.3s;
+      z-index: 1000;
+    }
+
+    .close-button:hover {
+      color: yellow;
+      text-shadow: 0 0 10px yellow;
+    }
+
     .tournament-container {
       width: 100%;
+      position: relative;
       max-width: 600px;
       padding: 20px;
       background-color: black;
@@ -105,12 +122,48 @@
       background-color: #fff700;
       box-shadow: 0px 0px 10px yellow;
     }
+    /* Ajouter dans le style des templates */
+    .error-messages {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .alert {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        font-size: 0.8em;
+        text-align: center;
+    }
+
+    .alert-error {
+        background-color: rgba(255, 0, 0, 0.2);
+        border: 1px solid red;
+        color: red;
+    }
+
+    .alert-success {
+        background-color: rgba(0, 255, 0, 0.2);
+        border: 1px solid green;
+        color: green;
+    }
   </style>
 </head>
 <body>
 
 <div class="tournament-container">
+<div class="close-button" onclick="window.location.href='{% url 'dashboard' %}'" title="{% trans 'Close' %}">✕</div>
   <h1>{% trans "Join Tournament" %}</h1>
+  <!-- Ajouter après le <h1> -->
+  {% if messages %}
+  <div class="error-messages">
+      {% for message in messages %}
+          <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+              {{ message }}
+          </div>
+      {% endfor %}
+  </div>
+  {% endif %}
   <div class="highlight-bar"></div>
 
   <form method="POST" action="{% url 'rejoindre_tournois' tournoi_id=tournoi.id %}">
