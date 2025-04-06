@@ -30,6 +30,9 @@ urlpatterns = [
     path('get-tournaments/', game_views.get_tournaments, name='get_tournaments'),
     path('get-morpion-matches/', game_views.get_morpion_matches, name='get_morpion_matches'),
 
+    path('morpion/match/<int:match_id>/', game_views.morpion_match_detail, name='morpion_match_detail'),
+    path('check_match_status/<int:match_id>/', game_views.check_match_status, name='check_match_status'),
+
     path("create_tournois/", tournois_views.creer_tournoi, name="creer_tournois"),
     path("join_tournament/<int:tournoi_id>/", tournois_views.rejoindre_tournoi, name="rejoindre_tournoi"),
     path("lancer_tournois/<int:tournoi_id>/", tournois_views.lancer_tournoi, name="lancer_tournois"),

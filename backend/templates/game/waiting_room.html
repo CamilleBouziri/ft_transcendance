@@ -103,25 +103,20 @@
     
 
 <script>
-    function checkMatchStatus() {
-        fetch("{% url 'check_match_status' match.id %}")
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === "in_progress") {
-                    window.location.href = "{% url 'morpion_match_detail' match.id %}";
-                } else if (data.status === "finished") {
-                    // Affiche le vainqueur dans la salle d'attente
-                    const winnerContainer = document.querySelector('.winner-container');
-                    if (winnerContainer && !winnerContainer.classList.contains('visible')) {
-                        winnerContainer.style.display = 'block';
-                        winnerContainer.querySelector('.winner-name').textContent = data.winner;
-                        winnerContainer.classList.add('visible'); // Marque comme visible pour éviter de réinitialiser
-                    }
-                }
-            });
-    }
+function checkMatchStatus() {
+    fetch(`/check_match_status/{{ match.id }}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.can_play) {
+                window.location.href = `/morpion/match/{{ match.id }}/`;
+            } else if (data.is_creator && data.is_full) {
+                window.location.href = `/morpion/match/{{ match.id }}/`;
+            }
+        });
+}
 
-    setInterval(checkMatchStatus, 2000);
+// Vérifier toutes les 2 secondes
+setInterval(checkMatchStatus, 2000);
 </script>
 
 </body>

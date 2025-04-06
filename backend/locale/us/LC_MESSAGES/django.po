@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-20 09:30+0000\n"
+"POT-Creation-Date: 2025-04-06 13:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,165 +18,592 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: project/settings.py:155
+#: auth_app/models.py:45
+msgid "Language"
+msgstr "Language"
+
+#: project/settings.py:181
 msgid "English"
 msgstr "English"
 
-#: project/settings.py:156
+#: project/settings.py:182
 msgid "French"
 msgstr "French"
 
-#: project/settings.py:157
+#: project/settings.py:183
 msgid "Spanish"
 msgstr "Spanish"
+
+#: templates/accueil.html:4 templates/base.html:17
+msgid "Home"
+msgstr "Home"
+
+#: templates/accueil.html:8
+msgid "Welcome"
+msgstr "Welcome"
+
+#: templates/accueil.html:10
+msgid "Profile Picture"
+msgstr "Profile Picture"
+
+#: templates/accueil.html:12
+msgid "Your email is:"
+msgstr "Your email is:"
+
+#: templates/accueil.html:13
+msgid "Your name is:"
+msgstr "Your name is:"
+
+#: templates/accueil.html:14
+msgid "Your id is:"
+msgstr "Your ID is:"
+
+#: templates/accueil.html:15 templates/base.html:20
+#: templates/game/dashboard.html:60
+msgid "Logout"
+msgstr "Logout"
+
+#: templates/amis/amis.html:13
+msgid "Search a friend"
+msgstr "Search a friend"
+
+#: templates/amis/amis.html:17
+#, fuzzy
+#| msgid "March"
+msgid "Search"
+msgstr "March"
+
+#: templates/amis/amis.html:28
+msgid "Add"
+msgstr "Add"
+
+#: templates/amis/amis.html:34
+msgid "No users found."
+msgstr "No users found."
+
+#: templates/amis/amis.html:40 tournois/models.py:7
+#, fuzzy
+#| msgid "Waiting Room"
+msgid "Waiting"
+msgstr "Waiting Room"
+
+#: templates/amis/amis.html:55 templates/amis/amis.html:76
+#, fuzzy
+#| msgid "Aucune invitation en attente."
+msgid "No invitations pending."
+msgstr "No pending invitations."
+
+#: templates/amis/amis.html:60
+msgid "Received"
+msgstr "Received"
+
+#: templates/amis/amis.html:69 templates/amis/amis.html:147
+#, fuzzy
+#| msgid "Accepter"
+msgid "Accept"
+msgstr "Accept"
+
+#: templates/amis/amis.html:70
+#, fuzzy
+#| msgid "Refuser"
+msgid "Refused"
+msgstr "Decline"
+
+#: templates/amis/amis.html:82 templates/base.html:18
+msgid "Friends"
+msgid "Friends"
+
+#: templates/amis/amis.html:93 templates/amis/amis.html:116
+#: templates/amis/amis.html:142
+#, fuzzy
+#| msgid "Play"
+msgid "Playing"
+msgstr "Play"
+
+#: templates/amis/amis.html:95 templates/amis/amis.html:118
+#: templates/amis/amis.html:143 templates/amis/profil_ami.html:29
+msgid "Online"
+msgstr "Online"
+
+#: templates/amis/amis.html:98 templates/amis/amis.html:121
+#: templates/amis/amis.html:144 templates/amis/profil_ami.html:31
+msgid "Offline"
+msgstr "Offline"
+
+#: templates/amis/amis.html:102
+msgid "Chatter"
+msgstr "Chat"
+
+#: templates/amis/amis.html:127 templates/amis/amis.html:146
+#: venv/lib/python3.10/site-packages/django/forms/formsets.py:499
+msgid "Delete"
+msgstr "Delete"
+
+#: templates/amis/amis.html:133
+msgid "No friends accept."
+msgstr "No friends accept."
+
+#: templates/amis/amis.html:145 templates/chat/conversations.html:11
+#: templates/chat/room.html:14
+msgid "Chat"
+msgstr "Chat"
+
+#: templates/amis/amis.html:148
+#, fuzzy
+#| msgid "Refuser"
+msgid "Refuse"
+msgstr "Decline"
+
+#: templates/amis/amis.html:149
+msgid "No pending invitations"
+msgstr "No pending invitations"
+
+#: templates/amis/amis.html:150
+msgid "Pending"
+msgstr "Pending"
+
+#: templates/amis/amis.html:151
+msgid "No friends accepted"
+msgstr "No friends accepted"
+
+#: templates/amis/amis.html:152
+msgid "Are you sure you want to delete this friend?"
+msgstr "Are you sure you want to delete this friend?"
+
+#: templates/amis/profil_ami.html:14
+#, fuzzy
+#| msgid "Profil de"
+msgid "Profil of "
+msgstr "Profile of"
+
+#: templates/amis/profil_ami.html:25
+#, fuzzy
+#| msgid "Victoires :"
+msgid "Victory :"
+msgstr "Wins:"
+
+#: templates/amis/profil_ami.html:26
+msgid "Defeat :"
+msgstr "Defeat :"
+
+#: templates/amis/profil_ami.html:27
+msgid "Statut :"
+msgstr "Status:"
+
+#: templates/amis/profil_ami.html:29
+msgid "Stake"
+msgstr "Stake"
+
+#: templates/base.html:19
+#, fuzzy
+#| msgid "Messages"
+msgid "Message"
+msgstr "Messages"
+
+#: templates/base.html:28
+msgid "Designed by"
+msgstr "Designed by"
+
+#: templates/change_name.html:13
+msgid "Change Name"
+msgstr "Change Name"
+
+#: templates/change_name.html:19
+msgid "Save"
+msgstr "Save"
+
+#: templates/chat/conversations.html:26
+msgid "You:"
+msgstr "You:"
+
+#: templates/chat/conversations.html:37
+msgid "You don't have any conversations yet."
+msgstr "You don't have any conversations yet."
+
+#: templates/chat/room.html:23
+#, fuzzy
+#| msgid "Voir le profil"
+msgid "View profile"
+msgstr "View Profile"
+
+#: templates/chat/room.html:24
+msgid "Block"
+msgstr "Block"
+
+#: templates/chat/room.html:29
+msgid "offline"
+msgstr "offline"
+
+#: templates/chat/room.html:46 templates/chat/room.html:56
+msgid "Invite to play"
+msgstr "Invite to play"
+
+#: templates/chat/room.html:48
+msgid "Send"
+msgstr "Send"
+
+#: templates/chat/room.html:59 templates/game/dashboard.html:89
+msgid "Pong"
+msgstr "Pong"
 
 #: templates/connexion.html:6
 msgid "Login Page"
 msgstr "Login Page"
 
-#: templates/connexion.html:246
+#: templates/connexion.html:248
 msgid "Connexion"
 msgstr "Login"
 
-#: templates/connexion.html:260
+#: templates/connexion.html:262
 msgid "Username"
 msgstr "Username"
 
-#: templates/connexion.html:271
+#: templates/connexion.html:273
 msgid "Password"
 msgstr "Password"
 
-#: templates/connexion.html:276
+#: templates/connexion.html:278
 msgid "Not Register ?"
 msgstr "Not registered?"
 
-#: templates/connexion.html:278 templates/inscription.html:269
+#: templates/connexion.html:280 templates/inscription.html:269
 msgid "Register"
 msgstr "Register"
 
-#: templates/connexion.html:293
+#: templates/connexion.html:295
 msgid "Se connecter"
 msgstr "Log in"
 
-#: templates/connexion.html:299
+#: templates/connexion.html:301
 msgid "Login with 42"
 msgstr "Login with 42"
 
-#: templates/game/dashboard.html:394
+#: templates/game/dashboard.html:30
 msgid "OK"
 msgstr "OK"
 
-#: templates/game/dashboard.html:421
-msgid "History"
-msgstr "History"
+#: templates/game/dashboard.html:47 templates/game/dashboard.html:49
+msgid "Change Avatar"
+msgstr "Change Avatar"
 
-#: templates/game/dashboard.html:438
-msgid "No games played yet."
-msgstr "No games played yet."
+#: templates/game/dashboard.html:52
+msgid "Edit Name"
+msgstr "Edit Name"
 
-#: templates/game/dashboard.html:448
-msgid "Friend"
-msgstr "Friend"
+#: templates/game/dashboard.html:58
+msgid "Level"
+msgstr "Level"
 
-#: templates/game/dashboard.html:450
-msgid "Game"
-msgstr "Game"
+#: templates/game/dashboard.html:87
+msgid "Choose a Game"
+msgstr "Choose a Game"
 
-#: templates/game/dashboard.html:457
+#: templates/game/dashboard.html:92 templates/game/morpion.html:7
+#: templates/game/morpion.html:240
+msgid "Morpion"
+msgstr "Tic-Tac-Toe"
+
+#: templates/game/dashboard.html:107
+msgid "Tournaments"
+msgstr "Tournaments"
+
+#: templates/game/dashboard.html:110 templates/tournois/creer_tournois.html:8
+#: templates/tournois/creer_tournois.html:157
+msgid "Create Tournament"
+msgstr "Create Tournament"
+
+#: templates/game/dashboard.html:119 templates/game/dashboard.html:162
+#: templates/tournois/detail_tournois.html:414
+msgid "Creator"
+msgstr "Creator"
+
+#: templates/game/dashboard.html:120 templates/game/dashboard.html:163
+#: templates/tournois/detail_tournois.html:415
+msgid "Status"
+msgstr "Status"
+
+#: templates/game/dashboard.html:121 templates/game/dashboard.html:164
+#: templates/game/waiting_room.html:84
+#: templates/tournois/detail_tournois.html:416
+#, fuzzy
+#| msgid "Player 1"
+msgid "Players"
+msgstr "Player 1"
+
+#: templates/game/dashboard.html:122 templates/game/dashboard.html:165
+msgid "Actions"
+msgstr "Actions"
+
+#: templates/game/dashboard.html:133 templates/game/dashboard.html:257
+msgid "Tournament is full"
+msgstr "Tournament is full"
+
+#: templates/game/dashboard.html:135 templates/game/dashboard.html:258
+msgid "You have joined this tournament"
+msgstr "You have joined this tournament"
+
+#: templates/game/dashboard.html:138 templates/game/dashboard.html:259
+#: templates/tournois/rejoindre_tournois.html:8
+#: templates/tournois/rejoindre_tournois.html:156
+msgid "Join Tournament"
+msgstr "Join Tournament"
+
+#: templates/game/dashboard.html:145 templates/game/dashboard.html:260
+msgid "No tournaments available at the moment."
+msgstr "No tournaments available at the moment."
+
+#: templates/game/dashboard.html:155
+msgid "Morpion Matches"
+msgstr "Tic-Tac-Toe Matches"
+
+#: templates/game/dashboard.html:176 templates/game/dashboard.html:254
+msgid "Match is full"
+msgstr "Match is full"
+
+#: templates/game/dashboard.html:178 templates/game/dashboard.html:253
+msgid "You have joined this match"
+msgstr "You have joined this match"
+
+#: templates/game/dashboard.html:181 templates/game/dashboard.html:255
+msgid "Join Match"
+msgstr "Join Match"
+
+#: templates/game/dashboard.html:188 templates/game/dashboard.html:256
+msgid "No Morpion matches available."
+msgstr "No Tic-Tac-Toe matches available."
+
+#: templates/game/dashboard.html:205
 msgid "Wins"
 msgstr "Wins"
 
-#: templates/game/dashboard.html:461
+#: templates/game/dashboard.html:209
 msgid "Losses"
 msgstr "Losses"
 
-#: templates/game/dashboard.html:470
-msgid "Achievements"
-msgstr "Achievements"
+#: templates/game/dashboard.html:216
+msgid "History"
+msgstr "History"
 
-#: templates/game/dashboard.html:477
-msgid "Case"
-msgstr "Case"
+#: templates/game/dashboard.html:244
+msgid "No games played yet."
+msgstr "No games played yet."
 
-#: templates/game/index.html:277
+#: templates/game/index.html:274 templates/tournois/jeu_tournois.html:279
 msgid "Play Game"
 msgstr "Play Game"
 
-#: templates/game/index.html:281
+#: templates/game/index.html:278 templates/game/invited_game.html:275
+#: templates/tournois/jeu_tournois.html:283
 msgid "Color"
 msgstr "Color"
 
-#: templates/game/index.html:292
+#: templates/game/index.html:289 templates/game/invited_game.html:286
+#: templates/tournois/jeu_tournois.html:294
 msgid "Paddle 1"
 msgstr "Paddle 1"
 
-#: templates/game/index.html:304
+#: templates/game/index.html:301 templates/game/invited_game.html:298
+#: templates/tournois/jeu_tournois.html:306
 msgid "Paddle 2"
 msgstr "Paddle 2"
 
-#: templates/game/index.html:316
+#: templates/game/index.html:313 templates/game/invited_game.html:310
+#: templates/tournois/jeu_tournois.html:318
 msgid "Terrain"
 msgstr "Terrain"
 
-#: templates/game/index.html:328
+#: templates/game/index.html:325 templates/game/invited_game.html:322
+#: templates/tournois/jeu_tournois.html:330
 msgid "Points"
 msgstr "Points"
 
-#: templates/game/index.html:330
+#: templates/game/index.html:327 templates/game/invited_game.html:324
+#: templates/tournois/jeu_tournois.html:332
 msgid "1 Point"
 msgstr "1 Point"
 
-#: templates/game/index.html:331
+#: templates/game/index.html:328 templates/game/invited_game.html:325
+#: templates/tournois/jeu_tournois.html:333
 msgid "3 Point"
 msgstr "3 Points"
 
-#: templates/game/index.html:332
+#: templates/game/index.html:329 templates/game/invited_game.html:326
+#: templates/tournois/jeu_tournois.html:334
 msgid "5 Point"
 msgstr "5 Points"
 
-#: templates/game/index.html:333
+#: templates/game/index.html:330 templates/game/invited_game.html:327
+#: templates/tournois/jeu_tournois.html:335
 msgid "11 Point"
 msgstr "11 Points"
 
+#: templates/game/index.html:336
+#, fuzzy
+#| msgid "Game"
+msgid "Game Mode"
+msgstr "Game"
+
 #: templates/game/index.html:338
+msgid "IA"
+msgstr "IA"
+
+#: templates/game/index.html:339
+#, fuzzy
+#| msgid "Player 1"
+msgid "2 Players"
+msgstr "Player 1"
+
+#: templates/game/index.html:344 templates/game/invited_game.html:333
+#: templates/game/morpion.html:278 templates/tournois/jeu_tournois.html:340
 msgid "Play"
 msgstr "Play"
 
-#: templates/game/index.html:343
+#: templates/game/index.html:349 templates/game/invited_game.html:338
+#: templates/tournois/jeu_tournois.html:345
 msgid "PLAY GAME"
 msgstr "PLAY GAME"
 
-#: templates/game/index.html:349 templates/game/index.html:375
+#: templates/game/index.html:367 templates/game/index.html:393
+#: templates/game/invited_game.html:375 templates/game/morpion.html:246
+#: templates/tournois/detail_tournois.html:465
+#: templates/tournois/jeu_tournois.html:380
 msgid "Player 1"
 msgstr "Player 1"
 
-#: templates/game/index.html:354 templates/game/index.html:380
+#: templates/game/index.html:372 templates/game/index.html:398
+#: templates/game/invited_game.html:380 templates/game/morpion.html:249
+#: templates/tournois/detail_tournois.html:468
+#: templates/tournois/jeu_tournois.html:385
 msgid "Player 2"
 msgstr "Player 2"
 
-#: templates/game/index.html:372
+#: templates/game/index.html:390 templates/game/invited_game.html:372
+#: templates/tournois/jeu_tournois.html:377
 msgid "Pause"
 msgstr "Pause"
 
-#: templates/game/index.html:376
+#: templates/game/index.html:394 templates/game/invited_game.html:376
+#: templates/tournois/jeu_tournois.html:381
 msgid "Left: A"
 msgstr "Left: A"
 
-#: templates/game/index.html:377
+#: templates/game/index.html:395 templates/game/invited_game.html:377
+#: templates/tournois/jeu_tournois.html:382
 msgid "Right: D"
 msgstr "Right: D"
 
-#: templates/game/index.html:381
+#: templates/game/index.html:399 templates/game/invited_game.html:381
+#: templates/tournois/jeu_tournois.html:386
 msgid "Left: ⮜"
 msgstr "Left: ⮜"
 
-#: templates/game/index.html:382
+#: templates/game/index.html:400 templates/game/invited_game.html:382
+#: templates/tournois/jeu_tournois.html:387
 msgid "Right: ⮞"
 msgstr "Right: ⮞"
 
-#: templates/game/index.html:385
+#: templates/game/index.html:403 templates/game/invited_game.html:385
+#: templates/tournois/jeu_tournois.html:390
 msgid "Resume"
 msgstr "Resume"
+
+#: templates/game/invited_game.html:271
+#, fuzzy
+#| msgid "Game"
+msgid "Game with"
+msgstr "Game"
+
+#: templates/game/invited_game.html:393
+#, fuzzy
+#| msgid "Game"
+msgid "Game Over"
+msgstr "Game"
+
+#: templates/game/invited_game.html:398
+#: templates/tournois/creer_tournois.html:156
+#: templates/tournois/jeu_tournois.html:526
+#: templates/tournois/rejoindre_tournois.html:155
+msgid "Close"
+msgid "Close"
+msgstr ""
+
+#: templates/game/morpion.html:244
+msgid "Game Settings"
+msgstr "Game Settings"
+
+#: templates/game/morpion.html:252
+#, fuzzy
+#| msgid "Player 1"
+msgid "Player 1 Color"
+msgstr "Player 1 Color"
+
+#: templates/game/morpion.html:256
+#, fuzzy
+#| msgid "Player 2"
+msgid "Player 2 Color"
+msgstr "Player 2 Color "
+
+#: templates/game/morpion.html:260
+#, fuzzy
+#| msgid "Player 1"
+msgid "Player 1 Shape"
+msgstr "Player 1"
+
+#: templates/game/morpion.html:267
+#, fuzzy
+#| msgid "Player 2"
+msgid "Player 2 Shape"
+msgstr "Player 2 Shape"
+
+#: templates/game/morpion.html:275
+msgid "Matchs"
+msgstr "Matches"
+
+#: templates/game/morpion.html:308
+msgid "Restart"
+msgstr "Restart"
+
+#: templates/game/morpion.html:309 templates/tournois/detail_tournois.html:408
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: templates/game/morpion.html:387
+msgid "Turn: "
+msgstr "Turn: "
+
+#: templates/game/morpion.html:418
+msgid "Winner :"
+msgstr "Winner:"
+
+#: templates/game/morpion.html:432
+msgid "Draw!"
+msgstr "Draw!"
+
+#: templates/game/not_creator_room.html:7
+#: templates/game/not_creator_room.html:57
+msgid "Access Restricted"
+msgstr "Access Restricted"
+
+#: templates/game/not_creator_room.html:58
+msgid "The game can only be played in the creator's interface:"
+msgstr "The game can only be played from the creator's interface:"
+
+#: templates/game/not_creator_room.html:59 templates/game/waiting_room.html:100
+msgid "Return to Dashboard"
+msgstr "Return to Dashboard"
+
+#: templates/game/waiting_room.html:7 templates/game/waiting_room.html:82
+msgid "Waiting Room"
+msgstr "Waiting Room"
+
+#: templates/game/waiting_room.html:91
+msgid "Waiting for another player..."
+msgstr "Waiting for another player..."
+
+#: templates/game/waiting_room.html:94
+#: templates/tournois/detail_tournois.html:433
+msgid "Winner"
+msgstr "Winner"
 
 #: templates/inscription.html:6
 msgid "Inscription"
@@ -194,6 +621,129 @@ msgstr "Already registered?"
 msgid "Login"
 msgstr "Login"
 
+#: templates/tournois/creer_tournois.html:174
+msgid "Tournament Name"
+msgstr "Tournament Name"
+
+#: templates/tournois/creer_tournois.html:178
+#: templates/tournois/rejoindre_tournois.html:172
+#, fuzzy
+#| msgid "Play Game"
+msgid "Player Name"
+msgstr "Player Name"
+
+#: templates/tournois/creer_tournois.html:179
+#: templates/tournois/rejoindre_tournois.html:173
+msgid "Default: Your Username"
+msgstr "Default: Your Username"
+
+#: templates/tournois/creer_tournois.html:181
+msgid "Create"
+msgstr "Create"
+
+#: templates/tournois/detail_tournois.html:8
+msgid "Tournament Details"
+msgstr "Tournament Details"
+
+#: templates/tournois/detail_tournois.html:417
+msgid "Name"
+msgstr "Name"
+
+#: templates/tournois/detail_tournois.html:425
+msgid "The match is only possible in the creator's interface:"
+msgstr "The match can only be played from the creator's interface:"
+
+#: templates/tournois/detail_tournois.html:435
+msgid "FINISHED"
+msgstr "FINISHED"
+
+#: templates/tournois/detail_tournois.html:441
+msgid "Tournament Matches"
+msgstr "Tournament Matches"
+
+#: templates/tournois/detail_tournois.html:471
+#, fuzzy
+#| msgid "Player 1"
+msgid "Player 3"
+msgstr "Player 3"
+
+#: templates/tournois/detail_tournois.html:474
+#, fuzzy
+#| msgid "Player 1"
+msgid "Player 4"
+msgstr "Player 4"
+
+#: templates/tournois/detail_tournois.html:485
+#, fuzzy
+#| msgid "Winner :"
+msgid "Winner 1"
+msgstr "Winner 1 :"
+
+#: templates/tournois/detail_tournois.html:494
+#, fuzzy
+#| msgid "Winner :"
+msgid "Winner 2"
+msgstr "Winner2 :"
+
+#: templates/tournois/detail_tournois.html:507
+#, fuzzy
+#| msgid "Winner"
+msgid "Final Winner"
+msgstr "Final Winner"
+
+#: templates/tournois/detail_tournois.html:516
+msgid "PLAY1"
+msgstr "PLAY1"
+
+#: templates/tournois/detail_tournois.html:518
+msgid "PLAY2"
+msgstr "PLAY2"
+
+#: templates/tournois/detail_tournois.html:520
+msgid "FINAL"
+msgstr "FINAL"
+
+#: templates/tournois/detail_tournois.html:532
+#: templates/tournois/detail_tournois.html:628
+msgid "Start Tournament"
+msgstr "Start Tournament"
+
+#: templates/tournois/jeu_tournois.html:523
+#, fuzzy
+#| msgid "Game"
+msgid "Game Over!"
+msgstr "Game Over"
+
+#: templates/tournois/jeu_tournois.html:524
+#, fuzzy
+#| msgid "Winner :"
+msgid "Winner:"
+msgstr "Winner:"
+
+#: templates/tournois/jeu_tournois.html:525
+msgid "Final Score:"
+msgstr "Final Score:"
+
+#: templates/tournois/rejoindre_tournois.html:175
+msgid "Join"
+msgstr "Join"
+
+#: templates/upload_avatar.html:10
+msgid "Upload Avatar"
+msgstr "Upload Avatar"
+
+#: templates/upload_avatar.html:17
+msgid "Upload"
+msgstr "Upload"
+
+#: tournois/models.py:8
+msgid "In Progress"
+msgstr "In Progress"
+
+#: tournois/models.py:9
+msgid "Finished"
+msgstr "Finished"
+
 #: venv/lib/python3.10/site-packages/django/contrib/messages/apps.py:15
 msgid "Messages"
 msgstr "Messages"
@@ -210,7 +760,6 @@ msgstr "Static Files"
 msgid "Syndication"
 msgstr "Syndication"
 
-
 #. Translators: String used to replace omitted page numbers in elided page
 #. range generated by paginators, e.g. [1, 2, '…', 5, 6, 7, '…', 9, 10].
 #: venv/lib/python3.10/site-packages/django/core/paginator.py:30
@@ -219,32 +768,32 @@ msgstr ""
 
 #: venv/lib/python3.10/site-packages/django/core/paginator.py:50
 msgid "That page number is not an integer"
-msgstr ""
+msgstr "That page number is not an integer"
 
 #: venv/lib/python3.10/site-packages/django/core/paginator.py:52
 msgid "That page number is less than 1"
-msgstr ""
+msgstr "That page number is less than 1"
 
 #: venv/lib/python3.10/site-packages/django/core/paginator.py:54
 msgid "That page contains no results"
-msgstr ""
+msgstr "That page contains no results"
 
 #: venv/lib/python3.10/site-packages/django/core/validators.py:22
 msgid "Enter a valid value."
-msgstr ""
+msgstr "Enter a valid value."
 
 #: venv/lib/python3.10/site-packages/django/core/validators.py:104
 #: venv/lib/python3.10/site-packages/django/forms/fields.py:749
 msgid "Enter a valid URL."
-msgstr ""
+msgstr "Enter a valid URL."
 
 #: venv/lib/python3.10/site-packages/django/core/validators.py:164
 msgid "Enter a valid integer."
-msgstr ""
+msgstr "Enter a valid integer."
 
 #: venv/lib/python3.10/site-packages/django/core/validators.py:175
 msgid "Enter a valid email address."
-msgstr ""
+msgstr "Enter a valid email address."
 
 #. Translators: "letters" means latin letters: a-z and A-Z.
 #: venv/lib/python3.10/site-packages/django/core/validators.py:256
@@ -770,10 +1319,6 @@ msgstr[1] ""
 msgid "Order"
 msgstr ""
 
-#: venv/lib/python3.10/site-packages/django/forms/formsets.py:499
-msgid "Delete"
-msgstr ""
-
 #: venv/lib/python3.10/site-packages/django/forms/models.py:886
 #, python-format
 msgid "Please correct the duplicate data for %(field)s."
@@ -793,20 +1338,21 @@ msgstr ""
 
 #: venv/lib/python3.10/site-packages/django/forms/models.py:907
 msgid "Please correct the duplicate values below."
-msgstr ""
+msgstr "Please correct the duplicate values below."
 
 #: venv/lib/python3.10/site-packages/django/forms/models.py:1338
 msgid "The inline value did not match the parent instance."
-msgstr ""
+msgstr "The inline value did not match the parent instance."
 
 #: venv/lib/python3.10/site-packages/django/forms/models.py:1429
 msgid "Select a valid choice. That choice is not one of the available choices."
 msgstr ""
+"Select a valid choice. That choice is not one of the available choices."
 
 #: venv/lib/python3.10/site-packages/django/forms/models.py:1568
 #, python-format
 msgid "“%(pk)s” is not a valid value."
-msgstr ""
+msgstr "\"%(pk)s\" is not a valid value."
 
 #: venv/lib/python3.10/site-packages/django/forms/utils.py:226
 #, python-format
@@ -814,434 +1360,436 @@ msgid ""
 "%(datetime)s couldn’t be interpreted in time zone %(current_timezone)s; it "
 "may be ambiguous or it may not exist."
 msgstr ""
+"%(datetime)s couldn’t be interpreted in time zone %(current_timezone)s; it "
+"may be ambiguous or it may not exist."
 
 #: venv/lib/python3.10/site-packages/django/forms/widgets.py:439
 msgid "Clear"
-msgstr ""
+msgstr "Clear"
 
 #: venv/lib/python3.10/site-packages/django/forms/widgets.py:440
 msgid "Currently"
-msgstr ""
+msgstr "Currently"
 
 #: venv/lib/python3.10/site-packages/django/forms/widgets.py:441
 msgid "Change"
-msgstr ""
+msgstr "Change"
 
 #: venv/lib/python3.10/site-packages/django/forms/widgets.py:770
 msgid "Unknown"
-msgstr ""
+msgstr "Unknown"
 
 #: venv/lib/python3.10/site-packages/django/forms/widgets.py:771
 msgid "Yes"
-msgstr ""
+msgstr "Yes"
 
 #: venv/lib/python3.10/site-packages/django/forms/widgets.py:772
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #. Translators: Please do not add spaces around commas.
 #: venv/lib/python3.10/site-packages/django/template/defaultfilters.py:861
 msgid "yes,no,maybe"
-msgstr ""
+msgstr "yes,no,maybe"
 
 #: venv/lib/python3.10/site-packages/django/template/defaultfilters.py:891
 #: venv/lib/python3.10/site-packages/django/template/defaultfilters.py:908
 #, python-format
 msgid "%(size)d byte"
 msgid_plural "%(size)d bytes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(size)d byte"
+msgstr[1] "%(size)d bytes"
 
 #: venv/lib/python3.10/site-packages/django/template/defaultfilters.py:910
 #, python-format
 msgid "%s KB"
-msgstr ""
+msgstr "%s KB"
 
 #: venv/lib/python3.10/site-packages/django/template/defaultfilters.py:912
 #, python-format
 msgid "%s MB"
-msgstr ""
+msgstr "%s MB"
 
 #: venv/lib/python3.10/site-packages/django/template/defaultfilters.py:914
 #, python-format
 msgid "%s GB"
-msgstr ""
+msgstr "%s GB"
 
 #: venv/lib/python3.10/site-packages/django/template/defaultfilters.py:916
 #, python-format
 msgid "%s TB"
-msgstr ""
+msgstr "%s TB"
 
 #: venv/lib/python3.10/site-packages/django/template/defaultfilters.py:918
 #, python-format
 msgid "%s PB"
-msgstr ""
+msgstr "%s PB"
 
 #: venv/lib/python3.10/site-packages/django/utils/dateformat.py:73
 msgid "p.m."
-msgstr ""
+msgstr "p.m."
 
 #: venv/lib/python3.10/site-packages/django/utils/dateformat.py:74
 msgid "a.m."
-msgstr ""
+msgstr "a.m."
 
 #: venv/lib/python3.10/site-packages/django/utils/dateformat.py:79
 msgid "PM"
-msgstr ""
+msgstr "PM"
 
 #: venv/lib/python3.10/site-packages/django/utils/dateformat.py:80
 msgid "AM"
-msgstr ""
+msgstr "AM"
 
 #: venv/lib/python3.10/site-packages/django/utils/dateformat.py:152
 msgid "midnight"
-msgstr ""
+msgstr "midnight"
 
 #: venv/lib/python3.10/site-packages/django/utils/dateformat.py:154
 msgid "noon"
-msgstr ""
+msgstr "noon"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:7
 msgid "Monday"
-msgstr ""
+msgstr "Monday"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:8
 msgid "Tuesday"
-msgstr ""
+msgstr "Tuesday"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:9
 msgid "Wednesday"
-msgstr ""
+msgstr "Wednesday"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:10
 msgid "Thursday"
-msgstr ""
+msgstr "Thursday"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:11
 msgid "Friday"
-msgstr ""
+msgstr "Friday"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:12
 msgid "Saturday"
-msgstr ""
+msgstr "Saturday"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:13
 msgid "Sunday"
-msgstr ""
+msgstr "Sunday"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:16
 msgid "Mon"
-msgstr ""
+msgstr "Mon"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:17
 msgid "Tue"
-msgstr ""
+msgstr "Tue"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:18
 msgid "Wed"
-msgstr ""
+msgstr "Wed"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:19
 msgid "Thu"
-msgstr ""
+msgstr "Thu"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:20
 msgid "Fri"
-msgstr ""
+msgstr "Fri"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:21
 msgid "Sat"
-msgstr ""
+msgstr "Sat"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:22
 msgid "Sun"
-msgstr ""
+msgstr "Sun"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:25
 msgid "January"
-msgstr ""
+msgstr "January"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:26
 msgid "February"
-msgstr ""
+msgstr "February"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:27
 msgid "March"
-msgstr ""
+msgstr "March"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:28
 msgid "April"
-msgstr ""
+msgstr "April"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:29
 msgid "May"
-msgstr ""
+msgstr "May"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:30
 msgid "June"
-msgstr ""
+msgstr "June"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:31
 msgid "July"
-msgstr ""
+msgstr "July"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:32
 msgid "August"
-msgstr ""
+msgstr "August"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:33
 msgid "September"
-msgstr ""
+msgstr "September"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:34
 msgid "October"
-msgstr ""
+msgstr "October"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:35
 msgid "November"
-msgstr ""
+msgstr "November"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:36
 msgid "December"
-msgstr ""
+msgstr "December"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:39
 msgid "jan"
-msgstr ""
+msgstr "jan"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:40
 msgid "feb"
-msgstr ""
+msgstr "feb"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:41
 msgid "mar"
-msgstr ""
+msgstr "mar"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:42
 msgid "apr"
-msgstr ""
+msgstr "apr"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:43
 msgid "may"
-msgstr ""
+msgstr "may"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:44
 msgid "jun"
-msgstr ""
+msgstr "jun"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:45
 msgid "jul"
-msgstr ""
+msgstr "jul"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:46
 msgid "aug"
-msgstr ""
+msgstr "aug"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:47
 msgid "sep"
-msgstr ""
+msgstr "sep"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:48
 msgid "oct"
-msgstr ""
+msgstr "oct"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:49
 msgid "nov"
-msgstr ""
+msgstr "nov"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:50
 msgid "dec"
-msgstr ""
+msgstr "dec"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:53
 msgctxt "abbrev. month"
 msgid "Jan."
-msgstr ""
+msgstr "Jan."
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:54
 msgctxt "abbrev. month"
 msgid "Feb."
-msgstr ""
+msgstr "Feb."
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:55
 msgctxt "abbrev. month"
 msgid "March"
-msgstr ""
+msgstr "Mar."
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:56
 msgctxt "abbrev. month"
 msgid "April"
-msgstr ""
+msgstr "Apr."
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:57
 msgctxt "abbrev. month"
 msgid "May"
-msgstr ""
+msgstr "May"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:58
 msgctxt "abbrev. month"
 msgid "June"
-msgstr ""
+msgstr "Jun."
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:59
 msgctxt "abbrev. month"
 msgid "July"
-msgstr ""
+msgstr "Jul."
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:60
 msgctxt "abbrev. month"
 msgid "Aug."
-msgstr ""
+msgstr "Aug."
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:61
 msgctxt "abbrev. month"
 msgid "Sept."
-msgstr ""
+msgstr "Sep."
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:62
 msgctxt "abbrev. month"
 msgid "Oct."
-msgstr ""
+msgstr "Oct."
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:63
 msgctxt "abbrev. month"
 msgid "Nov."
-msgstr ""
+msgstr "Nov."
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:64
 msgctxt "abbrev. month"
 msgid "Dec."
-msgstr ""
+msgstr "Dec."
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:67
 msgctxt "alt. month"
 msgid "January"
-msgstr ""
+msgstr "January"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:68
 msgctxt "alt. month"
 msgid "February"
-msgstr ""
+msgstr "February"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:69
 msgctxt "alt. month"
 msgid "March"
-msgstr ""
+msgstr "March"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:70
 msgctxt "alt. month"
 msgid "April"
-msgstr ""
+msgstr "April"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:71
 msgctxt "alt. month"
 msgid "May"
-msgstr ""
+msgstr "May"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:72
 msgctxt "alt. month"
 msgid "June"
-msgstr ""
+msgstr "June"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:73
 msgctxt "alt. month"
 msgid "July"
-msgstr ""
+msgstr "July"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:74
 msgctxt "alt. month"
 msgid "August"
-msgstr ""
+msgstr "August"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:75
 msgctxt "alt. month"
 msgid "September"
-msgstr ""
+msgstr "September"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:76
 msgctxt "alt. month"
 msgid "October"
-msgstr ""
+msgstr "October"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:77
 msgctxt "alt. month"
 msgid "November"
-msgstr ""
+msgstr "November"
 
 #: venv/lib/python3.10/site-packages/django/utils/dates.py:78
 msgctxt "alt. month"
 msgid "December"
-msgstr ""
+msgstr "December"
 
 #: venv/lib/python3.10/site-packages/django/utils/ipv6.py:8
 msgid "This is not a valid IPv6 address."
-msgstr ""
+msgstr "This is not a valid IPv6 address."
 
 #: venv/lib/python3.10/site-packages/django/utils/text.py:78
 #, python-format
 msgctxt "String to return when truncating text"
 msgid "%(truncated_text)s…"
-msgstr ""
+msgstr "%(truncated_text)s…"
 
 #: venv/lib/python3.10/site-packages/django/utils/text.py:254
 msgid "or"
-msgstr ""
+msgstr "or"
 
 #. Translators: This string is used as a separator between list elements
 #: venv/lib/python3.10/site-packages/django/utils/text.py:273
 #: venv/lib/python3.10/site-packages/django/utils/timesince.py:131
 msgid ", "
-msgstr ""
+msgstr ", "
 
 #: venv/lib/python3.10/site-packages/django/utils/timesince.py:8
 #, python-format
 msgid "%(num)d year"
 msgid_plural "%(num)d years"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(num)d year"
+msgstr[1] "%(num)d years"
 
 #: venv/lib/python3.10/site-packages/django/utils/timesince.py:9
 #, python-format
 msgid "%(num)d month"
 msgid_plural "%(num)d months"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(num)d month"
+msgstr[1] "%(num)d months"
 
 #: venv/lib/python3.10/site-packages/django/utils/timesince.py:10
 #, python-format
 msgid "%(num)d week"
 msgid_plural "%(num)d weeks"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(num)d week"
+msgstr[1] "%(num)d weeks"
 
 #: venv/lib/python3.10/site-packages/django/utils/timesince.py:11
 #, python-format
 msgid "%(num)d day"
 msgid_plural "%(num)d days"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(num)d day"
+msgstr[1] "%(num)d days"
 
 #: venv/lib/python3.10/site-packages/django/utils/timesince.py:12
 #, python-format
 msgid "%(num)d hour"
 msgid_plural "%(num)d hours"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(num)d hour"
+msgstr[1] "%(num)d hours"
 
 #: venv/lib/python3.10/site-packages/django/utils/timesince.py:13
 #, python-format
 msgid "%(num)d minute"
 msgid_plural "%(num)d minutes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(num)d minute"
+msgstr[1] "%(num)d minutes"
 
 #: venv/lib/python3.10/site-packages/django/views/csrf.py:111
 msgid "Forbidden"
-msgstr ""
+msgstr "Forbidden"
 
 #: venv/lib/python3.10/site-packages/django/views/csrf.py:112
 msgid "CSRF verification failed. Request aborted."
-msgstr ""
+msgstr "CSRF verification failed. Request aborted."
 
 #: venv/lib/python3.10/site-packages/django/views/csrf.py:116
 msgid ""
@@ -1250,6 +1798,9 @@ msgid ""
 "required for security reasons, to ensure that your browser is not being "
 "hijacked by third parties."
 msgstr ""
+"You are seeing this message because this HTTPS site requires a “Referer "
+"header” to be sent by your browser, but none was provided. This header is "
+"required for security reasons to ensure your browser is not being hijacked."
 
 #: venv/lib/python3.10/site-packages/django/views/csrf.py:122
 msgid ""
@@ -1257,6 +1808,8 @@ msgid ""
 "enable them, at least for this site, or for HTTPS connections, or for “same-"
 "origin” requests."
 msgstr ""
+"If your browser is configured to disable 'Referer' headers, please re-enable "
+"them for this site, HTTPS, or same-origin requests."
 
 #: venv/lib/python3.10/site-packages/django/views/csrf.py:127
 msgid ""
@@ -1266,6 +1819,10 @@ msgid ""
 "If you’re concerned about privacy, use alternatives like <a "
 "rel=\"noreferrer\" …> for links to third-party sites."
 msgstr ""
+"If you're using <meta name=\"referrer\" content=\"no-referrer\"> or the "
+"“Referrer-Policy: no-referrer” header, please remove them. CSRF protection "
+"needs the “Referer” header. For privacy, consider using <a "
+"rel=\"noreferrer\"> on external links."
 
 #: venv/lib/python3.10/site-packages/django/views/csrf.py:136
 msgid ""
@@ -1273,44 +1830,48 @@ msgid ""
 "submitting forms. This cookie is required for security reasons, to ensure "
 "that your browser is not being hijacked by third parties."
 msgstr ""
+"This site requires a CSRF cookie for form submissions. This cookie is "
+"essential for security and to prevent third-party hijacking."
 
 #: venv/lib/python3.10/site-packages/django/views/csrf.py:142
 msgid ""
 "If you have configured your browser to disable cookies, please re-enable "
 "them, at least for this site, or for “same-origin” requests."
 msgstr ""
+"If your browser disables cookies, please re-enable them for this site or "
+"same-origin requests."
 
 #: venv/lib/python3.10/site-packages/django/views/csrf.py:148
 msgid "More information is available with DEBUG=True."
-msgstr ""
+msgstr "More information is available with DEBUG=True."
 
 #: venv/lib/python3.10/site-packages/django/views/generic/dates.py:44
 msgid "No year specified"
-msgstr ""
+msgstr "No year specified"
 
 #: venv/lib/python3.10/site-packages/django/views/generic/dates.py:64
 #: venv/lib/python3.10/site-packages/django/views/generic/dates.py:115
 #: venv/lib/python3.10/site-packages/django/views/generic/dates.py:214
 msgid "Date out of range"
-msgstr ""
+msgstr "Date out of range"
 
 #: venv/lib/python3.10/site-packages/django/views/generic/dates.py:94
 msgid "No month specified"
-msgstr ""
+msgstr "No month specified"
 
 #: venv/lib/python3.10/site-packages/django/views/generic/dates.py:147
 msgid "No day specified"
-msgstr ""
+msgstr "No day specified"
 
 #: venv/lib/python3.10/site-packages/django/views/generic/dates.py:194
 msgid "No week specified"
-msgstr ""
+msgstr "No week specified"
 
 #: venv/lib/python3.10/site-packages/django/views/generic/dates.py:349
 #: venv/lib/python3.10/site-packages/django/views/generic/dates.py:380
 #, python-format
 msgid "No %(verbose_name_plural)s available"
-msgstr ""
+msgstr "No %(verbose_name_plural)s available"
 
 #: venv/lib/python3.10/site-packages/django/views/generic/dates.py:652
 #, python-format
@@ -1318,49 +1879,51 @@ msgid ""
 "Future %(verbose_name_plural)s not available because %(class_name)s."
 "allow_future is False."
 msgstr ""
+"Future %(verbose_name_plural)s not available because %(class_name)s."
+"allow_future is False."
 
 #: venv/lib/python3.10/site-packages/django/views/generic/dates.py:692
 #, python-format
 msgid "Invalid date string “%(datestr)s” given format “%(format)s”"
-msgstr ""
+msgstr "Invalid date string “%(datestr)s” given format “%(format)s”"
 
 #: venv/lib/python3.10/site-packages/django/views/generic/detail.py:56
 #, python-format
 msgid "No %(verbose_name)s found matching the query"
-msgstr ""
+msgstr "No %(verbose_name)s found matching the query"
 
 #: venv/lib/python3.10/site-packages/django/views/generic/list.py:70
 msgid "Page is not “last”, nor can it be converted to an int."
-msgstr ""
+msgstr "Page is not “last”, nor can it be converted to an int."
 
 #: venv/lib/python3.10/site-packages/django/views/generic/list.py:77
 #, python-format
 msgid "Invalid page (%(page_number)s): %(message)s"
-msgstr ""
+msgstr "Invalid page (%(page_number)s): %(message)s"
 
 #: venv/lib/python3.10/site-packages/django/views/generic/list.py:169
 #, python-format
 msgid "Empty list and “%(class_name)s.allow_empty” is False."
-msgstr ""
+msgstr "Empty list and “%(class_name)s.allow_empty” is False."
 
 #: venv/lib/python3.10/site-packages/django/views/static.py:38
 msgid "Directory indexes are not allowed here."
-msgstr ""
+msgstr "Directory indexes are not allowed here."
 
 #: venv/lib/python3.10/site-packages/django/views/static.py:40
 #, python-format
 msgid "“%(path)s” does not exist"
-msgstr ""
+msgstr "“%(path)s” does not exist"
 
 #: venv/lib/python3.10/site-packages/django/views/static.py:79
 #, python-format
 msgid "Index of %(directory)s"
-msgstr ""
+msgstr "Index of %(directory)s"
 
 #: venv/lib/python3.10/site-packages/django/views/templates/default_urlconf.html:7
 #: venv/lib/python3.10/site-packages/django/views/templates/default_urlconf.html:221
 msgid "The install worked successfully! Congratulations!"
-msgstr ""
+msgstr "The install worked successfully! Congratulations!"
 
 #: venv/lib/python3.10/site-packages/django/views/templates/default_urlconf.html:207
 #, python-format
@@ -1368,6 +1931,8 @@ msgid ""
 "View <a href=\"https://docs.djangoproject.com/en/%(version)s/releases/\" "
 "target=\"_blank\" rel=\"noopener\">release notes</a> for Django %(version)s"
 msgstr ""
+"View <a href=\"https://docs.djangoproject.com/en/%(version)s/releases/\" "
+"target=\"_blank\" rel=\"noopener\">release notes</a> for Django %(version)s"
 
 #: venv/lib/python3.10/site-packages/django/views/templates/default_urlconf.html:222
 #, python-format
@@ -1377,27 +1942,76 @@ msgid ""
 "rel=\"noopener\">DEBUG=True</a> is in your settings file and you have not "
 "configured any URLs."
 msgstr ""
+"You are seeing this page because <a href=\"https://docs.djangoproject.com/en/"
+"%(version)s/ref/settings/#debug\" target=\"_blank\" "
+"rel=\"noopener\">DEBUG=True</a> is in your settings file and you have not "
+"configured any URLs."
 
 #: venv/lib/python3.10/site-packages/django/views/templates/default_urlconf.html:230
 msgid "Django Documentation"
-msgstr ""
+msgstr "Django Documentation"
 
 #: venv/lib/python3.10/site-packages/django/views/templates/default_urlconf.html:231
 msgid "Topics, references, &amp; how-to’s"
-msgstr ""
+msgstr "Topics, references, & how-to’s"
 
 #: venv/lib/python3.10/site-packages/django/views/templates/default_urlconf.html:239
 msgid "Tutorial: A Polling App"
-msgstr ""
+msgstr "Tutorial: A Polling App"
 
 #: venv/lib/python3.10/site-packages/django/views/templates/default_urlconf.html:240
 msgid "Get started with Django"
-msgstr ""
+msgstr "Get started with Django"
 
 #: venv/lib/python3.10/site-packages/django/views/templates/default_urlconf.html:248
 msgid "Django Community"
-msgstr ""
+msgstr "Django Community"
 
 #: venv/lib/python3.10/site-packages/django/views/templates/default_urlconf.html:249
 msgid "Connect, get help, or contribute"
-msgstr ""
+msgstr "Connect, get help, or contribute"
+
+#~ msgid "Rechercher un ami"
+#~ msgstr "Search for a friend"
+
+#~ msgid "Rechercher"
+#~ msgstr "Search"
+
+#~ msgid "Ajouter"
+#~ msgstr "Add"
+
+#~ msgid "Aucun utilisateur trouvé."
+#~ msgstr "No user found."
+
+#~ msgid "En attente"
+#~ msgstr "Pending"
+
+#~ msgid "Reçues"
+#~ msgstr "Received"
+
+#~ msgid "Supprimer"
+#~ msgstr "Remove"
+
+#~ msgid "Aucun ami accepté."
+#~ msgstr "No accepted friends."
+
+#~ msgid "Défaites :"
+#~ msgstr "Losses:"
+
+#~ msgid "En jeu"
+#~ msgstr "In game"
+
+#~ msgid "En ligne"
+#~ msgstr "Online"
+
+#~ msgid "Hors ligne"
+#~ msgstr "Offline"
+
+#~ msgid "Bloquer"
+#~ msgstr "Block"
+
+#~ msgid "Inviter à jouer"
+#~ msgstr "Invite to play"
+
+#~ msgid "Envoyer"
+#~ msgstr "Send"

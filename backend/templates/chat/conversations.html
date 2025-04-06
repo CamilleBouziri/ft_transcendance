@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/room.css' %}">
-	<link rel="stylesheet" href="{% static 'css/conversations.css' %}">
+    <link rel="stylesheet" href="{% static 'css/conversations.css' %}">
 {% endblock %}
 
 {% block content %}
-<h1 class="page-title">Chat</h1>
+<h1 class="page-title">{% trans "Chat" %}</h1>
 <div class="conversations-list">
     {% if conversations %}
         {% for conversation in conversations %}
@@ -22,7 +23,7 @@
                     </div>
                     <div class="conversation-message">
                         {% if conversation.last_message.user.nom == request.user.nom %}
-                            Vous: 
+                            {% trans "You:" %} 
                         {% else %}
                             {{ conversation.other_user }}: 
                         {% endif %}
@@ -33,8 +34,8 @@
         {% endfor %}
     {% else %}
         <div class="no-conversations">
-            Vous n'avez pas encore de conversations.
+            {% trans "You don't have any conversations yet." %}
         </div>
     {% endif %}
 </div>
-{% endblock %} 
+{% endblock %}

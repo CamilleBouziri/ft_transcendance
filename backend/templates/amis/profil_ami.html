@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% load static %}
 
@@ -10,7 +11,7 @@
 
 <Body>
     <div class="profil-container">
-        <h1>Profil de {{ ami.nom }}</h1>
+        <h1>{% trans "Profil of " %} {{ ami.nom }}</h1>
     
         {% if ami.avatar %}
               <img src="{{ ami.avatar.url }}" alt="Avatar" style="width: 100px; height: 100px;">
@@ -21,13 +22,13 @@
         {% endif %}
         
         <div class="stats">
-            <p>Victoires : {{ ami.wins }}</p>
-            <p>Défaites : {{ ami.losses }}</p>
-            <p>Statut : 
+            <p>{% trans "Victory :" %} {{ ami.wins }}</p>
+            <p>{% trans "Defeat :"%} {{ ami.losses }}</p>
+            <p>{% trans "Statut :"%} 
                 {% if ami.is_online %}
-                    {% if ami.is_playing %}En jeu{% else %}En ligne{% endif %}
+                    {% if ami.is_playing %}{% trans "Stake" %} {% else %} {% trans "Online"%}{% endif %}
                 {% else %}
-                    Hors ligne
+                    {% trans "Offline" %}
                 {% endif %}
             </p>
         </div>

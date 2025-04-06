@@ -1,4 +1,6 @@
 {% load static %}
+{% load i18n %}
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -12,10 +14,10 @@
 <body>
 	<header>
 		<nav>
-			<a href="{% url 'dashboard' %}" class="nav-item is-active">Home</a>
-			<a href="{% url 'amis' %}" class="nav-item">Amis</a>
-			<a href="{% url 'chat:conversations_list' %}" class="nav-item">Messages</a>
-			<a href="{% url 'logout' %}" class="nav-item">Logout</a>
+			<a href="{% url 'dashboard' %}" class="nav-item is-active">{% trans "Home"%}</a>
+			<a href="{% url 'amis' %}" class="nav-item">{%trans "Friends"%}</a>
+			<a href="{% url 'chat:conversations_list' %}" class="nav-item">{% trans "Message"%}</a>
+			<a href="{% url 'logout' %}" class="nav-item">{% trans "Logout" %}</a>
 		</nav>
     </header>
 	<main>
@@ -23,7 +25,7 @@
     	{% block javascripts %}{% endblock %}
 	</main>
 	<footer>
-		<p>Designed by <a target="_blank" href="https://github.com/ouahdinaaaa">Ouahdina</a> & <a target="_blank" href="https://github.com/justforttest">Kamel</a> & <a target="_blank" href="https://github.com/CamilleBouziri">Bouziri</a></p>
+		<p> {% trans "Designed by"%} <a target="_blank" href="https://github.com/ouahdinaaaa">Ouahdina</a> & <a target="_blank" href="https://github.com/justforttest">Kamel</a> & <a target="_blank" href="https://github.com/CamilleBouziri">Bouziri</a></p>
 	</footer>
 </body>
 </html>

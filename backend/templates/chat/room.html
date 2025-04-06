@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/room.css' %}">
@@ -10,7 +11,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ room.name }} - Chat</title>
+    <title>{{ room.name }} - {% trans "Chat" %}</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/chat.css' %}">
 </head>
@@ -19,18 +20,14 @@
         <div class="room-header">
             <h1>{{ room_name }}</h1>
             <!-- <a href="{% url 'profil_ami' ami_nom=ami.nom %}" class="btn">Voir le profil</a> -->
-            <button onclick="window.location.href='{% url 'profil_ami' ami_nom=ami.nom %}'" class="btn">Voir le profil</button>
-            <button id="block-user" class="block-button">Bloquer</button>
+            <button onclick="window.location.href='{% url 'profil_ami' ami_nom=ami.nom %}'" class="btn">{% trans "View profile" %}</button>
+            <button id="block-user" class="block-button"  data-blocked="false">{% trans "Block" %}</button>
         </div>
         <div id="connection-status" style="color: red;"></div>
         <div class="user-status">
             <span id="user-status-indicator" class="offline">●</span>
-            <span id="user-status-text">Hors ligne</span>
+            <span id="user-status-text">{% trans "offline" %}</span>
         </div>
-        
-        <!-- <button id="send-game-invite" disabled title="L'utilisateur doit être en ligne pour recevoir une invitation">
-            Inviter à jouer
-        </button> -->
         
         <div class="messages-container" id="messages">
             {% for message in messages %}
@@ -42,13 +39,13 @@
         </div>
 
         <div class="message-input">
-            <input type="text" id="chat-message-input" placeholder="Votre message...">
+            <input type="text" id="chat-message-input" placeholder="{% trans 'Type your message...' %}">
             <div class="message-actions" style="display: flex; margin-top: 10px; gap: 10px;">
                 <!-- <button id="send-game-invite" class="btn game-invite-btn">Inviter à jouer</button> -->
                 <button id="send-game-invite" disabled title="L'utilisateur doit être en ligne pour recevoir une invitation"  class="btn">
-                    Inviter à jouer
+                    {% trans "Invite to play" %}
                 </button>
-                <button id="chat-message-submit" class="btn">Envoyer</button>
+                <button id="chat-message-submit" class="btn"> {% trans "Send" %}</button>
             </div>
         </div>
     </div>
@@ -56,10 +53,10 @@
     <div id="game-invite-modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h3>Inviter à jouer</h3>
+            <h3>{% trans "Invite to play" %}</h3>
             <div class="game-choices">
                 <!-- <button data-game="morpion" class="btn game-choice">Morpion</button> -->
-                <button data-game="pong" class="btn game-choice">Pong</button>
+                <button data-game="pong" class="btn game-choice">{% trans "Pong" %}</button>
             </div>
         </div>
     </div>
@@ -127,10 +124,28 @@
     }
     </style>
 
+<script>
+    window.TRANSLATIONS = {
+        "Block": "{% trans 'Block' %}",
+        "Unblock": "{% trans 'Unblock' %}",
+        "online": "{% trans 'online' %}",
+        "offline": "{% trans 'offline' %}",
+        "User must be online to receive an invitation": "{% trans 'User must be online to receive an invitation' %}",
+        "Unblock user to send invitation": "{% trans 'Unblock user to send invitation' %}",
+        "Join Game": "{% trans 'Join Game' %}"
+    };
+    
+    // Ajouter ces variables globales
+    window.currentBlockState = false;
+    window.currentOnlineState = false;
+    </script>
+
     <script src="{% static 'Scripts/room.js' %}" 
             data-room-name="{{ room_name }}" 
             data-user-name="{{ request.user.nom }}">
     </script>
+
+
 </body>
 </html>
 

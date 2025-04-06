@@ -1,6 +1,7 @@
-
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 
 class UtilisateursManager(BaseUserManager):
     def create_user(self, nom, email=None, password=None):
@@ -33,6 +34,17 @@ class Utilisateurs(AbstractBaseUser):
     # Champs pour les victoires et défaites
     wins = models.PositiveIntegerField(default=0)  # Victoires
     losses = models.PositiveIntegerField(default=0)  # Défaites
+    language = models.CharField(
+        max_length=2,
+        choices=[
+            ('en', 'English'),
+            ('fr', 'Français'),
+            ('es', 'Español'),
+        ],
+        default='en',
+        verbose_name=_('Language')
+    )
+
     objects = UtilisateursManager()
 
     USERNAME_FIELD = 'nom'

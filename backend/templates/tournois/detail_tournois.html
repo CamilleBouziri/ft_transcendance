@@ -462,16 +462,16 @@
 <!-- Joueurs -->
  
 <div class="player-icon player1">
-  <div class="player-name-container">{% if joueur1 %}{{ joueur1 }}{% else %}Joueur 1{% endif %}</div>
+  <div class="player-name-container">{% if joueur1 %}{{ joueur1 }}{% else %}{% trans "Player 1" %}{% endif %}</div>
 </div>
 <div class="player-icon player2">
-  <div class="player-name-container">{% if joueur2 %}{{ joueur2 }}{% else %}Joueur 2{% endif %}</div>
+  <div class="player-name-container">{% if joueur2 %}{{ joueur2 }}{% else %}{% trans "Player 2"%}{% endif %}</div>
 </div>
 <div class="player-icon player3">
-  <div class="player-name-container">{% if joueur3 %}{{ joueur3 }}{% else %}Joueur 3{% endif %}</div>
+  <div class="player-name-container">{% if joueur3 %}{{ joueur3 }}{% else %}{%trans "Player 3"%}{% endif %}</div>
 </div>
 <div class="player-icon player4">
-  <div class="player-name-container">{% if joueur4 %}{{ joueur4 }}{% else %}Joueur 4{% endif %}</div>
+  <div class="player-name-container">{% if joueur4 %}{{ joueur4 }}{% else %}{%trans "Player 4"%}{% endif %}</div>
 </div>
 
 
@@ -482,7 +482,7 @@
     {% if matches.0.gagnant %}
       {{ matches.0.gagnant_nom }}
     {% else %}
-      Winner 1
+     {% trans "Winner 1" %}
     {% endif %}
   </div>
 </div>
@@ -491,7 +491,7 @@
     {% if matches.1.gagnant %}
       {{ matches.1.gagnant_nom }}
     {% else %}
-      Winner 2
+      {% trans "Winner 2" %}
     {% endif %}
   </div>
 </div>
@@ -504,7 +504,7 @@
   </div>
 {% else %}
   <div class="player-icon final-winner">
-    <div class="player-name-container">Final Winner</div>
+    <div class="player-name-container">{% trans "Final Winner" %}</div>
   </div>
 {% endif %}
 
@@ -513,11 +513,11 @@
 <!-- Boutons PLAY corrigés -->
 {% if tournoi.statut == "en_cours" and request.user == tournoi.createur %}
     {% if matches.0 and not matches.0.gagnant and not matches.1.gagnant%}
-        <a href="{% url 'jeu_tournois' match_id=matches.0.id %}" class="play-button play1">PLAY1</a>
+        <a href="{% url 'jeu_tournois' match_id=matches.0.id %}" class="play-button play1">{%trans "PLAY1"%}</a>
     {% elif matches.1 and matches.0.gagnant and not matches.1.gagnant %}
-        <a href="{% url 'jeu_tournois' match_id=matches.1.id %}" class="play-button play2">PLAY2</a>
+        <a href="{% url 'jeu_tournois' match_id=matches.1.id %}" class="play-button play2">{% trans "PLAY2" %}</a>
     {% elif matches|length == 3 and matches.2.id and not matches.2.gagnant %}
-        <a href="{% url 'jeu_tournois' match_id=matches.2.id %}" class="play-button play-final">FINAL</a>
+        <a href="{% url 'jeu_tournois' match_id=matches.2.id %}" class="play-button play-final">{% trans "FINAL" %}</a>
     {% endif %}
 {% endif %}
 

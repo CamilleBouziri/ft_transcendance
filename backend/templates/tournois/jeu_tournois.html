@@ -517,6 +517,14 @@
                 selectedPoints     = settings.maxScore;
             }
         };
+
+        // En haut de votre fichier, dans la section script où vous définissez window.TRANSLATIONS
+        window.TRANSLATIONS = {
+            "Game Over!": "{% trans 'Game Over!' %}",
+            "Winner:": "{% trans 'Winner:' %}",
+            "Final Score:": "{% trans 'Final Score:' %}",
+            "Close": "{% trans 'Close' %}"
+        };
     </script>
 
     <script>
@@ -858,12 +866,12 @@ function displayWinner(winner, loser, winnerScore, loserScore) {
     overlay.id = 'gameResultOverlay';
     overlay.innerHTML = `
     <div class="result-container">
-    <h2>Partie Terminée !</h2>
-    <div class="result-content">
-    <p class="winner-text"><strong>Vainqueur :</strong> ${winner}</p>
-    <p class="score-text"><strong>Score Final :</strong> ${winnerScore} - ${loserScore}</p>
-    </div>
-    <button class="result-button" onclick="closeResultAndRedirect()">Fermer</button>
+        <h2>${gettext("Game Over!")}</h2>
+        <div class="result-content">
+            <p class="winner-text"><strong>${gettext("Winner:")}</strong> ${winner}</p>
+            <p class="score-text"><strong>${gettext("Final Score:")}</strong> ${winnerScore} - ${loserScore}</p>
+        </div>
+        <button class="result-button" onclick="closeResultAndRedirect()">${gettext("Close")}</button>
     </div>
     `;
     
