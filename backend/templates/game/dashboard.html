@@ -43,15 +43,14 @@
         {% else %}
           <img src="{% static 'img/joueurs.png' %}" style="width: 100px; height: 100px;">
         {% endif %}
-        <!-- <a href="{% url 'upload_avatar' %}" class="btn btn-secondary">{% trans "Change Avatar" %}</a> -->
       </div>
       <button onclick="window.location.href='{% url 'upload_avatar' %}'" class="btn2">{% trans "Change Avatar" %}</button>
       <div class="player-info">
         <h2>{{ user.nom }}
         <a href="{% url 'change_name' %}" class="btn btn-secondary" title="{% trans 'Edit Name' %}">
           <i class="fas fa-pencil-alt"></i> <!-- Icône de crayon -->
+        </a>
         </h2>
-      </a>
       <div class="progress-container">
           <div class="progress-bar" style="width: {{ level_progress }}%;"></div>
           <div class="progress-text"> {% trans "Level"%} {{ level }} - {{ level_progress }}%</div>
