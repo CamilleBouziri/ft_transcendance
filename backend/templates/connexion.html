@@ -1,3 +1,4 @@
+
 {% load i18n %}
 <!DOCTYPE html>
 <html lang="fr">
@@ -245,7 +246,7 @@ input[type="submit"]:active {
   <div class="signin">
     <div class="content">
       <!-- On traduit "Connexion" -->
-      <h2 style="font-size: 1.5em;">{% trans "Connexion" %}</h2>
+      <h2 style="font-size: 1.5em;">{% trans "Login" %}</h2>
 
       <form class="form" method="POST" action="{% url 'login' %}">
         {% csrf_token %}
@@ -267,12 +268,10 @@ input[type="submit"]:active {
             type="password"
             name="password"
             id="password"
-            required
-          >
+            required>
           <!-- On traduit "Mot de passe" -->
           <i>{% trans "Password" %}</i>
         </div>
-
         <div class="links">
           <p style="color: white; margin-top: 5px;">
             {% trans "Not Register ?" %}
@@ -281,7 +280,6 @@ input[type="submit"]:active {
             </a>
           </p>
         </div>
-
         {% if messages %}
           {% for message in messages %}
             <div class="error">
@@ -292,7 +290,7 @@ input[type="submit"]:active {
 
         <div class="inputBox">
           <!-- On traduit "Se connecter" -->
-          <input type="submit" value="{% trans "Se connecter" %}">
+          <input type="submit" value="{% trans "Login" %}">
         </div>
 
         <div class="social-login">

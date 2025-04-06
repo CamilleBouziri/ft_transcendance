@@ -146,22 +146,12 @@ document.querySelector('#chat-message-input').onkeyup = function(e) {
     }
 };
 
+
+
 document.getElementById('block-user').addEventListener('click', function() {
     const button = this;
-    const roomName = document.querySelector('[data-room-name]').getAttribute('data-room-name');
-    const userName = document.querySelector('[data-user-name]').getAttribute('data-user-name');
-    
-    // Correction de l'extraction du nom de l'autre utilisateur
-    console.log('Current user:', userName);
-    console.log('Room name:', roomName);
-    
-    // const otherUser = roomName.split('-').map(part => part.trim())
-    //                          .find(part => part !== userName);
-
     const otherUser = roomName;
     
-    console.log('Other user:', otherUser);
-
     fetch('/chat/api/block-user/', {
         method: 'POST',
         headers: {
@@ -172,19 +162,25 @@ document.getElementById('block-user').addEventListener('click', function() {
             blocked_user: otherUser
         })
     })
-    .then(response => {
-        console.log('Response status:', response.status);
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-        console.log('Response data:', data);
         if (data.success) {
-            button.textContent = button.textContent === 'Bloquer' ? 'Débloquer' : 'Bloquer';
-            button.classList.toggle('blocked');
-            document.getElementById('chat-message-input').disabled = button.textContent === 'Débloquer';
-            document.getElementById('chat-message-submit').disabled = button.textContent === 'Débloquer';
-        } else {
-            console.error('Block request failed:', data.message);
+            // Inverser l'état de blocage
+            window.currentBlockState = !window.currentBlockState;
+            button.dataset.blocked = window.currentBlockState;
+            
+            // Mettre à jour le texte du bouton
+            button.textContent = window.currentBlockState ? 
+                window.TRANSLATIONS["Unblock"] : 
+                window.TRANSLATIONS["Block"];
+            
+            // Mettre à jour l'état des champs de saisie
+            document.getElementById('chat-message-input').disabled = window.currentBlockState;
+            document.getElementById('chat-message-submit').disabled = window.currentBlockState;
+            document.getElementById('send-game-invite').disabled = window.currentBlockState;
+            
+            // Mettre à jour l'interface
+            updateInviteButton();
         }
     })
     .catch(error => {
@@ -379,29 +375,39 @@ function updateInviteButton() {
     const inviteButton = document.getElementById('send-game-invite');
     const statusIndicator = document.getElementById('user-status-indicator');
     const statusText = document.getElementById('user-status-text');
+    const blockButton = document.getElementById('block-user');
     
-    const isOnline = connectedUsers.has(otherUserName);
-    
+    // Mettre à jour l'état en ligne
+    window.currentOnlineState = connectedUsers.has(otherUserName);
+    // Mettre à jour le texte et l'état du bouton de blocage
+    if (blockButton) {
+        window.currentBlockState = blockButton.dataset.blocked === 'true';
+        blockButton.textContent = window.currentBlockState ? 
+            window.TRANSLATIONS["Unblock"] : 
+            window.TRANSLATIONS["Block"];
+    }
     // Mettre à jour le bouton d'invitation
     if (inviteButton) {
-        inviteButton.disabled = !isOnline;
-        inviteButton.title = isOnline ? 
-            "Inviter à jouer" : 
-            "L'utilisateur doit être en ligne pour recevoir une invitation";
+        inviteButton.disabled = !window.currentOnlineState || window.currentBlockState;
+        inviteButton.title = !window.currentOnlineState ? 
+            window.TRANSLATIONS["User must be online to receive an invitation"] : 
+            window.currentBlockState ? 
+            window.TRANSLATIONS["Unblock user to send invitation"] : 
+            "";
     }
-    
     // Mettre à jour l'indicateur de statut
     if (statusIndicator) {
-        statusIndicator.className = isOnline ? 'online' : 'offline';
+        statusIndicator.className = window.currentOnlineState ? 'online' : 'offline';
     }
-    
     // Mettre à jour le texte du statut
     if (statusText) {
-        statusText.textContent = isOnline ? 'En ligne' : 'Hors ligne';
+        statusText.textContent = window.currentOnlineState ? 
+            window.TRANSLATIONS["online"] : 
+            window.TRANSLATIONS["offline"];
     }
 }
-
 // Appeler cette fonction au chargement de la page
+
 document.addEventListener('DOMContentLoaded', function() {
     // Extraire l'ID de la salle depuis l'URL
     const pathParts = window.location.pathname.split('/');

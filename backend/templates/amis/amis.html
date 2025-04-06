@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
+
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/amis.css' %}">
@@ -8,11 +10,11 @@
 {% block content %}
 
 <div class="container-amis">
-    <h3>Rechercher un ami</h3>
+    <h3>{% trans "Search a friend" %}</h3>
 
     <form method="GET" action="{% url 'amis' %}">
         <input type="text" name="q" placeholder="Rechercher un utilisateur..." value="{{ query }}">
-        <button type="submit">Rechercher</button>
+        <button type="submit">{% trans "Search" %}</button>
     </form>
 
     {% if utilisateurs %}
@@ -23,19 +25,19 @@
                         {{ user.nom }}
                     </div>
                     <div class="container-bouton">
-                        <a href="{% url 'envoyer_demande_ami' utilisateur_id=user.id %}" class="btn btn-success">Ajouter</a>
+                        <a href="{% url 'envoyer_demande_ami' utilisateur_id=user.id %}" class="btn btn-success">{% trans "Add" %}</a>
                     </div>
                 </li>
             {% endfor %}
         </ul>
     {% else %}
-        <p>Aucun utilisateur trouvé.</p>
+        <p>{% trans "No users found."%}</p>
     {% endif %}
 </div>
 
 <div class="invitations-container">
     <div class="container-amis">
-        <h3>En attente</h3>
+        <h3>{% trans "Waiting" %}</h3>
         {% if demandes_envoyees %}
             <ul>
                 {% for demande in demandes_envoyees %}
@@ -50,12 +52,12 @@
                 {% endfor %}
             </ul>
         {% else %}
-            <p>Aucune invitation en attente.</p>
+            <p>{% trans "No invitations pending."%}</p>
         {% endif %}
     </div>
 
     <div class="container-amis">
-        <h3>Reçues</h3>
+        <h3>{% trans "Received" %}</h3>
         <ul id="invit-container">
             {% if demandes_recues %}
                 {% for demande in demandes_recues %}
@@ -64,20 +66,20 @@
                             {{ demande.utilisateur.nom }}
                         </div>
                         <div class="container-bouton">
-                            <a href="{% url 'accepter_demande_ami' demande_id=demande.id %}" class="btn btn-success">Accepter</a>
-                            <a href="{% url 'refuser_demande_ami' demande_id=demande.id %}" class="btn btn-danger">Refuser</a>
+                            <a href="{% url 'accepter_demande_ami' demande_id=demande.id %}" class="btn btn-success">{% trans "Accept"%}</a>
+                            <a href="{% url 'refuser_demande_ami' demande_id=demande.id %}" class="btn btn-danger">{% trans "Refused" %}</a>
                         </div>
                     </li>
                 {% endfor %}
             </ul>
         {% else %}
-            <p>Aucune invitation en attente.</p>
+            <p> {% trans "No invitations pending." %}</p>
         {% endif %}
     </div>
 </div>
 
 <div class="container-amis" id="friends-list">
-    <h3>Amis</h3>
+    <h3>{% trans "Friends" %}</h3>
     <ul  id="friends-container">
     {% if amis_acceptes.envoyes or amis_acceptes.recus %}
             {% for ami in amis_acceptes.envoyes %}
@@ -88,18 +90,18 @@
                     <div class="status_ami">
                         {% if ami.ami.is_online %}
                         {% if ami.ami.is_playing %}
-                            <span class="status-dot playing" title="En train de jouer">🎮</span>
+                        <span class="status-dot playing" title="{% trans 'Playing' %}">🎮</span>
+                         {% else %}
+                        <span class="status-dot online" title="{% trans 'Online' %}">🟢</span>
+                         {% endif %}
                         {% else %}
-                            <span class="status-dot online" title="En ligne">🟢</span>
-                        {% endif %}
-                        {% else %}
-                        <span class="status-dot offline" title="Hors ligne">⚫</span>
+                        <span class="status-dot offline" title="{% trans 'Offline' %}">⚫</span>
                         {% endif %}
                     </div>
                     <div class="container-bouton">
-                        <a href="{% url 'chat:room' room_name=ami.ami.nom %}" class="btn btn-primary">Chatter</a>
+                        <a href="{% url 'chat:room' room_name=ami.ami.nom %}" class="btn btn-primary">{% trans "Chatter" %}</a>
                         <a href="{% url 'supprimer_ami' ami_id=ami.ami.id %}" class="btn btn-danger" 
-                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet ami ?')">Supprimer</a>
+                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet ami ?')">{% trans "Deleted" }</a>
                     </div>
                 </li>
             {% endfor %}
@@ -111,24 +113,24 @@
                     <div class="status_ami">
                         {% if ami.utilisateur.is_online %}
                             {% if ami.utilisateur.is_playing %}
-                                <span class="status-dot playing" title="En train de jouer">🎮</span>
+                                <span class="status-dot playing" title="{% trans 'Playing' %}">🎮</span>
                             {% else %}
-                                <span class="status-dot online" title="En ligne">🟢</span>
+                                <span class="status-dot online" title="{% trans 'Online' %}">🟢</span>
                             {% endif %}
                         {% else %}
-                            <span class="status-dot offline" title="Hors ligne">⚫</span>
+                            <span class="status-dot offline" title="{% trans 'Offline' %}">⚫</span>
                         {% endif %}
                     </div>
                     <div class="container-bouton">
-                        <a href="{% url 'chat:room' room_name=ami.utilisateur.nom %}" class="btn btn-primary">Chatter</a>
+                        <a href="{% url 'chat:room' room_name=ami.utilisateur.nom %}" class="btn btn-primary">{% trans "Chatter"}</a>
                         <a href="{% url 'supprimer_ami' ami_id=ami.utilisateur.id %}" class="btn btn-danger"
-                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet ami ?')">Supprimer</a>
+                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet ami ?')">{% trans "Delete" %}</a>
                     </div>
                 </li>
             {% endfor %}
         </ul>
     {% else %}
-        <p>Aucun ami accepté.</p>
+        <p>{% trans "No friends accept."%}</p>
     {% endif %}
 </div>
 
@@ -136,6 +138,23 @@
 
 {% block javascripts %}
 <script>
+window.TRANSLATIONS = {
+    "Playing": "{% trans 'Playing' %}",
+    "Online": "{% trans 'Online' %}",
+    "Offline": "{% trans 'Offline' %}",
+    "Chat": "{% trans 'Chat' %}",
+    "Delete": "{% trans 'Delete' %}",
+    "Accept": "{% trans 'Accept' %}",
+    "Refuse": "{% trans 'Refuse' %}",
+    "No pending invitations": "{% trans 'No pending invitations' %}",
+    "Pending": "{% trans 'Pending' %}",
+    "No friends accepted": "{% trans 'No friends accepted' %}",
+    "Are you sure you want to delete this friend?": "{% trans 'Are you sure you want to delete this friend?' %}"
+};
+
+function gettext(text) {
+    return window.TRANSLATIONS[text] || text;
+}
 
 const chatRoomUrl = "{% url 'chat:room' room_name='PLACEHOLDER' %}";
 
@@ -158,12 +177,12 @@ function updateFriendsStatus() {
                     let statusHTML = '';
                     if (friend.is_online) {
                         if (friend.is_playing) {
-                            statusHTML = '<span class="status-dot playing" title="En train de jouer">🎮</span>';
+                            statusHTML = `<span class="status-dot playing" title="${gettext('Playing')}">🎮</span>`;
                         } else {
-                            statusHTML = '<span class="status-dot online" title="En ligne">🟢</span>';
+                            statusHTML = `<span class="status-dot online" title="${gettext('Online')}">🟢</span>`;
                         }
                     } else {
-                        statusHTML = '<span class="status-dot offline" title="Hors ligne">⚫</span>';
+                        statusHTML = `<span class="status-dot offline" title="${gettext('Offline')}">⚫</span>`;
                     }
                     statusDiv.innerHTML = statusHTML;
                 }
@@ -185,7 +204,6 @@ function updateFriendRequests() {
             return response.json();
         })
         .then(data => {
-            // const receivedContainer = document.getElementById('invit-container');
             console.log('Données reçues:', data); // Debug
             console.log('Container trouvé:', receivedContainer); // Debug
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', data.received_requests.length); // Debug
@@ -197,14 +215,14 @@ function updateFriendRequests() {
                         <li>
                             <div class="container-nom">${request.utilisateur.nom}</div>
                             <div class="container-bouton">
-                                <a href="/amis/accepter-demande/${request.id}/" class="btn btn-success">Accepter</a>
-                                <a href="/amis/refuser-demande/${request.id}/" class="btn btn-danger">Refuser</a>
+                                <a href="/amis/accepter-demande/${request.id}/" class="btn btn-success">${gettext('Accept')}</a>
+                                <a href="/amis/refuser-demande/${request.id}/" class="btn btn-danger">${gettext('Refused')}</a>
                             </div>
                         </li>
                     `).join('');
                     receivedContainer.innerHTML = requestsHTML;
                 } else {
-                    receivedContainer.innerHTML = '<p>Aucune invitation en attente.</p>';
+                    receivedContainer.innerHTML = `<p>${gettext('No pending invitations')}</p>`;
                 }
             }
         })
@@ -218,7 +236,6 @@ function updatePendingRequests() {
     fetch('/amis/get-pending/')
         .then(response => response.json())
         .then(data => {
-            // Mise à jour des demandes envoyées en attente
             const pendingContainer = document.querySelector('.invitations-container .container-amis:first-child ul');
             if (pendingContainer) {
                 if (data.pending_requests.length > 0) {
@@ -228,12 +245,12 @@ function updatePendingRequests() {
                                 ${request.ami.nom}
                             </div>
                             <div class="container-bouton">
-                                <span class="statut-attente">En attente</span>
+                                <span class="statut-attente">${gettext('Pending')}</span>
                             </div>
                         </li>
                     `).join('');
                 } else {
-                    pendingContainer.innerHTML = '<p>Aucune invitation en attente.</p>';
+                    pendingContainer.innerHTML = `<p>${gettext('No pending invitations')}</p>`;
                 }
             }
         });
@@ -246,9 +263,7 @@ function updateFriendsList() {
         fetch('/amis/get-friends/')
         .then(response => response.json())
         .then(data => {
-            // Modification du sélecteur pour cibler le bon conteneur
             const friendsContainer = document.getElementById('friends-container');
-            // console.log('Container trouvé:', friendsContainer); // Debug
 
             if (friendsContainer) {
                 if (data.friends && data.friends.length > 0) {
@@ -260,21 +275,21 @@ function updateFriendsList() {
                             <div class="status_ami">
                                 ${friend.is_online 
                                     ? friend.is_playing
-                                        ? '<span class="status-dot playing" title="En train de jouer">🎮</span>'
-                                        : '<span class="status-dot online" title="En ligne">🟢</span>'
-                                    : '<span class="status-dot offline" title="Hors ligne">⚫</span>'
+                                        ? `<span class="status-dot playing" title="${gettext('Playing')}">🎮</span>`
+                                        : `<span class="status-dot online" title="${gettext('Online')}">🟢</span>`
+                                    : `<span class="status-dot offline" title="${gettext('Offline')}">⚫</span>`
                                 }
                             </div>
                             <div class="container-bouton">
-                                <a href="${chatRoomUrl.replace('PLACEHOLDER', friend.nom)}" class="btn btn-primary">Chatter</a>
+                                <a href="${chatRoomUrl.replace('PLACEHOLDER', friend.nom)}" class="btn btn-primary">${gettext('Chat')}</a>
                                 <a href="/amis/supprimer-ami/${friend.id}/" class="btn btn-danger" 
-                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet ami ?')">Supprimer</a>
+                                   onclick="return confirm('${gettext('Are you sure you want to delete this friend?')}')">${gettext('Delete')}</a>
                             </div>
                         </li>
                     `).join('');
                     friendsContainer.innerHTML = friendsHTML;
                 } else {
-                    friendsContainer.innerHTML = '<p>Aucun ami accepté.</p>';
+                    friendsContainer.innerHTML = `<p>${gettext('No friends accepted')}</p>`;
                 }
             } else {
                 console.error('Container des amis non trouvé - Vérifiez la structure HTML');
@@ -293,13 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const receivedContainer = document.getElementById('invit-container');
     console.log('Container au chargement:', friendsContainer);
 
-    // // Première mise à jour immédiate
-    // updateFriendsStatus();
-    // updateFriendRequests();
-    // updatePendingRequests();
-    // updateFriendsList();
-
-    // Puis toutes les 4 secondes
     setInterval(() => {
         updateFriendsStatus();
         updateFriendRequests();

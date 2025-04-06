@@ -1,11 +1,12 @@
 from django.db import models
 from django.conf import settings  # Récupération du modèle utilisateur personnalisé
+from django.utils.translation import gettext_lazy as _
 
 class Tournoi(models.Model):
     STATUT_CHOICES = [
-        ("en_attente", "Attente"),
-        ("en_cours", "En cours"),
-        ("termine", "Terminé"),
+        ("en_attente", _("Waiting")),
+        ("en_cours", _("In Progress")),
+        ("termine", _("Finished")),
     ]
 
     nom = models.CharField(max_length=100, unique=True, verbose_name="Nom du tournoi")
@@ -40,7 +41,6 @@ class Tournoi(models.Model):
         blank=True,
         verbose_name="Noms personnalisés des joueurs"
     )
-    
     date_creation = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
 
     def est_complet(self):
@@ -62,41 +62,34 @@ class Tournoi(models.Model):
                     round="finale",
                     ordre=2
                 )
-        
         # Vérifier si le tournoi est terminé
         finale = Match.objects.filter(tournoi=self, round="finale").first()
         if finale and finale.gagnant:
             self.gagnant_final = finale.gagnant
             self.statut = "termine"
             self.save()
-
     def mettre_a_jour_classement(self):
         """Met à jour le classement des joueurs selon leurs performances."""
         classement = []
         matchs = list(self.matchs.all())
-
         # 1er = Gagnant de la finale
         if self.gagnant_final:
             classement.append(self.gagnant_final)
-
         # 2ème = Perdant de la finale
         finale = matchs[2] if len(matchs) == 3 else None
         if finale and finale.joueur1 != finale.gagnant:
             classement.append(finale.joueur1)
         elif finale and finale.joueur2 != finale.gagnant:
             classement.append(finale.joueur2)
-
         # 3ème et 4ème = Perdants des demi-finales
         for match in matchs[:2]:  # Premier tour (demi-finales)
             if match.joueur1 != match.gagnant:
                 classement.append(match.joueur1)
             if match.joueur2 != match.gagnant:
                 classement.append(match.joueur2)
-
         # Sauvegarde du classement (1er = 3 pts, 2e = 2 pts, etc.)
         for i, joueur in enumerate(classement):
             Classement.objects.create(tournoi=self, joueur=joueur, points=(3 - i))
-
     def __str__(self):
         return f"{self.nom} ({self.get_statut_display()})"
 

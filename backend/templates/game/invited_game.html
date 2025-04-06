@@ -546,16 +546,10 @@
                 gameContainer.style.pointerEvents = 'auto';
             }
         }
-
-        // Quand on clique sur la croix rouge
         function closeSettings() {
-            // Redirigez vers votre dashboard ou un autre lien de votre choix
             window.location.href = '/dashboard';
-            // Pour la démo, on se contente de masquer la div:
             document.getElementById('settingsContainer').style.display = 'none';
         }
-
-        // Charger d'anciens réglages éventuels
         window.onload = function () {
             const settings = JSON.parse(localStorage.getItem('pongSettings'));
             if (settings) {
@@ -567,15 +561,12 @@
                 selectedPoints     = settings.maxScore;
             }
         };
-
         function showGameResult(winner, player1Score, player2Score) {
             const overlay = document.getElementById('gameResultOverlay');
             const winnerText = overlay.querySelector('.winner-text');
             const scoreText = overlay.querySelector('.score-text');
-            
             winnerText.textContent = `${winner} wins!`;
             scoreText.textContent = `Score: ${player1Score} - ${player2Score}`;
-            
             // Sauvegarder les résultats dans le localStorage
             const gameResult = {
                 winner: winner,
@@ -586,10 +577,8 @@
             
             overlay.style.display = 'flex';
         }
-
         function handleGameEnd() {
             const gameData = JSON.parse(localStorage.getItem('gameResult'));
-            
             if (gameData) {
                 // Envoyer les résultats au serveur
                 fetch('/save-result/', {
@@ -621,9 +610,8 @@
                 });
             }
         }
-
         function endGame(winner, player1Score, player2Score) {
-            stopGame();  // Arrêter le jeu si cette fonction existe
+            stopGame();
             showGameResult(winner, player1Score, player2Score);
         }
     </script>

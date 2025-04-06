@@ -14,7 +14,7 @@ var paddleSpeed = 5;
 
 // Ball
 var ball, paddle1, paddle2;
-var ballSpeed = 1.3;
+var ballSpeed = 1.6;
 var ballDirX = 1, ballDirY = 1;
 
 // Scores
@@ -303,11 +303,19 @@ function paddlePhysics() {
 
 // ------------------- RESET BALL -------------------
 function resetBall(loser) {
+    // Reset ball position
     ball.position.set(0, 0, 5);
     ballDirX = loser === 1 ? 1 : -1;
     ballDirY = 1;
-}
 
+    // Reset paddles positions
+    paddle1.position.y = 0;
+    paddle2.position.y = 0;
+    
+    // Reset paddle directions
+    paddle1DirY = 0;
+    paddle2DirY = 0;
+}
 
 
 // ------------------- MATCH SCORE CHECK -------------------

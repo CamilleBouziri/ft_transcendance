@@ -2,6 +2,7 @@ from django.db import models
 
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 class Game(models.Model):
     name = models.CharField(max_length=100, default="Pong Match")
@@ -23,9 +24,9 @@ class Game(models.Model):
 
 class MorpionMatch(models.Model):
     STATUS_CHOICES = [
-        ("waiting", "Waiting for player"),
-        ("in_progress", "In Progress"),
-        ("finished", "Finished"),
+        ("waiting", _("Waiting")),
+        ("in_progress", _("In Progress")),
+        ("finished", _("Finished")),
     ]
 
     creator = models.ForeignKey(

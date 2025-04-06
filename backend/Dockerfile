@@ -14,6 +14,8 @@ RUN apt-get update && apt-get install -y postgresql-client \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+
+
 COPY ./backend/requirements.txt /app/requirements.txt
 RUN pip install --upgrade pip setuptools wheel
 RUN pip install -r requirements.txt
