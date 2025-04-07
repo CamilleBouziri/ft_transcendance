@@ -11,14 +11,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
     connected_users = {}
 
     async def connect(self):
-        current_user = self.scope["user"].nom
-        other_user = self.scope['url_route']['kwargs']['room_name']
+        current_user = self.scope["user"]
+        other_username = self.scope['url_route']['kwargs']['room_name']
         
-        users = sorted([current_user, other_user])
-        self.room_name = f"private_{users[0]}_{users[1]}"
+        # Récupérer l'autre utilisateur
+        other_user = await self.get_other_user(other_username)
+        if not other_user:
+            await self.close()
+            return
+        
+        # Créer le nom de la room avec les IDs triés
+        users_ids = sorted([current_user.id, other_user.id])
+        self.room_name = f"private_{users_ids[0]}_{users_ids[1]}"
         self.room_group_name = f"chat_{self.room_name}"
 
-        print(f"[{datetime.now()}] Connexion de {current_user} à la salle {self.room_name}")
+        print(f"[{datetime.now()}] Connexion de {current_user.nom} à la salle {self.room_name}")
 
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -28,7 +35,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.get_or_create_room()
 
         # Ajouter l'utilisateur à la liste des connectés pour cette salle
-        self.connected_users.setdefault(self.room_name, set()).add(self.scope["user"].nom)
+        self.connected_users.setdefault(self.room_name, set()).add(current_user.nom)
         
         # Informer tout le monde du statut de tous les utilisateurs connectés
         for user in self.connected_users.get(self.room_name, set()):
@@ -186,15 +193,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return None
 
     @database_sync_to_async
+    def get_other_user(self, username):
+        User = get_user_model()
+        try:
+            return User.objects.get(nom=username)
+        except User.DoesNotExist:
+            return None
+
+    @database_sync_to_async
     def is_user_blocked(self):
-        # Le format est maintenant "private_user1_user2"
-        users = self.room_name.replace('private_', '').split('_')
-        other_user = users[1] if users[0] == self.scope["user"].nom else users[0]
+        User = get_user_model()
+        # Extraire les IDs de la room
+        ids = self.room_name.replace('private_', '').split('_')
+        other_id = ids[1] if int(ids[0]) == self.scope["user"].id else ids[0]
         
         UserBlock = apps.get_model('chat', 'UserBlock')
         block_exists = UserBlock.objects.filter(
-            (Q(blocker=self.scope["user"]) & Q(blocked__nom=other_user)) |
-            (Q(blocker__nom=other_user) & Q(blocked=self.scope["user"]))
+            (Q(blocker=self.scope["user"]) & Q(blocked_id=other_id)) |
+            (Q(blocker_id=other_id) & Q(blocked=self.scope["user"]))
         ).exists()
         
         return block_exists

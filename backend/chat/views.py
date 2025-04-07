@@ -19,12 +19,12 @@ def index(request):
 
 @login_required
 def room(request, room_name):
-    users = sorted([request.user.nom, room_name])
-    unique_room_name = f"private_{users[0]}_{users[1]}"
+    # Récupérer l'ami par son nom
+    ami = get_object_or_404(Utilisateurs, nom=room_name)
     
-     # Récupérer l'ami (l'autre utilisateur)
-    other_username = room_name  # car room_name contient le nom de l'autre utilisateur
-    ami = get_object_or_404(Utilisateurs, nom=other_username)
+    # Créer le nom de la room avec les IDs triés
+    users_ids = sorted([request.user.id, ami.id])
+    unique_room_name = f"private_{users_ids[0]}_{users_ids[1]}"
     
     room, created = Room.objects.get_or_create(
         name=unique_room_name,
@@ -32,7 +32,6 @@ def room(request, room_name):
     )
     
     messages = Message.objects.filter(room=room).order_by('timestamp')
-    print(f"Chargement de {messages.count()} messages pour la salle {unique_room_name}")
     
     return render(request, 'chat/room.html', {
         'room_name': room_name,
@@ -55,27 +54,32 @@ def conversations_list(request):
         messages__user=request.user
     ).distinct()
     
+    # Trouver toutes les rooms qui contiennent l'ID de l'utilisateur
+    user_id_pattern = f"_{request.user.id}_|_{request.user.id}$|^private_{request.user.id}_"
     other_rooms = Room.objects.filter(
-        messages__isnull=False
+        messages__isnull=False,
+        name__regex=user_id_pattern
     ).exclude(
         id__in=user_rooms
-    ).filter(
-        name__contains=request.user.nom
     ).distinct()
     
     all_rooms = user_rooms.union(other_rooms)
     
     conversations = []
     for room in all_rooms:
-        room_name_parts = room.name.replace('private_', '').split('_')
-        other_user_name = room_name_parts[1] if room_name_parts[0] == request.user.nom else room_name_parts[0]
+        # Extraire les IDs de la room
+        room_ids = room.name.replace('private_', '').split('_')
+        other_id = int(room_ids[1]) if int(room_ids[0]) == request.user.id else int(room_ids[0])
+        
+        # Récupérer l'autre utilisateur par son ID
+        other_user = Utilisateurs.objects.get(id=other_id)
         
         last_message = Message.objects.filter(room=room).order_by('-timestamp').first()
         
         if last_message:
             conversations.append({
                 'room': room,
-                'other_user': other_user_name,
+                'other_user': other_user.nom,
                 'last_message': last_message,
                 'timestamp': last_message.timestamp
             })
