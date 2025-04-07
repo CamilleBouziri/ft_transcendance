@@ -204,13 +204,13 @@ function updateFriendRequests() {
             return response.json();
         })
         .then(data => {
-            console.log('Données reçues:', data); // Debug
-            console.log('Container trouvé:', receivedContainer); // Debug
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', data.received_requests.length); // Debug
+            // console.log('Données reçues:', data); // Debug
+            // console.log('Container trouvé:', receivedContainer); // Debug
+            // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', data.received_requests.length); // Debug
             
             if (receivedContainer) {
                 if (data.received_requests && data.received_requests.length > 0) {
-                    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'); // Debug
+                    // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'); // Debug
                     const requestsHTML = data.received_requests.map(request => `
                         <li>
                             <div class="container-nom">${request.utilisateur.nom}</div>
@@ -303,10 +303,10 @@ function updateFriendsList() {
 
 // Démarrer les mises à jour dès le chargement de la page
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM chargé');
+    // console.log('DOM chargé');
     const friendsContainer = document.getElementById('friends-container');
     const receivedContainer = document.getElementById('invit-container');
-    console.log('Container au chargement:', friendsContainer);
+    // console.log('Container au chargement:', friendsContainer);
 
     setInterval(() => {
         updateFriendsStatus();
