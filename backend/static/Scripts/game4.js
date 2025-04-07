@@ -14,12 +14,12 @@ var paddleSpeed = 5;
 
 // Ball
 var ball, paddle1, paddle2;
-var ballSpeed = 1.6;
+var ballSpeed = 2.5;
 var ballDirX = 1, ballDirY = 1;
 
 // Scores
 var score1 = 0, score2 = 0;
-var maxScore = 7;
+var maxScore = 11;
 
 // Camera
 var cameraSide = 0;
@@ -30,7 +30,7 @@ var mode = "2players";
 // For pause
 var paused = false;
 
-// ------------------- FUNCTION TO GET SETTINGS -------------------
+// ------------------- FUNCTION RECUP SETTING ENRE FRONT -------------------
 function getSettings() {
     const savedSettings = localStorage.getItem('pongSettings');
     return savedSettings ? JSON.parse(savedSettings) : null;

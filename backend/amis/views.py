@@ -5,6 +5,29 @@ from .models import Ami
 from django.db import models
 from django.http import JsonResponse
 
+"""
+
+    Utilisateur A (utilisateur)         ---( demande d'ami )-->        Utilisateur B (ami)
+                                                |
+                                    statut = en_attente/accepte/refuse
+
+    Attributs :
+
+    │── utilisateur : ForeignKey → Utilisateurs
+    │   └── L'utilisateur qui envoie la demande d'amitié
+    │
+    │── ami: ForeignKey → Utilisateurs
+    │   └── L'utilisateur qui reçoit la demande d'amitié
+    │
+    │── statut : CharField 
+    │   └── Valeurs possibles: 'en_attente', 'accepte', 'refuse'
+    │   └── Statut actuel de la demande d'amitié
+    │
+    │── date_ajout : DateTimeField (auto_now_add=True)
+        └── Date et heure de création de la demande d'amitié
+
+"""
+
 @login_required
 def rechercher_utilisateur(request):
     query = request.GET.get('q', '').strip()
@@ -18,6 +41,30 @@ def rechercher_utilisateur(request):
 
     return redirect('amis')
 
+"""
+    ENVOYER UNE DEMANDE D'AMITIÉ
+
+    Utilisateur ─── sélectionne utilisateur_id ──→ Vérification
+                                                    │
+                                                    V
+    Traitements : ┌─── Vérifie si demande déjà existante
+                  │     └── Si oui: redirection sans action
+                  │
+                  └─── Sinon: création d'une demande d'amitié avec statut='en_attente'
+                              └── Redirection vers 'rechercher_utilisateur'
+
+    Paramètres :
+
+    │── request : HttpRequest
+    │   └── Utilisateur authentifié qui envoie la demande
+    │
+    │── utilisateur_id : int
+    │   └── ID de l'utilisateur à qui envoyer la demande
+    │
+    └── Return : Redirect vers 'rechercher_utilisateur'
+
+"""
+
 @login_required
 def envoyer_demande_ami(request, utilisateur_id):
     utilisateur_cible = get_object_or_404(Utilisateurs, id=utilisateur_id)
@@ -28,7 +75,41 @@ def envoyer_demande_ami(request, utilisateur_id):
     Ami.objects.create(utilisateur=request.user, ami=utilisateur_cible, statut='en_attente')
 
     return redirect('rechercher_utilisateur')
-    
+
+"""
+
+    AFFICHAGE DES AMIS ET DES DEMANDES ENVOYEES ET RECUES
+
+    Utilisateur ─── accède à la page ──→ Système de gestion d'amitié
+                                            │
+                                            V
+    Traitement :  ┌─── Recherche (si query présent)
+                  │     └── Filtre utilisateurs correspondants
+                  │     └── Exclut utilisateurs déjà liés (amis/demandes)
+                  │
+                  ├─── Récupère les demandes envoyées (en_attente)
+                  │
+                  ├─── Récupère les demandes reçues (en_attente)
+                  │
+                  ├─── Récupère les amis acceptés (envoyés)
+                  │
+                  └─── Récupère les amis acceptés (reçus)
+                                            │
+                                            V
+                                 Affichage du template 'amis.html'
+
+    Paramètres :
+    │── request : HttpRequest
+    │   └── Peut contenir 'q': paramètre de recherche dans GET
+    │
+    └── Return : Rendu du template avec contexte contenant:
+        └── utilisateurs: résultats de recherche filtrés
+        └── query: terme de recherche utilisé
+        └── demandes_envoyees: demandes d'amitié en attente envoyées
+        └── demandes_recues: demandes d'amitié en attente reçues
+        └── amis_acceptes: dict contenant les relations amicales établies
+
+"""
 
 @login_required
 def amis(request):
@@ -70,6 +151,28 @@ def amis(request):
         'amis_acceptes': amis_acceptes
     })
 
+"""
+    ACCEPTER UNE DEMANDE D'AMITIÉ
+    
+    Utilisateur ─── sélectionne demande_id ──→ Vérification
+                                                    │
+                                                    V
+    Traitements : ┌─── Vérifie si demande existe et est en attente
+                  │     └── Si oui: met à jour statut à 'accepte'
+                  │
+                  └─── Redirige vers 'amis'
+    
+    Paramètres :
+    │── request: HttpRequest
+    │   └── Utilisateur authentifié qui accepte la demande
+    │
+    │── demande_id : int
+    │   └── ID de la demande à accepter
+    │
+    └── Return : Redirect vers 'amis'
+
+"""
+
 @login_required
 def accepter_demande_ami(request, demande_id):
     demande = get_object_or_404(Ami, id=demande_id, ami=request.user, statut='en_attente')
@@ -77,13 +180,57 @@ def accepter_demande_ami(request, demande_id):
     demande.save()
     return redirect('amis')
 
+"""
+    REFUSER UNE DEMANDE D'AMITIÉ
+
+    Utilisateur ─── sélectionne demande_id ──→ Vérification
+                                                    │
+                                                    V
+    Traitements : ┌─── Vérifie si demande existe et est en attente
+                  │     └── Si oui: met à jour statut à 'refuse'
+                  │
+                  └─── Redirige vers 'amis'
+
+    Paramètres :
+    │── request: HttpRequest
+    │   └── Utilisateur authentifié qui refuse la demande
+    │
+    │── demande_id: int
+    │   └── ID de la demande à refuser
+    │
+    └── Return: Redirect vers 'amis'
+
+"""
+
 @login_required
 def refuser_demande_ami(request, demande_id):
     demande = get_object_or_404(Ami, id=demande_id, ami=request.user, statut='en_attente')
     demande.statut = 'refuse'
     demande.save()
     return redirect('amis')
-    
+
+"""
+    SUPPRIMER UN AMI
+
+    Utilisateur ─── sélectionne ami_id ──→ Vérification
+                                                    │
+                                                    V
+    Traitements : ┌─── Vérifie si ami existe et est accepté
+                  │     └── Si oui: supprime la relation
+                  │
+                  └─── Redirige vers 'amis'
+
+    Paramètres :
+    │── request: HttpRequest
+    │   └── Utilisateur authentifié qui souhaite supprimer l'ami
+    │
+    │── ami_id: int
+    │   └── ID de l'ami à supprimer
+    │
+    └── Return: Redirect vers 'amis'
+
+"""
+
 @login_required
 def supprimer_ami(request, ami_id):
     ami = get_object_or_404(

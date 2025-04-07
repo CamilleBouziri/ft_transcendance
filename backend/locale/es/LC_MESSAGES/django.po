@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-06 18:09+0000\n"
+"POT-Creation-Date: 2025-04-07 12:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,7 +71,7 @@ msgid "Your id is:"
 msgstr "Tu ID es:"
 
 #: templates/accueil.html:15 templates/base.html:20
-#: templates/game/dashboard.html:60
+#: templates/game/dashboard.html:58
 msgid "Logout"
 msgstr "Cerrar sesión"
 
@@ -232,7 +232,7 @@ msgstr "Invitar a jugar"
 msgid "Send"
 msgstr "Enviar"
 
-#: templates/chat/room.html:59 templates/game/dashboard.html:89
+#: templates/chat/room.html:59 templates/game/dashboard.html:87
 msgid "Pong"
 msgstr "Pong"
 
@@ -257,6 +257,12 @@ msgstr "El usuario debe estar en línea para recibir una invitación."
 #| msgid "No pending invitations"
 msgid "Unblock user to send invitation"
 msgstr "No hay invitaciones pendientes"
+
+#: templates/chat/room.html:135
+#, fuzzy
+#| msgid "Join Tournament"
+msgid "Join Game"
+msgstr "Unirse al torneo"
 
 #: templates/connexion.html:7
 msgid "Login Page"
@@ -287,111 +293,111 @@ msgstr "Registrarse"
 msgid "Login with 42"
 msgstr "Iniciar sesión con 42"
 
-#: templates/game/dashboard.html:30
+#: templates/game/dashboard.html:29
 msgid "OK"
 msgstr "OK"
 
-#: templates/game/dashboard.html:47 templates/game/dashboard.html:49
+#: templates/game/dashboard.html:47
 msgid "Change Avatar"
 msgstr "Cambiar avatar"
 
-#: templates/game/dashboard.html:52
+#: templates/game/dashboard.html:50
 msgid "Edit Name"
 msgstr "Editar nombre"
 
-#: templates/game/dashboard.html:58
+#: templates/game/dashboard.html:56
 msgid "Level"
 msgstr "Nivel"
 
-#: templates/game/dashboard.html:87
+#: templates/game/dashboard.html:85
 msgid "Choose a Game"
 msgstr "Elige un juego"
 
-#: templates/game/dashboard.html:92 templates/game/morpion.html:7
+#: templates/game/dashboard.html:90 templates/game/morpion.html:7
 #: templates/game/morpion.html:240
 msgid "Morpion"
 msgstr "Tres en raya"
 
-#: templates/game/dashboard.html:107
+#: templates/game/dashboard.html:105
 msgid "Tournaments"
 msgstr "Torneos"
 
-#: templates/game/dashboard.html:110 templates/tournois/creer_tournois.html:8
+#: templates/game/dashboard.html:108 templates/tournois/creer_tournois.html:8
 #: templates/tournois/creer_tournois.html:157
 msgid "Create Tournament"
 msgstr "Crear torneo"
 
-#: templates/game/dashboard.html:119 templates/game/dashboard.html:162
-#: templates/tournois/detail_tournois.html:414
+#: templates/game/dashboard.html:117 templates/game/dashboard.html:160
+#: templates/tournois/detail_tournois.html:416
 msgid "Creator"
 msgstr "Creador"
 
-#: templates/game/dashboard.html:120 templates/game/dashboard.html:163
-#: templates/tournois/detail_tournois.html:415
+#: templates/game/dashboard.html:118 templates/game/dashboard.html:161
+#: templates/tournois/detail_tournois.html:417
 msgid "Status"
 msgstr "Estado"
 
-#: templates/game/dashboard.html:121 templates/game/dashboard.html:164
+#: templates/game/dashboard.html:119 templates/game/dashboard.html:162
 #: templates/game/waiting_room.html:84
-#: templates/tournois/detail_tournois.html:416
+#: templates/tournois/detail_tournois.html:418
 msgid "Players"
 msgstr "Jugadores"
 
-#: templates/game/dashboard.html:122 templates/game/dashboard.html:165
+#: templates/game/dashboard.html:120 templates/game/dashboard.html:163
 msgid "Actions"
 msgstr "Acciones"
 
-#: templates/game/dashboard.html:133 templates/game/dashboard.html:254
+#: templates/game/dashboard.html:131 templates/game/dashboard.html:252
 msgid "Tournament is full"
 msgstr "El torneo está completo"
 
-#: templates/game/dashboard.html:135 templates/game/dashboard.html:255
+#: templates/game/dashboard.html:133 templates/game/dashboard.html:253
 msgid "You have joined this tournament"
 msgstr "Te has unido a este torneo"
 
-#: templates/game/dashboard.html:138 templates/game/dashboard.html:256
+#: templates/game/dashboard.html:136 templates/game/dashboard.html:254
 #: templates/tournois/rejoindre_tournois.html:8
 #: templates/tournois/rejoindre_tournois.html:156
 msgid "Join Tournament"
 msgstr "Unirse al torneo"
 
-#: templates/game/dashboard.html:145 templates/game/dashboard.html:260
+#: templates/game/dashboard.html:143 templates/game/dashboard.html:258
 msgid "No tournaments available at the moment."
 msgstr "No hay torneos disponibles por el momento."
 
-#: templates/game/dashboard.html:155
+#: templates/game/dashboard.html:153
 msgid "Morpion Matches"
 msgstr "Partidas de Tres en raya"
 
-#: templates/game/dashboard.html:176 templates/game/dashboard.html:257
+#: templates/game/dashboard.html:174 templates/game/dashboard.html:255
 msgid "Match is full"
 msgstr "La partida está llena"
 
-#: templates/game/dashboard.html:178 templates/game/dashboard.html:258
+#: templates/game/dashboard.html:176 templates/game/dashboard.html:256
 msgid "You have joined this match"
 msgstr "Te has unido a esta partida"
 
-#: templates/game/dashboard.html:181 templates/game/dashboard.html:259
+#: templates/game/dashboard.html:179 templates/game/dashboard.html:257
 msgid "Join Match"
 msgstr "Unirse a la partida"
 
-#: templates/game/dashboard.html:188 templates/game/dashboard.html:261
+#: templates/game/dashboard.html:186 templates/game/dashboard.html:259
 msgid "No Morpion matches available."
 msgstr "No hay partidas de Tres en raya disponibles."
 
-#: templates/game/dashboard.html:205
+#: templates/game/dashboard.html:203
 msgid "Wins"
 msgstr "Victorias"
 
-#: templates/game/dashboard.html:209
+#: templates/game/dashboard.html:207
 msgid "Losses"
 msgstr "Derrotas"
 
-#: templates/game/dashboard.html:216
+#: templates/game/dashboard.html:214
 msgid "History"
 msgstr "Historial"
 
-#: templates/game/dashboard.html:244
+#: templates/game/dashboard.html:242
 msgid "No games played yet."
 msgstr "Aún no se han jugado juegos."
 
@@ -472,47 +478,71 @@ msgstr "JUGAR"
 
 #: templates/game/index.html:367 templates/game/index.html:393
 #: templates/game/invited_game.html:375 templates/game/morpion.html:246
-#: templates/tournois/detail_tournois.html:465
-#: templates/tournois/jeu_tournois.html:380
+#: templates/tournois/detail_tournois.html:467
+#: templates/tournois/jeu_tournois.html:376
 msgid "Player 1"
 msgstr "Jugador 1"
 
 #: templates/game/index.html:372 templates/game/index.html:398
 #: templates/game/invited_game.html:380 templates/game/morpion.html:249
-#: templates/tournois/detail_tournois.html:468
-#: templates/tournois/jeu_tournois.html:385
+#: templates/tournois/detail_tournois.html:470
+#: templates/tournois/jeu_tournois.html:381
 msgid "Player 2"
 msgstr "Jugador 2"
 
 #: templates/game/index.html:390 templates/game/invited_game.html:372
-#: templates/tournois/jeu_tournois.html:377
+#: templates/tournois/jeu_tournois.html:373
 msgid "Pause"
 msgstr "Pausa"
 
 #: templates/game/index.html:394 templates/game/invited_game.html:376
-#: templates/tournois/jeu_tournois.html:381
+#: templates/tournois/jeu_tournois.html:377
 msgid "Left: A"
 msgstr "Izquierda: A"
 
 #: templates/game/index.html:395 templates/game/invited_game.html:377
-#: templates/tournois/jeu_tournois.html:382
+#: templates/tournois/jeu_tournois.html:378
 msgid "Right: D"
 msgstr "Derecha: D"
 
 #: templates/game/index.html:399 templates/game/invited_game.html:381
-#: templates/tournois/jeu_tournois.html:386
+#: templates/tournois/jeu_tournois.html:382
 msgid "Left: ⮜"
 msgstr "Izquierda: ⮜"
 
 #: templates/game/index.html:400 templates/game/invited_game.html:382
-#: templates/tournois/jeu_tournois.html:387
+#: templates/tournois/jeu_tournois.html:383
 msgid "Right: ⮞"
 msgstr "Derecha: ⮞"
 
 #: templates/game/index.html:403 templates/game/invited_game.html:385
-#: templates/tournois/jeu_tournois.html:390
+#: templates/tournois/jeu_tournois.html:386
 msgid "Resume"
 msgstr "Reanudar"
+
+#: templates/game/index.html:581 templates/game/invited_game.html:621
+#, fuzzy
+#| msgid "Finished"
+msgid "Game Finished !"
+msgstr "Finalizado"
+
+#: templates/game/index.html:582 templates/game/invited_game.html:622
+#: templates/game/morpion.html:418
+msgid "Winner :"
+msgstr "Ganador:"
+
+#: templates/game/index.html:583 templates/game/invited_game.html:623
+#: templates/tournois/jeu_tournois.html:518
+msgid "Final Score:"
+msgstr "Puntuación final:"
+
+#: templates/game/index.html:584 templates/game/invited_game.html:398
+#: templates/game/invited_game.html:624
+#: templates/tournois/creer_tournois.html:156
+#: templates/tournois/jeu_tournois.html:519
+#: templates/tournois/rejoindre_tournois.html:155
+msgid "Close"
+msgstr "Cerrar"
 
 #: templates/game/invited_game.html:271
 #, fuzzy
@@ -525,13 +555,6 @@ msgstr "Juego"
 #| msgid "Game"
 msgid "Game Over"
 msgstr "Juego"
-
-#: templates/game/invited_game.html:398
-#: templates/tournois/creer_tournois.html:156
-#: templates/tournois/jeu_tournois.html:526
-#: templates/tournois/rejoindre_tournois.html:155
-msgid "Close"
-msgstr "Cerrar"
 
 #: templates/game/morpion.html:244
 msgid "Game Settings"
@@ -575,17 +598,13 @@ msgstr "Turno: "
 msgid "Restart"
 msgstr "Reiniciar"
 
-#: templates/game/morpion.html:309 templates/tournois/detail_tournois.html:408
+#: templates/game/morpion.html:309 templates/tournois/detail_tournois.html:410
 msgid "Dashboard"
 msgstr "Panel de control"
 
 #: templates/game/morpion.html:387
 msgid "Turn: "
 msgstr "Turno: "
-
-#: templates/game/morpion.html:418
-msgid "Winner :"
-msgstr "Ganador:"
 
 #: templates/game/morpion.html:432
 msgid "Draw!"
@@ -613,7 +632,7 @@ msgid "Waiting for another player..."
 msgstr "Esperando a otro jugador..."
 
 #: templates/game/waiting_room.html:94
-#: templates/tournois/detail_tournois.html:433
+#: templates/tournois/detail_tournois.html:435
 msgid "Winner"
 msgstr "Ganador"
 
@@ -651,70 +670,66 @@ msgstr "Crear"
 msgid "Tournament Details"
 msgstr "Detalles del torneo"
 
-#: templates/tournois/detail_tournois.html:417
+#: templates/tournois/detail_tournois.html:419
 msgid "Name"
 msgstr "Nombre"
 
-#: templates/tournois/detail_tournois.html:425
+#: templates/tournois/detail_tournois.html:427
 msgid "The match is only possible in the creator's interface:"
 msgstr "La partida solo es posible desde la interfaz del creador:"
 
-#: templates/tournois/detail_tournois.html:435
+#: templates/tournois/detail_tournois.html:437
 msgid "FINISHED"
 msgstr "FINALIZADO"
 
-#: templates/tournois/detail_tournois.html:441
+#: templates/tournois/detail_tournois.html:443
 msgid "Tournament Matches"
 msgstr "Partidas del torneo"
 
-#: templates/tournois/detail_tournois.html:471
+#: templates/tournois/detail_tournois.html:473
 msgid "Player 3"
 msgstr "Jugador 3"
 
-#: templates/tournois/detail_tournois.html:474
+#: templates/tournois/detail_tournois.html:476
 msgid "Player 4"
 msgstr "Jugador 4"
 
-#: templates/tournois/detail_tournois.html:485
+#: templates/tournois/detail_tournois.html:487
 msgid "Winner 1"
 msgstr "Ganador 1"
 
-#: templates/tournois/detail_tournois.html:494
+#: templates/tournois/detail_tournois.html:496
 msgid "Winner 2"
 msgstr "Ganador 2"
 
-#: templates/tournois/detail_tournois.html:507
+#: templates/tournois/detail_tournois.html:509
 msgid "Final Winner"
 msgstr "Ganador final"
 
-#: templates/tournois/detail_tournois.html:516
+#: templates/tournois/detail_tournois.html:518
 msgid "PLAY1"
 msgstr "JUGAR1"
 
-#: templates/tournois/detail_tournois.html:518
+#: templates/tournois/detail_tournois.html:520
 msgid "PLAY2"
 msgstr "JUGAR2"
 
-#: templates/tournois/detail_tournois.html:520
+#: templates/tournois/detail_tournois.html:522
 msgid "FINAL"
 msgstr "FINAL"
 
-#: templates/tournois/detail_tournois.html:532
-#: templates/tournois/detail_tournois.html:628
+#: templates/tournois/detail_tournois.html:534
+#: templates/tournois/detail_tournois.html:630
 msgid "Start Tournament"
 msgstr "Iniciar torneo"
 
-#: templates/tournois/jeu_tournois.html:523
+#: templates/tournois/jeu_tournois.html:516
 msgid "Game Over!"
 msgstr "¡Juego terminado!"
 
-#: templates/tournois/jeu_tournois.html:524
+#: templates/tournois/jeu_tournois.html:517
 msgid "Winner:"
 msgstr "Ganador:"
-
-#: templates/tournois/jeu_tournois.html:525
-msgid "Final Score:"
-msgstr "Puntuación final:"
 
 #: templates/tournois/rejoindre_tournois.html:175
 msgid "Join"

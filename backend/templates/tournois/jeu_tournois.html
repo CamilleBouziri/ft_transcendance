@@ -346,11 +346,7 @@
 
         <div id="players-container">
             <div id="player1" class="player">
-                {% if user.photo_url %}
-                    <img id="iconPlayer1" class="icon" src="{{ user.photo_url }}" alt="Player 1 Icon">
-                {% else %}
                     <img id="iconPlayer1" class="icon" src="{% static 'img/joueurs.png' %}" alt="Player 1 Icon">
-                {% endif %}
                 <h2 id="player1-name">{{ joueur1_nom }}</h2>
                 <div class="scoreBubble" id="scorePlayer1">0</div>
             </div>
@@ -390,8 +386,6 @@
         <button onclick="togglePause()">{% trans "Resume" %}</button>
     </div>
 
-    <!-- Scripts du jeu -->
-    <!-- <script src="../../static/Scripts/game2.js"></script> -->
     <script src="../../static/Scripts/keyboard.js"></script>
     <script src="../../static/Scripts/three.min.js"></script>
 
@@ -459,12 +453,11 @@
 
         // Appliquer les réglages et démarrer
         function applySettings() {
-            // Par sécurité, si jamais l'utilisateur n'a rien sélectionné, on met quelques valeurs par défaut
             if (!selectedBallColor) selectedBallColor = '#FF0000';
             if (!selectedPaddle1)  selectedPaddle1  = '#FFFFFF';
             if (!selectedPaddle2)  selectedPaddle2  = '#00FF00';
             if (!selectedTerrain)  selectedTerrain  = '#00FF00';
-            if (!selectedPoints)   selectedPoints   = '5';
+            if (!selectedPoints)   selectedPoints   = '3';
 
             const settings = {
                 ballColor:     selectedBallColor,
@@ -936,7 +929,8 @@ function getCSRFToken() {
         .find(row => row.startsWith('csrftoken='))
         ?.split('=')[1] || '';
 }
-
         </script>
+
+
 </body>
 </html>

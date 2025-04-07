@@ -14,12 +14,12 @@ var paddleSpeed = 5;
 
 // Ball
 var ball, paddle1, paddle2;
-var ballSpeed = 1.6;
+var ballSpeed = 2.5;
 var ballDirX = 1, ballDirY = 1;
 
 // Scores
 var score1 = 0, score2 = 0;
-var maxScore = 7;
+var maxScore = 11;
 
 // Camera
 var cameraSide = 0;
@@ -30,30 +30,30 @@ var mode = "2players";
 // For pause
 var paused = false;
 
-// ------------------- FUNCTION TO GET SETTINGS -------------------
+// ------------------- FUNCTION RECUP SETT ENRE FRONT -------------------
 function getSettings() {
     const savedSettings = localStorage.getItem('pongSettings');
     return savedSettings ? JSON.parse(savedSettings) : null;
 }
 
-// ------------------- FUNCTION TO TOGGLE PAUSE -------------------
+// ------------------- FUNCTION METTRE PAUSE -------------------
 function togglePause() {
     paused = !paused;
     console.log(paused ? "Game paused" : "Game resumed");
 }
 
-// ------------------- CAMERA PHYSICS -------------------
+// fonction suivre la raquette et la balle
 function cameraPhysics() {
     spotLight.position.copy(camera.position);
     spotLight.position.z += 20;
 
     if (cameraSide === 0) {
-        camera.position.x = paddle1.position.x - 100;
-        camera.position.z = paddle1.position.z + 100 + 0.04 * (-ball.position.x + paddle1.position.x);
+        camera.position.x = paddle1.position.x - 100;   
+        camera.position.z = paddle1.position.z + 100 + 0.04 * (-ball.position.x + paddle1.position.x); //derriere balle du joueur 1 paddle 1
 
-        camera.rotation.x = -0.01 * (ball.position.y) * Math.PI / 180;
-        camera.rotation.y = -60 * Math.PI / 180;
-        camera.rotation.z = -90 * Math.PI / 180;
+        camera.rotation.x = -0.01 * (ball.position.y) * Math.PI / 180; // mini zom qui bouge en fonction bale
+        camera.rotation.y = -60 * Math.PI / 180;  //  vue mouvement vague
+        camera.rotation.z = -90 * Math.PI / 180; // vue face 
     } else {
         camera.position.x = paddle2.position.x + 100;
         camera.position.z = paddle2.position.z + 100 + 0.04 * (ball.position.x - paddle2.position.x);
@@ -64,15 +64,15 @@ function cameraPhysics() {
     }
 }
 
-// ------------------- SETUP -------------------
+// demare the game
 function setup() {
-    const settings = getSettings(); // Get saved settings
+    const settings = getSettings(); // RECUP SETTINGS
     if (settings) {
         maxScore = settings.maxScore;
-        mode = settings.mode; // Set game mode
+        mode = settings.mode; // choisit le mde
     }
 
-    document.getElementById("winnerBoard").innerHTML = "First to " + maxScore + " wins!";
+    document.getElementById("winnerBoard").innerHTML = "First to " + maxScore + " wins!"; // condition stop
     score1 = 0;
     score2 = 0;
     createScene(settings);
@@ -96,6 +96,7 @@ function createScene(settings) {
     camera.position.z = 320;
     renderer.setSize(WIDTH, HEIGHT);
     c.appendChild(renderer.domElement);
+
 
     // Terrain
     var terrainColor = settings ? settings.terrainColor : 0x0e18a9;
@@ -200,11 +201,10 @@ function createScene(settings) {
     renderer.shadowMapEnabled = true;
 }
 
-// ------------------- DRAW -------------------
+//dessine en boule le jeu
 function draw() {
     renderer.render(scene, camera);
     requestAnimationFrame(draw);
-
     if (!paused) {
         ballPhysics();
         paddlePhysics();
@@ -218,7 +218,7 @@ function draw() {
     }
 }
 
-// ------------------- BALL PHYSICS -------------------
+// Gere les rebon et sortie de jeu
 function ballPhysics() {
     if (ball.position.x <= -fieldWidth / 2) {
         score2++;
@@ -245,7 +245,7 @@ function ballPhysics() {
     }
 }
 
-// ------------------- PLAYER PADDLE MOVEMENT -------------------
+// padde mouvemment joeur1 
 function playerPaddleMovement() {
     paddle1DirY = 0;
     if (Key.isDown(Key.A)) {
@@ -257,7 +257,7 @@ function playerPaddleMovement() {
     paddle1.position.y = Math.max(Math.min(paddle1.position.y, fieldHeight * 0.45), -fieldHeight * 0.45);
 }
 
-// ------------------- PLAYER 2 PADDLE MOVEMENT -------------------
+// fonction pour le deplacement du paddle 2
 function player2PaddleMovement() {
     paddle2DirY = 0;
     if (Key.isDown(Key.LEFT)) {
@@ -269,14 +269,16 @@ function player2PaddleMovement() {
     paddle2.position.y = Math.max(Math.min(paddle2.position.y, fieldHeight * 0.45), -fieldHeight * 0.45);
 }
 
-// ------------------- OPPONENT PADDLE MOVEMENT -------------------
+// fonction on passe en mode ia
+// position et mouvement en fonction du paddle suis la balle
 function opponentPaddleMovement() {
     paddle2DirY = (ball.position.y - paddle2.position.y) * 0.2;
     paddle2.position.y += Math.sign(paddle2DirY) * Math.min(Math.abs(paddle2DirY), paddleSpeed);
     paddle2.position.y = Math.max(Math.min(paddle2.position.y, fieldHeight * 0.45), -fieldHeight * 0.45);
 }
 
-// ------------------- PADDLE PHYSICS -------------------
+
+
 function paddlePhysics() {
     if (
         ball.position.x <= paddle1.position.x + paddleWidth &&
@@ -301,18 +303,16 @@ function paddlePhysics() {
     }
 }
 
-// ------------------- RESET BALL -------------------
+
+// fonction pour remettre tout a 0 balle centre et compagnie
 function resetBall(loser) {
-    // Reset ball position
     ball.position.set(0, 0, 5);
     ballDirX = loser === 1 ? 1 : -1;
     ballDirY = 1;
 
-    // Reset paddles positions
+ 
     paddle1.position.y = 0;
     paddle2.position.y = 0;
-    
-    // Reset paddle directions
     paddle1DirY = 0;
     paddle2DirY = 0;
 }
@@ -321,9 +321,7 @@ function resetBall(loser) {
 // ------------------- MATCH SCORE CHECK -------------------
 
 
-// Mise à jour de la fonction matchScoreCheck
-// ... (rest of the code remains the same until matchScoreCheck function)
-
+// Vérifie si un joueur a atteint le score maximum
 function matchScoreCheck() {
     if (score1 >= maxScore) {
         ballSpeed = 0;
@@ -340,24 +338,26 @@ function matchScoreCheck() {
     }
 }
 
+
+// Fonction pour afficher le résultat de la partie
 function displayWinner(winner, loser, winnerScore, loserScore) {
     const overlay = document.createElement('div');
     overlay.id = 'gameResultOverlay';
     overlay.innerHTML = `
     <div class="result-container">
-    <h2>Partie Terminée !</h2>
+    <h2>${window.translations.gameFinished}</h2>
     <div class="result-content">
-    <p class="winner-text"><strong>Vainqueur :</strong> ${winner}</p>
-    <p class="score-text"><strong>Score Final :</strong> ${winnerScore} - ${loserScore}</p>
+    <p class="winner-text"><strong>${window.translations.winner}</strong> ${winner}</p>
+    <p class="score-text"><strong>${window.translations.finalScore}</strong> ${winnerScore} - ${loserScore}</p>
     </div>
-    <button class="result-button" onclick="closeResultAndRedirect()">Fermer</button>
+    <button class="result-button" onclick="closeResultAndRedirect()">${window.translations.close}</button>
     </div>
     `;
     
     document.body.appendChild(overlay);
 }
 
-// Garder une seule version de sendGameResult
+// Fonction pour envoyer le résultat du jeu au backend
 function sendGameResult(player1Name, player2Name, player1Score, player2Score) {
     const csrfToken = document.cookie
     .split('; ')
@@ -397,6 +397,7 @@ function sendGameResult(player1Name, player2Name, player1Score, player2Score) {
     });
 }
 
+// Fonction pour fermer le résultat et rediriger vers dashboard
 function closeResultAndRedirect() {
     const overlay = document.getElementById('gameResultOverlay');
     if (overlay) {
@@ -406,7 +407,7 @@ function closeResultAndRedirect() {
 }
 
 
-// Fonction utilitaire pour obtenir le token CSRF
+// Fonction le token CSRF
 function getCSRFToken() {
     return document.cookie
         .split('; ')

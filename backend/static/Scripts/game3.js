@@ -11,12 +11,12 @@ var paddleSpeed = 5;
 
 // Ball
 var ball, paddle1, paddle2;
-var ballSpeed = 1.6;
+var ballSpeed = 2.5;
 var ballDirX = 1, ballDirY = 1;
 
 // Scores
 var score1 = 0, score2 = 0;
-var maxScore = 7;
+var maxScore = 11;
 
 // Camera
 var cameraSide = 0;
@@ -342,12 +342,12 @@ function displayWinner(winner, loser, winnerScore, loserScore) {
     overlay.id = 'gameResultOverlay';
     overlay.innerHTML = `
     <div class="result-container">
-    <h2>Partie Terminée !</h2>
+    <h2>${window.translations.gameFinished}</h2>
     <div class="result-content">
-    <p class="winner-text"><strong>Vainqueur :</strong> ${winner}</p>
-    <p class="score-text"><strong>Score Final :</strong> ${winnerScore} - ${loserScore}</p>
+    <p class="winner-text"><strong>${window.translations.winner}</strong> ${winner}</p>
+    <p class="score-text"><strong>${window.translations.finalScore}</strong> ${winnerScore} - ${loserScore}</p>
     </div>
-    <button class="result-button" onclick="closeResultAndRedirect()">Fermer</button>
+    <button class="result-button" onclick="closeResultAndRedirect()">${window.translations.close}</button>
     </div>
     `;
     
